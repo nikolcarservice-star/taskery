@@ -1026,7 +1026,8 @@
       "NEW_MESSAGE": "Новое сообщение",
       "NEW_BID": "Новый отклик",
       "SUPPORT_REPLY": "Поддержка",
-      "USER_WARNING": "Предупреждение"
+      "USER_WARNING": "Предупреждение",
+      "ADMIN_BROADCAST": "Сообщение платформы"
     },
     "projectStatus": {
       "OPEN": "Открыт",
@@ -1814,6 +1815,10 @@
     },
     "USER_WARNING": {
       "title": "Предупреждение от администрации",
+      "body": "{project}"
+    },
+    "ADMIN_BROADCAST": {
+      "title": "Сообщение от Taskery",
       "body": "{project}"
     }
   },

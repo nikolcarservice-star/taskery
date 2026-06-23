@@ -79,6 +79,13 @@ export function AdminMobileHome({
       permission: "FINANCE",
     },
     {
+      href: `${ADMIN_MOBILE_ROOT}/broadcast`,
+      label: "Рассылка",
+      description: "Массовые уведомления",
+      icon: "📣",
+      permission: "STAFF_MANAGE",
+    },
+    {
       href: `${ADMIN_MOBILE_ROOT}/catalog`,
       label: "Каталог",
       description: "Категории и навыки",

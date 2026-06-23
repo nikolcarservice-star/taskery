@@ -806,6 +806,7 @@ export type Dictionary = {
       NEW_BID: string;
       SUPPORT_REPLY: string;
       USER_WARNING: string;
+      ADMIN_BROADCAST: string;
     };
     projectStatus: {
       OPEN: string;
@@ -1513,6 +1514,7 @@ export type Dictionary = {
     NEW_BID: { title: string; body: string };
     SUPPORT_REPLY: { title: string; body: string };
     USER_WARNING: { title: string; body: string };
+    ADMIN_BROADCAST: { title: string; body: string };
   };
   faq: FaqItem[];
 };

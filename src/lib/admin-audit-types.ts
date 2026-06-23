@@ -39,4 +39,5 @@ export const ADMIN_AUDIT_ACTION_LABELS: Record<AdminAuditAction, string> = {
   CATALOG_SKILL_SAVE: "Навык сохранён",
   WITHDRAWAL_APPROVE: "Вывод одобрен",
   WITHDRAWAL_REJECT: "Вывод отклонён",
+  BROADCAST_SEND: "Рассылка отправлена",
 };

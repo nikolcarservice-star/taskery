@@ -3,6 +3,7 @@
 import { AdminModerationStack } from "@/components/AdminModerationStack";
 import { AdminFinancePanel } from "@/components/AdminFinancePanel";
 import { AdminAuditPanel } from "@/components/AdminAuditPanel";
+import { AdminBroadcastPanel } from "@/components/AdminBroadcastPanel";
 import { AdminCatalogPanel } from "@/components/AdminCatalogPanel";
 import { AdminVerificationPanel } from "@/components/AdminVerificationPanel";
 import { AdminSupportPanel } from "@/components/AdminSupportPanel";
@@ -140,10 +141,18 @@ export function AdminPanel({
       )}
 
       {canManageStaff && (
-        <AdminCatalogPanel
-          categories={catalogCategories}
-          skills={catalogSkills}
-        />
+        <>
+          <AdminBroadcastPanel
+            stats={{
+              freelancers: stats.freelancers,
+              clients: stats.clients,
+            }}
+          />
+          <AdminCatalogPanel
+            categories={catalogCategories}
+            skills={catalogSkills}
+          />
+        </>
       )}
 
       {canViewFinance && finance && (

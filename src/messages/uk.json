@@ -582,7 +582,8 @@
       "NEW_MESSAGE": "Нове повідомлення",
       "NEW_BID": "Новий відгук",
       "SUPPORT_REPLY": "Підтримка",
-      "USER_WARNING": "Попередження"
+      "USER_WARNING": "Попередження",
+      "ADMIN_BROADCAST": "Повідомлення платформи"
     },
     "projectStatus": {
       "OPEN": "Відкритий",
@@ -1829,6 +1830,10 @@
     },
     "USER_WARNING": {
       "title": "Попередження від адміністрації",
+      "body": "{project}"
+    },
+    "ADMIN_BROADCAST": {
+      "title": "Повідомлення від Taskery",
       "body": "{project}"
     }
   },

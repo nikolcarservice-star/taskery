@@ -597,7 +597,8 @@
       "NEW_MESSAGE": "New message",
       "NEW_BID": "New bid",
       "SUPPORT_REPLY": "Support",
-      "USER_WARNING": "Warning"
+      "USER_WARNING": "Warning",
+      "ADMIN_BROADCAST": "Platform message"
     },
     "projectStatus": {
       "OPEN": "Open",
@@ -1844,6 +1845,10 @@
     },
     "USER_WARNING": {
       "title": "Warning from administration",
+      "body": "{project}"
+    },
+    "ADMIN_BROADCAST": {
+      "title": "Message from Taskery",
       "body": "{project}"
     }
   },

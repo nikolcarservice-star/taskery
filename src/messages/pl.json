@@ -576,7 +576,8 @@
       "NEW_MESSAGE": "Nowa wiadomość",
       "NEW_BID": "Nowa oferta",
       "SUPPORT_REPLY": "Wsparcie",
-      "USER_WARNING": "Ostrzeżenie"
+      "USER_WARNING": "Ostrzeżenie",
+      "ADMIN_BROADCAST": "Wiadomość platformy"
     },
     "projectStatus": {
       "OPEN": "Otwarty",
@@ -1823,6 +1824,10 @@
     },
     "USER_WARNING": {
       "title": "Ostrzeżenie od administracji",
+      "body": "{project}"
+    },
+    "ADMIN_BROADCAST": {
+      "title": "Wiadomość od Taskery",
       "body": "{project}"
     }
   },
