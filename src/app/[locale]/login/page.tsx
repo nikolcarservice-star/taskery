@@ -51,7 +51,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
           <LoginForm googleEnabled={googleEnabled} />
         </div>
 
-        <DemoAccountsHint />
+        {process.env.NODE_ENV === "development" && <DemoAccountsHint />}
       </main>
 
       <SiteFooter locale={locale} dict={dict} />
