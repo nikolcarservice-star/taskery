@@ -11,6 +11,7 @@ export async function getUserSettings(userId: string): Promise<UserSettingsData>
       where: { id: userId },
       select: {
         email: true,
+        twoFactorEnabled: true,
         settings: true,
       },
     }),
@@ -25,6 +26,7 @@ export async function getUserSettings(userId: string): Promise<UserSettingsData>
 
   return {
     email: user.email,
+    twoFactorEnabled: user.twoFactorEnabled,
     emailProjectDigest: settings?.emailProjectDigest ?? DEFAULT_SETTINGS.emailProjectDigest,
     emailNewMessages: settings?.emailNewMessages ?? DEFAULT_SETTINGS.emailNewMessages,
     emailServiceInfo: settings?.emailServiceInfo ?? DEFAULT_SETTINGS.emailServiceInfo,

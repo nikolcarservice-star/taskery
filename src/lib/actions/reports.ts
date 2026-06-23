@@ -2,6 +2,7 @@
 
 import type { ReportReason, ReportTargetType } from "@/generated/prisma/client";
 import { actionError } from "@/lib/action-errors";
+import { notifyAdminsWithPermission } from "@/lib/admin-notify";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
@@ -112,6 +113,14 @@ export async function submitReport(
 
     await recalculateProjectReportStats(project.id);
 
+    await notifyAdminsWithPermission("MODERATION", {
+      type: "ADMIN_REPORT",
+      title: "Новая жалоба на проект",
+      body: reason,
+      link: "/admin",
+      metadata: { reportTarget: "PROJECT", projectId: project.id },
+    });
+
     revalidatePath(`/projects/${project.slug}`);
     revalidatePath("/projects");
     revalidatePath("/admin");
@@ -148,6 +157,14 @@ export async function submitReport(
       reason,
       details: details || null,
     },
+  });
+
+  await notifyAdminsWithPermission("MODERATION", {
+    type: "ADMIN_REPORT",
+    title: "Новая жалоба на пользователя",
+    body: reason,
+    link: "/admin",
+    metadata: { reportTarget: "USER", targetUserId },
   });
 
   revalidatePath(`/freelancers/${targetUserId}`);

@@ -659,6 +659,22 @@ export type Dictionary = {
       twoFactor: string;
       twoFactorSoon: string;
       twoFactorHint: string;
+      twoFactorDescription: string;
+      twoFactorWithdrawalsHint: string;
+      twoFactorEnabled: string;
+      twoFactorEnable: string;
+      twoFactorDisable: string;
+      twoFactorStarting: string;
+      twoFactorDisabling: string;
+      twoFactorConfirming: string;
+      twoFactorSetupTitle: string;
+      twoFactorSetupHint: string;
+      twoFactorSecretLabel: string;
+      twoFactorCodeLabel: string;
+      twoFactorConfirm: string;
+      twoFactorRestartSetup: string;
+      twoFactorEnabledSuccess: string;
+      twoFactorDisabledSuccess: string;
       sessions: string;
       sessionsHint: string;
       personalData: string;
@@ -807,6 +823,9 @@ export type Dictionary = {
       SUPPORT_REPLY: string;
       USER_WARNING: string;
       ADMIN_BROADCAST: string;
+      ADMIN_DISPUTE: string;
+      ADMIN_REPORT: string;
+      ADMIN_WITHDRAWAL: string;
     };
     projectStatus: {
       OPEN: string;
@@ -1087,6 +1106,14 @@ export type Dictionary = {
       payoutHolderPlaceholder: string;
       payoutCurrent: string;
       payoutFreelancerHint: string;
+      stripeConnectTitle: string;
+      stripeConnectDescription: string;
+      stripeConnectReady: string;
+      stripeConnectPending: string;
+      stripeConnectNotLinked: string;
+      stripeConnectStart: string;
+      stripeConnectManage: string;
+      stripeConnectStarting: string;
     };
     freelancerProfile: {
       tabs: {
@@ -1161,6 +1188,8 @@ export type Dictionary = {
         withdrawalMinHint: string;
         withdrawalSubmitting: string;
         withdrawalSubmitted: string;
+        withdrawalTotpLabel: string;
+        withdrawalTotpHint: string;
         emptyWithdrawals: string;
         withdrawalNeedPayoutDetails: string;
         withdrawalSetupPayoutLink: string;
@@ -1458,6 +1487,11 @@ export type Dictionary = {
     REPORT_ALREADY_SUBMITTED: string;
     CANNOT_REPORT_SELF: string;
     ACCOUNT_BANNED: string;
+    TWO_FACTOR_REQUIRED: string;
+    TWO_FACTOR_INVALID: string;
+    TWO_FACTOR_ALREADY_ENABLED: string;
+    TWO_FACTOR_NOT_ENABLED: string;
+    TWO_FACTOR_SETUP_REQUIRED: string;
   };
   reports: {
     reportProject: string;
@@ -1515,6 +1549,9 @@ export type Dictionary = {
     SUPPORT_REPLY: { title: string; body: string };
     USER_WARNING: { title: string; body: string };
     ADMIN_BROADCAST: { title: string; body: string };
+    ADMIN_DISPUTE: { title: string; body: string };
+    ADMIN_REPORT: { title: string; body: string };
+    ADMIN_WITHDRAWAL: { title: string; body: string };
   };
   faq: FaqItem[];
 };

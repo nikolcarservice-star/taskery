@@ -418,6 +418,22 @@
       "twoFactor": "Двофакторна автентифікація",
       "twoFactorSoon": "2FA незабаром буде доступна",
       "twoFactorHint": "Поки що використовуйте надійний пароль і перевіряйте активні сесії.",
+      "twoFactorDescription": "Захистіть виведення коштів одноразовими кодами з додатку-аутентифікатора (Google Authenticator, Authy тощо).",
+      "twoFactorWithdrawalsHint": "Якщо 2FA увімкнено, код з додатку потрібен при кожному виведенні.",
+      "twoFactorEnabled": "2FA увімкнено",
+      "twoFactorEnable": "Увімкнути 2FA",
+      "twoFactorDisable": "Вимкнути 2FA",
+      "twoFactorStarting": "Підготовка…",
+      "twoFactorDisabling": "Вимкнення…",
+      "twoFactorConfirming": "Перевірка…",
+      "twoFactorSetupTitle": "Додайте акаунт у додаток",
+      "twoFactorSetupHint": "Відскануйте QR-код або введіть секретний ключ вручну, потім введіть 6-значний код для підтвердження.",
+      "twoFactorSecretLabel": "Секретний ключ",
+      "twoFactorCodeLabel": "Код з додатку",
+      "twoFactorConfirm": "Підтвердити",
+      "twoFactorRestartSetup": "Новий QR-код",
+      "twoFactorEnabledSuccess": "2FA успішно увімкнено",
+      "twoFactorDisabledSuccess": "2FA вимкнено",
       "sessions": "Активні сесії",
       "sessionsHint": "Ви увійшли в акаунт на цьому пристрої. Керування сесіями з’явиться пізніше.",
       "personalData": "Особисті дані",
@@ -583,7 +599,10 @@
       "NEW_BID": "Новий відгук",
       "SUPPORT_REPLY": "Підтримка",
       "USER_WARNING": "Попередження",
-      "ADMIN_BROADCAST": "Повідомлення платформи"
+      "ADMIN_BROADCAST": "Повідомлення платформи",
+      "ADMIN_DISPUTE": "Спір",
+      "ADMIN_REPORT": "Скарга",
+      "ADMIN_WITHDRAWAL": "Заявка на виведення"
     },
     "projectStatus": {
       "OPEN": "Відкритий",
@@ -948,7 +967,15 @@
       "payoutHolderLabel": "Отримувач (необов'язково)",
       "payoutHolderPlaceholder": "ПІБ або назва компанії",
       "payoutCurrent": "Поточні реквізити: {method} {destination}",
-      "payoutFreelancerHint": "Ці дані використовуються при виведенні коштів. Зміни застосовуються до наступних заявок."
+      "payoutFreelancerHint": "Ці дані використовуються при виведенні коштів. Зміни застосовуються до наступних заявок.",
+      "stripeConnectTitle": "Stripe Connect",
+      "stripeConnectDescription": "Підключіть Stripe для автоматичних виплат після схвалення виведення адміністратором.",
+      "stripeConnectReady": "Stripe Connect налаштовано",
+      "stripeConnectPending": "Акаунт Stripe створено — завершіть перевірку",
+      "stripeConnectNotLinked": "Stripe Connect не підключено",
+      "stripeConnectStart": "Підключити Stripe",
+      "stripeConnectManage": "Оновити дані Stripe",
+      "stripeConnectStarting": "Відкриваємо Stripe…"
     },
     "freelancerProfile": {
       "tabs": {
@@ -1015,6 +1042,8 @@
         "withdrawalMinHint": "Мінімум {min} ₴",
         "withdrawalSubmitting": "Надсилання…",
         "withdrawalSubmitted": "Заявку надіслано на розгляд",
+        "withdrawalTotpLabel": "Код 2FA",
+        "withdrawalTotpHint": "Введіть 6-значний код з додатку-аутентифікатора.",
         "emptyWithdrawals": "Заявок на виведення поки немає.",
         "withdrawalNeedPayoutDetails": "Перед виведенням вкажіть реквізити в особистих даних.",
         "withdrawalSetupPayoutLink": "Налаштувати платіжні дані →",
@@ -1793,7 +1822,12 @@
     "REPORT_DETAILS_REQUIRED": "Опишіть проблему (мінімум 10 символів)",
     "REPORT_ALREADY_SUBMITTED": "Ви вже надіслали скаргу",
     "CANNOT_REPORT_SELF": "Не можна скаржитися на себе або власний проєкт",
-    "ACCOUNT_BANNED": "Акаунт заблоковано"
+    "ACCOUNT_BANNED": "Акаунт заблоковано",
+    "TWO_FACTOR_REQUIRED": "Введіть код з додатку-аутентифікатора",
+    "TWO_FACTOR_INVALID": "Невірний код 2FA",
+    "TWO_FACTOR_ALREADY_ENABLED": "2FA вже увімкнено",
+    "TWO_FACTOR_NOT_ENABLED": "2FA не увімкнено",
+    "TWO_FACTOR_SETUP_REQUIRED": "Спочатку почніть налаштування 2FA"
   },
   "cookies": {
     "title": "Ми використовуємо cookies",
@@ -1834,6 +1868,18 @@
     },
     "ADMIN_BROADCAST": {
       "title": "Повідомлення від Taskery",
+      "body": "{project}"
+    },
+    "ADMIN_DISPUTE": {
+      "title": "Відкрито спір",
+      "body": "{project}"
+    },
+    "ADMIN_REPORT": {
+      "title": "Нова скарга",
+      "body": "{project}"
+    },
+    "ADMIN_WITHDRAWAL": {
+      "title": "Заявка на виведення",
       "body": "{project}"
     }
   },

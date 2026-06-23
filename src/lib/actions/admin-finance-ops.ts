@@ -4,6 +4,7 @@ import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { transferWithdrawalToConnect } from "@/lib/stripe-connect";
 import {
   atomicApproveWithdrawal,
   atomicRejectWithdrawal,
@@ -118,12 +119,43 @@ export async function adminApproveWithdrawal(
       authResult.admin.id,
     );
 
+    let stripeTransferId: string | null = null;
+    try {
+      const transfer = await transferWithdrawalToConnect(
+        payment.userId,
+        Number(payment.amount),
+        paymentId,
+      );
+      stripeTransferId = transfer?.transferId ?? null;
+    } catch (transferError) {
+      console.error("Stripe Connect transfer failed:", transferError);
+    }
+
+    if (stripeTransferId) {
+      const existingMeta =
+        typeof payment.metadata === "object" && payment.metadata
+          ? (payment.metadata as Record<string, unknown>)
+          : {};
+      await prisma.payment.update({
+        where: { id: paymentId },
+        data: {
+          metadata: {
+            ...existingMeta,
+            stripeTransferId,
+            payoutMethod: "stripe_connect",
+          },
+        },
+      });
+    }
+
     await prisma.notification.create({
       data: {
         userId: payment.userId,
         type: "USER_WARNING",
         title: "Вывод одобрен",
-        body: `Заявка на ${Number(payment.amount).toLocaleString("uk-UA")} ₴ одобрена. Средства будут переведены на указанные реквизиты в течение 1–3 рабочих дней.`,
+        body: stripeTransferId
+          ? `Заявка на ${Number(payment.amount).toLocaleString("uk-UA")} ₴ одобрена. Средства отправлены через Stripe Connect.`
+          : `Заявка на ${Number(payment.amount).toLocaleString("uk-UA")} ₴ одобрена. Средства будут переведены на указанные реквизиты в течение 1–3 рабочих дней.`,
         link: "/dashboard/finances?tab=withdrawals",
       },
     });

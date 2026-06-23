@@ -892,6 +892,22 @@
       "twoFactor": "Двухфакторная аутентификация",
       "twoFactorSoon": "2FA скоро будет доступна",
       "twoFactorHint": "Пока используйте надёжный пароль и проверяйте активные сессии.",
+      "twoFactorDescription": "Защитите вывод средств одноразовыми кодами из приложения-аутентификатора (Google Authenticator, Authy и др.).",
+      "twoFactorWithdrawalsHint": "При включённой 2FA код из приложения потребуется при каждом выводе средств.",
+      "twoFactorEnabled": "2FA включена",
+      "twoFactorEnable": "Включить 2FA",
+      "twoFactorDisable": "Отключить 2FA",
+      "twoFactorStarting": "Подготовка…",
+      "twoFactorDisabling": "Отключение…",
+      "twoFactorConfirming": "Проверка…",
+      "twoFactorSetupTitle": "Добавьте аккаунт в приложение",
+      "twoFactorSetupHint": "Отсканируйте QR-код или введите секретный ключ вручную, затем введите 6-значный код для подтверждения.",
+      "twoFactorSecretLabel": "Секретный ключ",
+      "twoFactorCodeLabel": "Код из приложения",
+      "twoFactorConfirm": "Подтвердить",
+      "twoFactorRestartSetup": "Новый QR-код",
+      "twoFactorEnabledSuccess": "2FA успешно включена",
+      "twoFactorDisabledSuccess": "2FA отключена",
       "sessions": "Активные сессии",
       "sessionsHint": "Вы вошли в аккаунт на этом устройстве. Управление сессиями появится в следующих обновлениях.",
       "personalData": "Личные данные",
@@ -1027,7 +1043,10 @@
       "NEW_BID": "Новый отклик",
       "SUPPORT_REPLY": "Поддержка",
       "USER_WARNING": "Предупреждение",
-      "ADMIN_BROADCAST": "Сообщение платформы"
+      "ADMIN_BROADCAST": "Сообщение платформы",
+      "ADMIN_DISPUTE": "Спор",
+      "ADMIN_REPORT": "Жалоба",
+      "ADMIN_WITHDRAWAL": "Заявка на вывод"
     },
     "projectStatus": {
       "OPEN": "Открыт",
@@ -1392,7 +1411,15 @@
       "payoutHolderLabel": "Получатель (необязательно)",
       "payoutHolderPlaceholder": "ФИО или название компании",
       "payoutCurrent": "Текущие реквизиты: {method} {destination}",
-      "payoutFreelancerHint": "Эти данные используются при выводе средств. Изменения применяются к следующим заявкам."
+      "payoutFreelancerHint": "Эти данные используются при выводе средств. Изменения применяются к следующим заявкам.",
+      "stripeConnectTitle": "Stripe Connect",
+      "stripeConnectDescription": "Подключите Stripe для автоматических выплат при одобрении вывода администратором.",
+      "stripeConnectReady": "Stripe Connect настроен — выплаты доступны",
+      "stripeConnectPending": "Аккаунт Stripe создан — завершите проверку данных",
+      "stripeConnectNotLinked": "Stripe Connect не подключён",
+      "stripeConnectStart": "Подключить Stripe",
+      "stripeConnectManage": "Обновить данные Stripe",
+      "stripeConnectStarting": "Открываем Stripe…"
     },
     "freelancerProfile": {
       "tabs": {
@@ -1467,6 +1494,8 @@
         "withdrawalMinHint": "Минимум {min} ₴",
         "withdrawalSubmitting": "Отправка…",
         "withdrawalSubmitted": "Заявка отправлена на рассмотрение",
+        "withdrawalTotpLabel": "Код 2FA",
+        "withdrawalTotpHint": "Введите 6-значный код из приложения-аутентификатора.",
         "emptyWithdrawals": "Заявок на вывод пока нет.",
         "withdrawalNeedPayoutDetails": "Перед выводом укажите реквизиты в личных данных.",
         "withdrawalSetupPayoutLink": "Настроить платёжные данные →",
@@ -1778,7 +1807,12 @@
     "REPORT_DETAILS_REQUIRED": "Опишите проблему (минимум 10 символов)",
     "REPORT_ALREADY_SUBMITTED": "Вы уже отправили жалобу",
     "CANNOT_REPORT_SELF": "Нельзя пожаловаться на себя или свой проект",
-    "ACCOUNT_BANNED": "Аккаунт заблокирован"
+    "ACCOUNT_BANNED": "Аккаунт заблокирован",
+    "TWO_FACTOR_REQUIRED": "Введите код из приложения-аутентификатора",
+    "TWO_FACTOR_INVALID": "Неверный код 2FA",
+    "TWO_FACTOR_ALREADY_ENABLED": "2FA уже включена",
+    "TWO_FACTOR_NOT_ENABLED": "2FA не включена",
+    "TWO_FACTOR_SETUP_REQUIRED": "Сначала начните настройку 2FA"
   },
   "cookies": {
     "title": "Мы используем cookies",
@@ -1819,6 +1853,18 @@
     },
     "ADMIN_BROADCAST": {
       "title": "Сообщение от Taskery",
+      "body": "{project}"
+    },
+    "ADMIN_DISPUTE": {
+      "title": "Открыт спор",
+      "body": "{project}"
+    },
+    "ADMIN_REPORT": {
+      "title": "Новая жалоба",
+      "body": "{project}"
+    },
+    "ADMIN_WITHDRAWAL": {
+      "title": "Заявка на вывод",
       "body": "{project}"
     }
   },

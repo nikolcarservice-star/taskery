@@ -412,6 +412,22 @@
       "twoFactor": "Uwierzytelnianie dwuskładnikowe",
       "twoFactorSoon": "2FA będzie wkrótce dostępne",
       "twoFactorHint": "Na razie używaj silnego hasła i sprawdzaj aktywne sesje.",
+      "twoFactorDescription": "Chroń wypłaty jednorazowymi kodami z aplikacji uwierzytelniającej (Google Authenticator, Authy itd.).",
+      "twoFactorWithdrawalsHint": "Po włączeniu 2FA kod z aplikacji jest wymagany przy każdej wypłacie.",
+      "twoFactorEnabled": "2FA włączone",
+      "twoFactorEnable": "Włącz 2FA",
+      "twoFactorDisable": "Wyłącz 2FA",
+      "twoFactorStarting": "Przygotowanie…",
+      "twoFactorDisabling": "Wyłączanie…",
+      "twoFactorConfirming": "Weryfikacja…",
+      "twoFactorSetupTitle": "Dodaj konto do aplikacji",
+      "twoFactorSetupHint": "Zeskanuj kod QR lub wpisz klucz ręcznie, następnie podaj 6-cyfrowy kod potwierdzający.",
+      "twoFactorSecretLabel": "Klucz tajny",
+      "twoFactorCodeLabel": "Kod z aplikacji",
+      "twoFactorConfirm": "Potwierdź",
+      "twoFactorRestartSetup": "Nowy kod QR",
+      "twoFactorEnabledSuccess": "2FA włączone pomyślnie",
+      "twoFactorDisabledSuccess": "2FA wyłączone",
       "sessions": "Aktywne sesje",
       "sessionsHint": "Jesteś zalogowany na tym urządzeniu. Zarządzanie sesjami pojawi się później.",
       "personalData": "Dane osobowe",
@@ -577,7 +593,10 @@
       "NEW_BID": "Nowa oferta",
       "SUPPORT_REPLY": "Wsparcie",
       "USER_WARNING": "Ostrzeżenie",
-      "ADMIN_BROADCAST": "Wiadomość platformy"
+      "ADMIN_BROADCAST": "Wiadomość platformy",
+      "ADMIN_DISPUTE": "Spór",
+      "ADMIN_REPORT": "Zgłoszenie",
+      "ADMIN_WITHDRAWAL": "Wniosek o wypłatę"
     },
     "projectStatus": {
       "OPEN": "Otwarty",
@@ -942,7 +961,15 @@
       "payoutHolderLabel": "Odbiorca (opcjonalnie)",
       "payoutHolderPlaceholder": "Imię i nazwisko lub firma",
       "payoutCurrent": "Aktualne dane: {method} {destination}",
-      "payoutFreelancerHint": "Te dane są używane przy wypłatach. Zmiany dotyczą kolejnych wniosków."
+      "payoutFreelancerHint": "Te dane są używane przy wypłatach. Zmiany dotyczą kolejnych wniosków.",
+      "stripeConnectTitle": "Stripe Connect",
+      "stripeConnectDescription": "Połącz Stripe, aby otrzymywać automatyczne wypłaty po zatwierdzeniu przez admina.",
+      "stripeConnectReady": "Stripe Connect gotowy do wypłat",
+      "stripeConnectPending": "Konto Stripe utworzone — dokończ weryfikację",
+      "stripeConnectNotLinked": "Stripe Connect nie jest połączony",
+      "stripeConnectStart": "Połącz Stripe",
+      "stripeConnectManage": "Zaktualizuj dane Stripe",
+      "stripeConnectStarting": "Otwieranie Stripe…"
     },
     "freelancerProfile": {
       "tabs": {
@@ -1009,6 +1036,8 @@
         "withdrawalMinHint": "Minimum {min} ₴",
         "withdrawalSubmitting": "Wysyłanie…",
         "withdrawalSubmitted": "Wniosek wysłany do rozpatrzenia",
+        "withdrawalTotpLabel": "Kod 2FA",
+        "withdrawalTotpHint": "Wpisz 6-cyfrowy kod z aplikacji uwierzytelniającej.",
         "emptyWithdrawals": "Brak wniosków o wypłatę.",
         "withdrawalNeedPayoutDetails": "Przed wypłatą podaj dane w sekcji danych osobowych.",
         "withdrawalSetupPayoutLink": "Skonfiguruj dane płatności →",
@@ -1787,7 +1816,12 @@
     "REPORT_DETAILS_REQUIRED": "Opisz problem (minimum 10 znaków)",
     "REPORT_ALREADY_SUBMITTED": "Zgłoszenie zostało już wysłane",
     "CANNOT_REPORT_SELF": "Nie można zgłaszać siebie ani własnego projektu",
-    "ACCOUNT_BANNED": "Konto jest zablokowane"
+    "ACCOUNT_BANNED": "Konto jest zablokowane",
+    "TWO_FACTOR_REQUIRED": "Wpisz kod z aplikacji uwierzytelniającej",
+    "TWO_FACTOR_INVALID": "Nieprawidłowy kod 2FA",
+    "TWO_FACTOR_ALREADY_ENABLED": "2FA jest już włączone",
+    "TWO_FACTOR_NOT_ENABLED": "2FA nie jest włączone",
+    "TWO_FACTOR_SETUP_REQUIRED": "Najpierw rozpocznij konfigurację 2FA"
   },
   "cookies": {
     "title": "Używamy plików cookie",
@@ -1828,6 +1862,18 @@
     },
     "ADMIN_BROADCAST": {
       "title": "Wiadomość od Taskery",
+      "body": "{project}"
+    },
+    "ADMIN_DISPUTE": {
+      "title": "Spór otwarty",
+      "body": "{project}"
+    },
+    "ADMIN_REPORT": {
+      "title": "Nowe zgłoszenie",
+      "body": "{project}"
+    },
+    "ADMIN_WITHDRAWAL": {
+      "title": "Wniosek o wypłatę",
       "body": "{project}"
     }
   },

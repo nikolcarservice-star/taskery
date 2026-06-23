@@ -7,6 +7,7 @@ import { hasAdminPermission, isSuperAdmin } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAdminFinanceOverview } from "@/lib/queries/admin-finance";
+import { getAdminAnalyticsOverview } from "@/lib/queries/admin-analytics";
 import { getRecentAdminAuditLogs } from "@/lib/admin-audit";
 import { getAdminCatalogOverview } from "@/lib/queries/admin-catalog";
 import { getPendingProfileVerifications } from "@/lib/queries/admin-verification";
@@ -72,6 +73,7 @@ export default async function AdminPage() {
     verificationItems,
     catalogOverview,
     pendingWithdrawals,
+    analytics,
   ] = await Promise.all([
     canModerate
       ? prisma.project.findMany({
@@ -130,6 +132,7 @@ export default async function AdminPage() {
     canViewUsers ? getPendingProfileVerifications() : Promise.resolve([]),
     canManageStaff ? getAdminCatalogOverview() : Promise.resolve(null),
     canViewFinance ? getPendingWithdrawals() : Promise.resolve([]),
+    canViewFinance ? getAdminAnalyticsOverview() : Promise.resolve(null),
   ]);
 
   return (
@@ -163,6 +166,7 @@ export default async function AdminPage() {
             }))}
             users={users}
             finance={finance}
+            analytics={analytics}
             auditLogs={auditLogs}
             supportTickets={supportTickets}
             verificationItems={verificationItems}

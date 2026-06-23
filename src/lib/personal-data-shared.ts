@@ -24,6 +24,9 @@ export type PersonalDataForm = {
   payoutMethod: "CARD" | "IBAN" | null;
   payoutDestination: string | null;
   payoutHolderName: string | null;
+  stripeConnectEnabled: boolean;
+  stripeConnectAccountLinked: boolean;
+  stripeConnectPayoutsEnabled: boolean;
 };
 
 export const LANGUAGE_OPTIONS = [

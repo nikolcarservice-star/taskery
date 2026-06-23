@@ -71,7 +71,7 @@ export async function getFreelancerFinanceData(
   const [user, contracts, withdrawalPayments, profile] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
-      select: { balance: true },
+      select: { balance: true, twoFactorEnabled: true },
     }),
     prisma.contract.findMany({
       where: { freelancerId: userId },
@@ -223,6 +223,7 @@ export async function getFreelancerFinanceData(
     withdrawalLedger,
     pendingWithdrawal,
     savedPayout,
+    twoFactorEnabled: user?.twoFactorEnabled ?? false,
     monthlyStats,
     yearTotal,
   };

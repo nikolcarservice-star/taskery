@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminAnalyticsPanel } from "@/components/AdminAnalyticsPanel";
 import { AdminModerationStack } from "@/components/AdminModerationStack";
 import { AdminFinancePanel } from "@/components/AdminFinancePanel";
 import { AdminAuditPanel } from "@/components/AdminAuditPanel";
@@ -17,6 +18,7 @@ import {
   isSuperAdmin,
 } from "@/lib/admin-permissions";
 import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
+import type { AdminAnalyticsOverview } from "@/lib/queries/admin-analytics";
 import type { AdminFinanceOverview } from "@/lib/queries/admin-finance";
 import type { AdminUserItem } from "@/lib/queries/admin-users";
 import type { AdminAuditEntry } from "@/lib/admin-audit-types";
@@ -58,6 +60,7 @@ type AdminPanelProps = {
   currentAdminId: string;
   users: AdminUserItem[];
   finance: AdminFinanceOverview | null;
+  analytics: AdminAnalyticsOverview | null;
   auditLogs: AdminAuditEntry[];
   supportTickets: AdminSupportTicketItem[];
   verificationItems: AdminVerificationItem[];
@@ -77,6 +80,7 @@ export function AdminPanel({
   currentAdminId,
   users,
   finance,
+  analytics,
   auditLogs,
   supportTickets,
   verificationItems,
@@ -108,6 +112,10 @@ export function AdminPanel({
           </div>
         ))}
       </section>
+
+      {canViewFinance && analytics && (
+        <AdminAnalyticsPanel analytics={analytics} />
+      )}
 
       {!canModerate && !canManageStaff && !canViewUsers && !canViewFinance && (
         <section className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-900">

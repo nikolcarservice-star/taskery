@@ -32,6 +32,10 @@ export const PRICING = {
 
 export const stripeEnabled = Boolean(process.env.STRIPE_SECRET_KEY);
 
+export const stripeConnectEnabled = Boolean(
+  stripeEnabled && process.env.STRIPE_CONNECT_ENABLED === "true",
+);
+
 export const stripe = stripeEnabled
   ? new Stripe(process.env.STRIPE_SECRET_KEY!, {
       apiVersion: "2026-05-27.dahlia",

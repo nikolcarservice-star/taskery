@@ -2,6 +2,7 @@
 
 import { useLocalizedPath } from "@/components/LocalizedLink";
 import { FormActionError } from "@/components/FormActionError";
+import { StripeConnectSettings } from "@/components/StripeConnectSettings";
 import { UserAvatar } from "@/components/UserAvatar";
 import {
   updateContactData,
@@ -560,6 +561,12 @@ function FreelancerPaymentTab({ data }: { data: PersonalDataForm }) {
       <SectionTitle
         title={t.paymentTitle}
         description={t.paymentDescriptionFreelancer}
+      />
+
+      <StripeConnectSettings
+        connectEnabled={data.stripeConnectEnabled}
+        payoutsEnabled={data.stripeConnectPayoutsEnabled}
+        accountLinked={data.stripeConnectAccountLinked}
       />
 
       {data.payoutDestination && (

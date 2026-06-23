@@ -47,6 +47,7 @@ export type FreelancerFinanceData = {
   withdrawalLedger: FinanceLedgerEntry[];
   pendingWithdrawal: PendingWithdrawalInfo | null;
   savedPayout: SavedPayoutDetails | null;
+  twoFactorEnabled: boolean;
   monthlyStats: MonthlyStat[];
   yearTotal: number;
 };

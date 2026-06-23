@@ -2,6 +2,7 @@
 
 
 
+import { notifyAdminsWithPermission } from "@/lib/admin-notify";
 import { auth } from "@/lib/auth";
 
 import { notifyFreelancerBidAccepted } from "@/lib/notifications";
@@ -676,7 +677,15 @@ export async function openDispute(
 
   }
 
-
+  await notifyAdminsWithPermission("MODERATION", {
+    type: "ADMIN_DISPUTE",
+    title: "Открыт спор",
+    body: project.title,
+    link: project.conversation
+      ? `/admin/review/conversation/${project.conversation.id}`
+      : "/admin",
+    metadata: { projectId: project.id },
+  });
 
   return { success: true };
 

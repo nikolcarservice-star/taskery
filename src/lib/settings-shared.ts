@@ -2,6 +2,7 @@ export type SettingsTab = "service" | "security";
 
 export type UserSettingsData = {
   email: string;
+  twoFactorEnabled: boolean;
   emailProjectDigest: boolean;
   emailNewMessages: boolean;
   emailServiceInfo: boolean;
@@ -27,7 +28,7 @@ export const THEME_OPTIONS = [
   { value: "dark", label: "Тёмная" },
 ] as const;
 
-export const DEFAULT_SETTINGS: Omit<UserSettingsData, "email"> = {
+export const DEFAULT_SETTINGS: Omit<UserSettingsData, "email" | "twoFactorEnabled"> = {
   emailProjectDigest: true,
   emailNewMessages: true,
   emailServiceInfo: true,

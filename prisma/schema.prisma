@@ -96,6 +96,9 @@ enum NotificationType {
   SUPPORT_REPLY
   USER_WARNING
   ADMIN_BROADCAST
+  ADMIN_DISPUTE
+  ADMIN_REPORT
+  ADMIN_WITHDRAWAL
 }
 
 enum ReportTargetType {
@@ -215,6 +218,8 @@ model User {
   bannedUntil        DateTime?        @map("banned_until")
   banReason          String?          @map("ban_reason") @db.Text
   deletedAt          DateTime?        @map("deleted_at")
+  twoFactorEnabled   Boolean          @default(false) @map("two_factor_enabled")
+  twoFactorSecret    String?          @map("two_factor_secret")
   createdAt          DateTime         @default(now()) @map("created_at")
   updatedAt          DateTime         @updatedAt @map("updated_at")
 
@@ -290,6 +295,8 @@ model FreelancerProfile {
   payoutMethod           PayoutMethod?     @map("payout_method")
   payoutDestination      String?           @map("payout_destination")
   payoutHolderName       String?           @map("payout_holder_name")
+  stripeConnectAccountId String?           @unique @map("stripe_connect_account_id")
+  stripeConnectPayoutsEnabled Boolean      @default(false) @map("stripe_connect_payouts_enabled")
   createdAt              DateTime          @default(now()) @map("created_at")
   updatedAt              DateTime          @updatedAt @map("updated_at")
 

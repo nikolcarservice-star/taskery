@@ -9,6 +9,7 @@ import { Suspense } from "react";
 
 type PersonalPageProps = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ connect?: string }>;
 };
 
 export async function generateMetadata({ params }: PersonalPageProps) {
@@ -29,11 +30,24 @@ function PersonalDataFallback() {
   return <div className="mt-6 h-40 animate-pulse rounded-xl bg-zinc-100" />;
 }
 
-export default async function PersonalDataPage({ params }: PersonalPageProps) {
+export default async function PersonalDataPage({
+  params,
+  searchParams,
+}: PersonalPageProps) {
   const locale = await requireAppLocale(params);
   const dict = await getDictionary(locale);
   const p = dict.pages.freelancer.personal;
   const session = await requireFreelancer(localizedPath(locale, "/dashboard/personal"));
+  const resolvedSearchParams = await searchParams;
+
+  if (
+    resolvedSearchParams.connect === "return" ||
+    resolvedSearchParams.connect === "refresh"
+  ) {
+    const { syncConnectAccountForUser } = await import("@/lib/personal-data");
+    await syncConnectAccountForUser(session.user.id);
+  }
+
   const data = await getPersonalData(session.user.id);
 
   return (

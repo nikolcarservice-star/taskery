@@ -1,6 +1,9 @@
 "use server";
 
+import { actionError, ActionErrorCode } from "@/lib/action-errors";
 import { auth } from "@/lib/auth";
+import { verifyUserTotp } from "@/lib/actions/two-factor";
+import { notifyAdminsWithPermission } from "@/lib/admin-notify";
 import { prisma } from "@/lib/prisma";
 import {
   atomicRequestWithdrawal,
@@ -43,10 +46,35 @@ export async function requestWithdrawal(
   const validated = validatePayoutDetails(method, destination);
   if ("error" in validated) return { error: validated.error };
 
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { twoFactorEnabled: true },
+  });
+
+  const totpCode = (formData.get("totpCode") as string | null)?.trim() ?? "";
+
+  if (user?.twoFactorEnabled) {
+    if (!totpCode) {
+      return actionError(ActionErrorCode.TWO_FACTOR_REQUIRED);
+    }
+    const valid = await verifyUserTotp(session.user.id, totpCode);
+    if (!valid) {
+      return actionError(ActionErrorCode.TWO_FACTOR_INVALID);
+    }
+  }
+
   try {
-    await atomicRequestWithdrawal(session.user.id, amount, {
+    const payment = await atomicRequestWithdrawal(session.user.id, amount, {
       method: validated.method,
       destination: validated.destination,
+    });
+
+    await notifyAdminsWithPermission("FINANCE", {
+      type: "ADMIN_WITHDRAWAL",
+      title: "Новая заявка на вывод",
+      body: `${amount.toLocaleString("uk-UA")} ₴`,
+      link: "/admin",
+      metadata: { paymentId: payment.id, userId: session.user.id, amount },
     });
   } catch (error) {
     if (error instanceof WithdrawalError) {

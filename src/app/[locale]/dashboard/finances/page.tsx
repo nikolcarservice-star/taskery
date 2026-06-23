@@ -54,6 +54,7 @@ export default async function FreelancerFinancesPage({ params }: FinancesPagePro
           withdrawalLedger={data.withdrawalLedger}
           pendingWithdrawal={data.pendingWithdrawal}
           savedPayout={data.savedPayout}
+          twoFactorEnabled={data.twoFactorEnabled}
           monthlyStats={data.monthlyStats}
           yearTotal={data.yearTotal}
         />

@@ -15,6 +15,7 @@ import {
   requestWithdrawal,
   type WithdrawalRequestState,
 } from "@/lib/actions/withdrawals";
+import { FormActionError } from "@/components/FormActionError";
 import { MIN_WITHDRAWAL_UAH, maskPayoutDestination } from "@/lib/withdrawals-shared";
 import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
 import Link from "next/link";
@@ -27,6 +28,7 @@ type FreelancerFinancesProps = {
   withdrawalLedger: FinanceLedgerEntry[];
   pendingWithdrawal: PendingWithdrawalInfo | null;
   savedPayout: SavedPayoutDetails | null;
+  twoFactorEnabled: boolean;
   monthlyStats: MonthlyStat[];
   yearTotal: number;
 };
@@ -167,11 +169,13 @@ function WithdrawalRequestForm({
   pendingWithdrawal,
   savedPayout,
   personalPaymentHref,
+  twoFactorEnabled,
 }: {
   summary: FinanceSummary;
   pendingWithdrawal: PendingWithdrawalInfo | null;
   savedPayout: SavedPayoutDetails | null;
   personalPaymentHref: string;
+  twoFactorEnabled: boolean;
 }) {
   const dict = useDictionary();
   const t = dict.cabinetForms.finances.freelancer;
@@ -238,6 +242,25 @@ function WithdrawalRequestForm({
           {t.withdrawalMinHint.replace("{min}", String(MIN_WITHDRAWAL_UAH))}
         </p>
       </div>
+      {twoFactorEnabled && (
+        <div>
+          <label htmlFor="withdraw-totp" className="block text-sm font-medium text-zinc-700">
+            {t.withdrawalTotpLabel}
+          </label>
+          <input
+            id="withdraw-totp"
+            name="totpCode"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            pattern="\d{6}"
+            maxLength={6}
+            required
+            className="mt-1.5 w-full max-w-xs rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm tracking-widest"
+          />
+          <p className="mt-1 text-xs text-zinc-500">{t.withdrawalTotpHint}</p>
+        </div>
+      )}
       <button
         type="submit"
         disabled={pending || summary.availableBalance < MIN_WITHDRAWAL_UAH}
@@ -245,7 +268,7 @@ function WithdrawalRequestForm({
       >
         {pending ? t.withdrawalSubmitting : t.requestWithdrawal}
       </button>
-      {state.error && <p className="text-sm text-red-600">{state.error}</p>}
+      <FormActionError error={state.error} />
       {state.success && <p className="text-sm text-emerald-700">{t.withdrawalSubmitted}</p>}
     </form>
   );
@@ -257,12 +280,14 @@ function WithdrawalsTab({
   pendingWithdrawal,
   savedPayout,
   personalPaymentHref,
+  twoFactorEnabled,
 }: {
   summary: FinanceSummary;
   withdrawalLedger: FinanceLedgerEntry[];
   pendingWithdrawal: PendingWithdrawalInfo | null;
   savedPayout: SavedPayoutDetails | null;
   personalPaymentHref: string;
+  twoFactorEnabled: boolean;
 }) {
   const dict = useDictionary();
   const l = useLocalizedPath();
@@ -287,6 +312,7 @@ function WithdrawalsTab({
         pendingWithdrawal={pendingWithdrawal}
         savedPayout={savedPayout}
         personalPaymentHref={personalPaymentHref}
+        twoFactorEnabled={twoFactorEnabled}
       />
 
       <p className="text-sm text-zinc-500">{t.withdrawalProcessingHint}</p>
@@ -478,6 +504,7 @@ export function FreelancerFinances({
   withdrawalLedger,
   pendingWithdrawal,
   savedPayout,
+  twoFactorEnabled,
   monthlyStats,
   yearTotal,
 }: FreelancerFinancesProps) {
@@ -535,6 +562,7 @@ export function FreelancerFinances({
             pendingWithdrawal={pendingWithdrawal}
             savedPayout={savedPayout}
             personalPaymentHref={personalPaymentHref}
+            twoFactorEnabled={twoFactorEnabled}
           />
         )}
         {activeTab === "statistics" && (

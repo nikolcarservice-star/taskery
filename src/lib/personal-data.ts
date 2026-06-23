@@ -2,7 +2,22 @@ import {
   type PersonalDataForm,
   type UserLanguageRow,
 } from "@/lib/personal-data-shared";
+import { stripeConnectEnabled } from "@/lib/stripe-config";
 import { prisma } from "@/lib/prisma";
+
+export async function syncConnectAccountForUser(userId: string) {
+  const profile = await prisma.freelancerProfile.findUnique({
+    where: { userId },
+    select: { stripeConnectAccountId: true },
+  });
+
+  if (!profile?.stripeConnectAccountId) {
+    return;
+  }
+
+  const { syncConnectAccountStatus } = await import("@/lib/stripe-connect");
+  await syncConnectAccountStatus(profile.stripeConnectAccountId);
+}
 
 export async function getPersonalData(userId: string): Promise<PersonalDataForm> {
   const user = await prisma.user.findUnique({
@@ -26,6 +41,8 @@ export async function getPersonalData(userId: string): Promise<PersonalDataForm>
           payoutMethod: true,
           payoutDestination: true,
           payoutHolderName: true,
+          stripeConnectAccountId: true,
+          stripeConnectPayoutsEnabled: true,
         },
       },
     },
@@ -72,5 +89,11 @@ export async function getPersonalData(userId: string): Promise<PersonalDataForm>
         : null,
     payoutDestination: user.freelancerProfile?.payoutDestination ?? null,
     payoutHolderName: user.freelancerProfile?.payoutHolderName ?? null,
+    stripeConnectEnabled,
+    stripeConnectAccountLinked: Boolean(
+      user.freelancerProfile?.stripeConnectAccountId,
+    ),
+    stripeConnectPayoutsEnabled:
+      user.freelancerProfile?.stripeConnectPayoutsEnabled ?? false,
   };
 }

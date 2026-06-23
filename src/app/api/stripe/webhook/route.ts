@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 import { stripe, stripeEnabled, PRICING } from "@/lib/stripe-config";
+import { syncConnectAccountStatus } from "@/lib/stripe-connect";
 import { atomicFundContract } from "@/lib/escrow-ops";
 
 import Stripe from "stripe";
@@ -65,7 +66,10 @@ export async function POST(request: NextRequest) {
 
   }
 
-
+  if (event.type === "account.updated") {
+    const account = event.data.object as Stripe.Account;
+    await syncConnectAccountStatus(account.id);
+  }
 
   if (event.type === "customer.subscription.deleted") {
 

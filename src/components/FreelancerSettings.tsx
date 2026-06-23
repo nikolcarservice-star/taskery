@@ -4,6 +4,7 @@ import { updateServiceSettings, type ActionState } from "@/lib/actions/settings"
 import { FormActionError } from "@/components/FormActionError";
 import { LocalizationSettings } from "@/components/LocalizationSettings";
 import { useLocalizedPath } from "@/components/LocalizedLink";
+import { TwoFactorSettings } from "@/components/TwoFactorSettings";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { stripLocalePrefix } from "@/lib/i18n/routing";
 import {
@@ -219,9 +220,11 @@ function ServiceSettingsTab({
 
 function SecuritySettingsTab({
   email,
+  twoFactorEnabled,
   personalPath,
 }: {
   email: string;
+  twoFactorEnabled: boolean;
   personalPath: string;
 }) {
   const dict = useDictionary();
@@ -242,11 +245,8 @@ function SecuritySettingsTab({
         </Link>
       </SettingsSection>
 
-      <SettingsSection title={t.twoFactor}>
-        <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50/80 px-5 py-8 text-center">
-          <p className="text-sm font-medium text-zinc-800">{t.twoFactorSoon}</p>
-          <p className="mt-1 text-sm text-zinc-500">{t.twoFactorHint}</p>
-        </div>
+      <SettingsSection title={t.twoFactor} description={t.twoFactorWithdrawalsHint}>
+        <TwoFactorSettings twoFactorEnabled={twoFactorEnabled} email={email} />
       </SettingsSection>
 
       <SettingsSection title={t.sessions}>
@@ -314,7 +314,11 @@ export function FreelancerSettings({ settings }: FreelancerSettingsProps) {
         {activeTab === "service" ? (
           <ServiceSettingsTab settings={settings} isClient={isClient} />
         ) : (
-          <SecuritySettingsTab email={settings.email} personalPath={personalPath} />
+          <SecuritySettingsTab
+            email={settings.email}
+            twoFactorEnabled={settings.twoFactorEnabled}
+            personalPath={personalPath}
+          />
         )}
       </div>
     </div>

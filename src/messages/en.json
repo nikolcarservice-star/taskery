@@ -433,6 +433,22 @@
       "twoFactor": "Two-factor authentication",
       "twoFactorSoon": "2FA coming soon",
       "twoFactorHint": "For now, use a strong password and review active sessions.",
+      "twoFactorDescription": "Protect withdrawals with one-time codes from an authenticator app (Google Authenticator, Authy, etc.).",
+      "twoFactorWithdrawalsHint": "When 2FA is enabled, an app code is required for every withdrawal.",
+      "twoFactorEnabled": "2FA enabled",
+      "twoFactorEnable": "Enable 2FA",
+      "twoFactorDisable": "Disable 2FA",
+      "twoFactorStarting": "Preparing…",
+      "twoFactorDisabling": "Disabling…",
+      "twoFactorConfirming": "Verifying…",
+      "twoFactorSetupTitle": "Add account to your app",
+      "twoFactorSetupHint": "Scan the QR code or enter the secret key manually, then enter the 6-digit code to confirm.",
+      "twoFactorSecretLabel": "Secret key",
+      "twoFactorCodeLabel": "Authenticator code",
+      "twoFactorConfirm": "Confirm",
+      "twoFactorRestartSetup": "New QR code",
+      "twoFactorEnabledSuccess": "2FA enabled successfully",
+      "twoFactorDisabledSuccess": "2FA disabled",
       "sessions": "Active sessions",
       "sessionsHint": "You are signed in on this device. Session management is coming later.",
       "personalData": "Personal data",
@@ -598,7 +614,10 @@
       "NEW_BID": "New bid",
       "SUPPORT_REPLY": "Support",
       "USER_WARNING": "Warning",
-      "ADMIN_BROADCAST": "Platform message"
+      "ADMIN_BROADCAST": "Platform message",
+      "ADMIN_DISPUTE": "Dispute",
+      "ADMIN_REPORT": "Report",
+      "ADMIN_WITHDRAWAL": "Withdrawal request"
     },
     "projectStatus": {
       "OPEN": "Open",
@@ -963,7 +982,15 @@
       "payoutHolderLabel": "Account holder (optional)",
       "payoutHolderPlaceholder": "Full name or company",
       "payoutCurrent": "Current payout details: {method} {destination}",
-      "payoutFreelancerHint": "These details are used for withdrawals. Changes apply to future requests."
+      "payoutFreelancerHint": "These details are used for withdrawals. Changes apply to future requests.",
+      "stripeConnectTitle": "Stripe Connect",
+      "stripeConnectDescription": "Connect Stripe for automatic payouts when an admin approves your withdrawal.",
+      "stripeConnectReady": "Stripe Connect is ready for payouts",
+      "stripeConnectPending": "Stripe account created — complete verification",
+      "stripeConnectNotLinked": "Stripe Connect is not linked",
+      "stripeConnectStart": "Connect Stripe",
+      "stripeConnectManage": "Update Stripe details",
+      "stripeConnectStarting": "Opening Stripe…"
     },
     "freelancerProfile": {
       "tabs": {
@@ -1030,6 +1057,8 @@
         "withdrawalMinHint": "Minimum {min} ₴",
         "withdrawalSubmitting": "Submitting…",
         "withdrawalSubmitted": "Request submitted for review",
+        "withdrawalTotpLabel": "2FA code",
+        "withdrawalTotpHint": "Enter the 6-digit code from your authenticator app.",
         "emptyWithdrawals": "No withdrawal requests yet.",
         "withdrawalNeedPayoutDetails": "Add payout details in your personal data before withdrawing.",
         "withdrawalSetupPayoutLink": "Set up payment details →",
@@ -1808,7 +1837,12 @@
     "REPORT_DETAILS_REQUIRED": "Describe the issue (at least 10 characters)",
     "REPORT_ALREADY_SUBMITTED": "You have already submitted a report",
     "CANNOT_REPORT_SELF": "You cannot report yourself or your own project",
-    "ACCOUNT_BANNED": "Account is banned"
+    "ACCOUNT_BANNED": "Account is banned",
+    "TWO_FACTOR_REQUIRED": "Enter the code from your authenticator app",
+    "TWO_FACTOR_INVALID": "Invalid 2FA code",
+    "TWO_FACTOR_ALREADY_ENABLED": "2FA is already enabled",
+    "TWO_FACTOR_NOT_ENABLED": "2FA is not enabled",
+    "TWO_FACTOR_SETUP_REQUIRED": "Start 2FA setup first"
   },
   "cookies": {
     "title": "We use cookies",
@@ -1849,6 +1883,18 @@
     },
     "ADMIN_BROADCAST": {
       "title": "Message from Taskery",
+      "body": "{project}"
+    },
+    "ADMIN_DISPUTE": {
+      "title": "Dispute opened",
+      "body": "{project}"
+    },
+    "ADMIN_REPORT": {
+      "title": "New report",
+      "body": "{project}"
+    },
+    "ADMIN_WITHDRAWAL": {
+      "title": "Withdrawal request",
       "body": "{project}"
     }
   },

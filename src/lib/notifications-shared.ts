@@ -19,6 +19,9 @@ export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
   SUPPORT_REPLY: "Поддержка",
   USER_WARNING: "Предупреждение",
   ADMIN_BROADCAST: "Сообщение платформы",
+  ADMIN_DISPUTE: "Спор (админ)",
+  ADMIN_REPORT: "Жалоба (админ)",
+  ADMIN_WITHDRAWAL: "Вывод (админ)",
 };
 
 export function formatNotificationWhen(date: Date): string {
