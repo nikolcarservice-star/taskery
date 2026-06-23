@@ -77,6 +77,66 @@ export async function adminDismissReport(
   return { success: true };
 }
 
+export async function adminDismissProjectReports(
+  _prevState: ModerationActionState,
+  formData: FormData,
+): Promise<ModerationActionState> {
+  const authResult = await requireModerationAdmin();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const projectId = (formData.get("projectId") as string | null)?.trim();
+  if (!projectId) return { error: "Проект не найден" };
+
+  const note = (formData.get("adminNote") as string | null)?.trim() || undefined;
+
+  await prisma.report.updateMany({
+    where: {
+      targetProjectId: projectId,
+      status: { in: ["PENDING", "IN_REVIEW"] },
+    },
+    data: {
+      status: "DISMISSED",
+      resolvedById: authResult.admin.id,
+      resolvedAt: new Date(),
+      adminNote: note ?? null,
+    },
+  });
+
+  await recalculateProjectReportStats(projectId);
+
+  revalidatePath("/admin");
+  return { success: true };
+}
+
+export async function adminDismissUserReports(
+  _prevState: ModerationActionState,
+  formData: FormData,
+): Promise<ModerationActionState> {
+  const authResult = await requireModerationAdmin();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const userId = (formData.get("userId") as string | null)?.trim();
+  if (!userId) return { error: "Пользователь не найден" };
+
+  const note = (formData.get("adminNote") as string | null)?.trim() || undefined;
+
+  await prisma.report.updateMany({
+    where: {
+      targetUserId: userId,
+      status: { in: ["PENDING", "IN_REVIEW"] },
+    },
+    data: {
+      status: "DISMISSED",
+      resolvedById: authResult.admin.id,
+      resolvedAt: new Date(),
+      adminNote: note ?? null,
+    },
+  });
+
+  revalidatePath("/admin");
+  return { success: true };
+}
+
 export async function adminBlockProject(
   _prevState: ModerationActionState,
   formData: FormData,

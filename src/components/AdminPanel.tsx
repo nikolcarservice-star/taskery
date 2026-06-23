@@ -7,6 +7,8 @@ import {
   type ActionState,
 } from "@/lib/actions/admin";
 import { AdminReportsPanel } from "@/components/AdminReportsPanel";
+import { AdminFinancePanel } from "@/components/AdminFinancePanel";
+import { AdminUsersPanel } from "@/components/AdminUsersPanel";
 import {
   AdminStaffManager,
   type AdminStaffMember,
@@ -14,6 +16,8 @@ import {
 import {
   hasAdminPermission,
 } from "@/lib/admin-permissions";
+import type { AdminFinanceOverview } from "@/lib/queries/admin-finance";
+import type { AdminUserItem } from "@/lib/queries/admin-users";
 import type { AdminPermission } from "@/generated/prisma/client";
 import {
   formatBudget,
@@ -48,6 +52,8 @@ type AdminPanelProps = {
   permissions: AdminPermission[];
   admins: AdminStaffMember[];
   currentAdminId: string;
+  users: AdminUserItem[];
+  finance: AdminFinanceOverview | null;
 };
 
 const initialState: ActionState = {};
@@ -127,6 +133,8 @@ export function AdminPanel({
   permissions,
   admins,
   currentAdminId,
+  users,
+  finance,
 }: AdminPanelProps) {
   const canModerate = hasAdminPermission(permissions, "MODERATION");
   const canManageStaff = hasAdminPermission(permissions, "STAFF_MANAGE");
@@ -237,21 +245,9 @@ export function AdminPanel({
       </section>
       )}
 
-      {(canViewUsers || canViewFinance) && (
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-zinc-900">
-            Дополнительные разделы
-          </h2>
-          <ul className="mt-3 space-y-2 text-sm text-zinc-600">
-            {canViewUsers && (
-              <li>• Пользователи — раздел в разработке</li>
-            )}
-            {canViewFinance && (
-              <li>• Финансы — раздел в разработке</li>
-            )}
-          </ul>
-        </section>
-      )}
+      {canViewUsers && <AdminUsersPanel users={users} />}
+
+      {canViewFinance && finance && <AdminFinancePanel finance={finance} />}
     </div>
   );
 }

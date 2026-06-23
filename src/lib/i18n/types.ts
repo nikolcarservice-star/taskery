@@ -1390,14 +1390,17 @@ export type Dictionary = {
     success: string;
     ownerHiddenNotice: string;
     ownerReportsNotice: string;
+    ownerUnderpricedNotice: string;
+    emptyPrompt: string;
     bar: {
       underpriced: string;
       hot: string;
-      totalReports: string;
+      general: string;
     };
     flag: {
-      warning: string;
-      hot: string;
+      underpriced: string;
+      underpricedHot: string;
+      general: string;
     };
     reasons: {
       UNDERPRICED: string;

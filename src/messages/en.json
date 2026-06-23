@@ -1765,15 +1765,18 @@
     "submitting": "Submitting…",
     "success": "Report submitted. Thank you!",
     "ownerHiddenNotice": "This project is hidden from the catalog due to reports and awaits moderation.",
-    "ownerReportsNotice": "Reports received: {count}.",
+    "ownerReportsNotice": "Project reports received: {count}.",
+    "ownerUnderpricedNotice": "Underpriced reports: {count} of {threshold}.",
+    "emptyPrompt": "Think the budget is too low or the project breaks the rules?",
     "bar": {
       "underpriced": "{count} of {threshold} underpriced reports",
-      "hot": "Project under moderation review",
-      "totalReports": "Total reports: {count}"
+      "hot": "Under review: many underpriced reports",
+      "general": "{count} project reports"
     },
     "flag": {
-      "warning": "Project has reports",
-      "hot": "Many reports — under review"
+      "underpriced": "Underpriced",
+      "underpricedHot": "Underpriced",
+      "general": "Project report"
     },
     "reasons": {
       "UNDERPRICED": "Underpriced",

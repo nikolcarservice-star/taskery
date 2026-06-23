@@ -1744,15 +1744,18 @@
     "submitting": "Wysyłanie…",
     "success": "Zgłoszenie wysłane. Dziękujemy!",
     "ownerHiddenNotice": "Projekt ukryty w katalogu z powodu zgłoszeń i oczekuje na moderację.",
-    "ownerReportsNotice": "Otrzymano zgłoszeń: {count}.",
+    "ownerReportsNotice": "Zgłoszeń projektu: {count}.",
+    "ownerUnderpricedNotice": "Zgłoszeń o zaniżonej cenie: {count} z {threshold}.",
+    "emptyPrompt": "Uważasz, że budżet jest zaniżony lub projekt łamie zasady?",
     "bar": {
       "underpriced": "{count} z {threshold} zgłoszeń o zaniżonej cenie",
-      "hot": "Projekt weryfikowany przez moderację",
-      "totalReports": "Łącznie zgłoszeń: {count}"
+      "hot": "Weryfikacja: wiele zgłoszeń o zaniżonej cenie",
+      "general": "{count} zgłoszeń projektu"
     },
     "flag": {
-      "warning": "Projekt ma zgłoszenia",
-      "hot": "Wiele zgłoszeń — weryfikacja"
+      "underpriced": "Zaniżona cena",
+      "underpricedHot": "Zaniżona cena",
+      "general": "Zgłoszenie projektu"
     },
     "reasons": {
       "UNDERPRICED": "Zaniżona cena",

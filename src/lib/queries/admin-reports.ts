@@ -5,7 +5,7 @@ export async function getPendingAdminReports(): Promise<AdminReportItem[]> {
   const reports = await prisma.report.findMany({
     where: { status: { in: ["PENDING", "IN_REVIEW"] } },
     orderBy: [{ createdAt: "desc" }],
-    take: 50,
+    take: 200,
     include: {
       reporter: { select: { id: true, name: true, email: true } },
       targetUser: { select: { id: true, name: true, email: true, role: true } },
