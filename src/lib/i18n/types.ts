@@ -1076,6 +1076,16 @@ export type Dictionary = {
       paymentSoonFreelancer: string;
       goFinancesClient: string;
       goFinancesFreelancer: string;
+      paymentClientInfo: string;
+      payoutMethodLabel: string;
+      payoutMethodCard: string;
+      payoutMethodIban: string;
+      payoutDestinationLabel: string;
+      payoutDestinationPlaceholder: string;
+      payoutHolderLabel: string;
+      payoutHolderPlaceholder: string;
+      payoutCurrent: string;
+      payoutFreelancerHint: string;
     };
     freelancerProfile: {
       tabs: {
@@ -1151,6 +1161,10 @@ export type Dictionary = {
         withdrawalSubmitting: string;
         withdrawalSubmitted: string;
         emptyWithdrawals: string;
+        withdrawalNeedPayoutDetails: string;
+        withdrawalSetupPayoutLink: string;
+        withdrawalUsingSavedPayout: string;
+        withdrawalChangePayoutLink: string;
         colDate: string;
         colCredit: string;
         colDescription: string;

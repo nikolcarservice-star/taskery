@@ -5,6 +5,7 @@ import { FormActionError } from "@/components/FormActionError";
 import { UserAvatar } from "@/components/UserAvatar";
 import {
   updateContactData,
+  updatePayoutDetails,
   updatePersonalData,
   updateProfilePhoto,
   type ActionState,
@@ -24,6 +25,7 @@ import {
   type UserLanguageRow,
 } from "@/lib/personal-data-shared";
 import Link from "next/link";
+import { maskPayoutDestination } from "@/lib/withdrawals-shared";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 
@@ -519,36 +521,132 @@ function ContactsTab({ data }: { data: PersonalDataForm }) {
   );
 }
 
-function PaymentTab({ isClient }: { isClient: boolean }) {
+function ClientPaymentTab() {
   const l = useLocalizedPath();
   const dict = useDictionary();
   const t = dict.cabinetForms.personalData;
-  const financesHref = isClient
-    ? l("/client/finances")
-    : l("/dashboard/finances?tab=withdrawals");
 
   return (
     <div className="space-y-6">
       <SectionTitle
         title={t.paymentTitle}
-        description={isClient ? t.paymentDescriptionClient : t.paymentDescriptionFreelancer}
+        description={t.paymentDescriptionClient}
       />
-      <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50/80 px-6 py-12 text-center">
-        <p className="text-base font-semibold text-zinc-900">
-          {t.paymentUnderDevelopment}
-        </p>
-        <p className="mt-2 text-sm text-zinc-500">
-          {isClient ? t.paymentSoonClient : t.paymentSoonFreelancer}
-        </p>
+      <div className="rounded-xl border border-zinc-200 bg-zinc-50/80 px-6 py-8 text-sm text-zinc-700">
+        <p>{t.paymentClientInfo}</p>
         <Link
-          href={financesHref}
-          className="mt-4 inline-flex text-sm font-medium text-indigo-600 hover:underline"
+          href={l("/client/finances")}
+          className="mt-4 inline-flex font-medium text-indigo-600 hover:underline"
         >
-          {isClient ? t.goFinancesClient : t.goFinancesFreelancer}
+          {t.goFinancesClient}
         </Link>
       </div>
     </div>
   );
+}
+
+function FreelancerPaymentTab({ data }: { data: PersonalDataForm }) {
+  const l = useLocalizedPath();
+  const dict = useDictionary();
+  const t = dict.cabinetForms.personalData;
+  const common = dict.cabinetForms.common;
+  const [state, formAction, pending] = useActionState(
+    updatePayoutDetails,
+    initialState,
+  );
+
+  return (
+    <div className="space-y-6">
+      <SectionTitle
+        title={t.paymentTitle}
+        description={t.paymentDescriptionFreelancer}
+      />
+
+      {data.payoutDestination && (
+        <p className="rounded-lg bg-sky-50 px-4 py-3 text-sm text-sky-900">
+          {t.payoutCurrent
+            .replace(
+              "{method}",
+              data.payoutMethod === "IBAN" ? t.payoutMethodIban : t.payoutMethodCard,
+            )
+            .replace(
+              "{destination}",
+              maskPayoutDestination(data.payoutDestination),
+            )}
+        </p>
+      )}
+
+      <form action={formAction} className="space-y-4">
+        <div>
+          <label htmlFor="payout-method" className={labelClassName}>
+            {t.payoutMethodLabel}
+          </label>
+          <select
+            id="payout-method"
+            name="method"
+            required
+            defaultValue={data.payoutMethod ?? "CARD"}
+            className={inputClassName}
+          >
+            <option value="CARD">{t.payoutMethodCard}</option>
+            <option value="IBAN">{t.payoutMethodIban}</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="payout-destination" className={labelClassName}>
+            {t.payoutDestinationLabel}
+          </label>
+          <input
+            id="payout-destination"
+            name="destination"
+            required
+            defaultValue={data.payoutDestination ?? ""}
+            placeholder={t.payoutDestinationPlaceholder}
+            className={inputClassName}
+          />
+        </div>
+        <div>
+          <label htmlFor="payout-holder" className={labelClassName}>
+            {t.payoutHolderLabel}
+          </label>
+          <input
+            id="payout-holder"
+            name="holderName"
+            defaultValue={data.payoutHolderName ?? ""}
+            placeholder={t.payoutHolderPlaceholder}
+            className={inputClassName}
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-4 border-t border-zinc-100 pt-6">
+          <SaveButton pending={pending} label={common.save} savingLabel={common.saving} />
+          <FormMessage state={state} savedLabel={common.saved} />
+        </div>
+      </form>
+
+      <p className="text-sm text-zinc-500">{t.payoutFreelancerHint}</p>
+      <Link
+        href={l("/dashboard/finances?tab=withdrawals")}
+        className="inline-flex text-sm font-medium text-indigo-600 hover:underline"
+      >
+        {t.goFinancesFreelancer}
+      </Link>
+    </div>
+  );
+}
+
+function PaymentTab({
+  data,
+  isClient,
+}: {
+  data: PersonalDataForm;
+  isClient: boolean;
+}) {
+  if (isClient) {
+    return <ClientPaymentTab />;
+  }
+
+  return <FreelancerPaymentTab data={data} />;
 }
 
 export function PersonalDataSettings({ data }: PersonalDataSettingsProps) {
@@ -608,7 +706,9 @@ export function PersonalDataSettings({ data }: PersonalDataSettingsProps) {
         {activeTab === "data" && <MyDataTab data={data} isClient={isClient} />}
         {activeTab === "photo" && <PhotoTab data={data} isClient={isClient} />}
         {activeTab === "contacts" && <ContactsTab data={data} />}
-        {activeTab === "payment" && <PaymentTab isClient={isClient} />}
+        {activeTab === "payment" && (
+          <PaymentTab data={data} isClient={isClient} />
+        )}
       </div>
     </div>
   );

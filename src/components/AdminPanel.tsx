@@ -18,7 +18,7 @@ import {
 import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
 import type { AdminFinanceOverview } from "@/lib/queries/admin-finance";
 import type { AdminUserItem } from "@/lib/queries/admin-users";
-import type { AdminAuditEntry } from "@/lib/admin-audit";
+import type { AdminAuditEntry } from "@/lib/admin-audit-types";
 import { AdminWithdrawalsPanel } from "@/components/AdminWithdrawalsPanel";
 import type { AdminWithdrawalItem } from "@/lib/queries/admin-withdrawals";
 import type { AdminSupportTicketItem } from "@/lib/queries/admin-support";

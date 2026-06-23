@@ -9,6 +9,7 @@ import {
 import { mapImageUploadError } from "@/lib/image-upload-errors";
 import type { LanguageLevel } from "@/lib/personal-data-shared";
 import { prisma } from "@/lib/prisma";
+import { validatePayoutDetails } from "@/lib/withdrawals-shared";
 import { revalidatePath } from "next/cache";
 
 export type ActionState = { error?: string; success?: boolean };
@@ -188,5 +189,45 @@ export async function updateContactData(
   });
 
   revalidatePersonalPaths(session.user.id);
+  return { success: true };
+}
+
+export async function updatePayoutDetails(
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "AUTH_REQUIRED" };
+
+  if (session.user.role !== "FREELANCER" && session.user.role !== "ADMIN") {
+    return { error: "FREELANCERS_ONLY" };
+  }
+
+  const method = (formData.get("method") as string | null)?.trim() ?? null;
+  const destinationRaw =
+    (formData.get("destination") as string | null)?.trim() ?? null;
+  const holderName =
+    (formData.get("holderName") as string | null)?.trim() || null;
+
+  const validated = validatePayoutDetails(method, destinationRaw);
+  if ("error" in validated) return { error: validated.error };
+
+  await prisma.freelancerProfile.upsert({
+    where: { userId: session.user.id },
+    create: {
+      userId: session.user.id,
+      payoutMethod: validated.method,
+      payoutDestination: validated.destination,
+      payoutHolderName: holderName,
+    },
+    update: {
+      payoutMethod: validated.method,
+      payoutDestination: validated.destination,
+      payoutHolderName: holderName,
+    },
+  });
+
+  revalidatePersonalPaths(session.user.id);
+  revalidatePath("/dashboard/finances");
   return { success: true };
 }

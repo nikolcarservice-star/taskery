@@ -931,7 +931,17 @@
       "paymentSoonClient": "Wkrótce dodasz tutaj kartę do doładowań. Na razie użyj sekcji Moje finanse.",
       "paymentSoonFreelancer": "Wkrótce dodasz kartę lub IBAN do wypłat. Na razie użyj zakładki Wypłaty w finansach.",
       "goFinancesClient": "Przejdź do Moje finanse →",
-      "goFinancesFreelancer": "Przejdź do wypłat →"
+      "goFinancesFreelancer": "Przejdź do wypłat →",
+      "paymentClientInfo": "Doładowania salda odbywają się przez Stripe na stronie Moje finanse. Nie trzeba tu zapisywać karty.",
+      "payoutMethodLabel": "Metoda wypłaty",
+      "payoutMethodCard": "Karta bankowa",
+      "payoutMethodIban": "IBAN / konto bankowe",
+      "payoutDestinationLabel": "Numer karty lub IBAN",
+      "payoutDestinationPlaceholder": "4276… lub UA00…",
+      "payoutHolderLabel": "Odbiorca (opcjonalnie)",
+      "payoutHolderPlaceholder": "Imię i nazwisko lub firma",
+      "payoutCurrent": "Aktualne dane: {method} {destination}",
+      "payoutFreelancerHint": "Te dane są używane przy wypłatach. Zmiany dotyczą kolejnych wniosków."
     },
     "freelancerProfile": {
       "tabs": {
@@ -999,6 +1009,10 @@
         "withdrawalSubmitting": "Wysyłanie…",
         "withdrawalSubmitted": "Wniosek wysłany do rozpatrzenia",
         "emptyWithdrawals": "Brak wniosków o wypłatę.",
+        "withdrawalNeedPayoutDetails": "Przed wypłatą podaj dane w sekcji danych osobowych.",
+        "withdrawalSetupPayoutLink": "Skonfiguruj dane płatności →",
+        "withdrawalUsingSavedPayout": "Wypłata na {method} {destination}.",
+        "withdrawalChangePayoutLink": "Zmień",
         "colDate": "Data",
         "colCredit": "Uznanie",
         "colDescription": "Opis",

@@ -7,6 +7,7 @@ import {
 } from "@/lib/actions/admin-finance-ops";
 import type { AdminWithdrawalItem } from "@/lib/queries/admin-withdrawals";
 import { formatUah } from "@/lib/freelancer-finances-shared";
+import { maskPayoutDestination } from "@/lib/withdrawals-shared";
 import { useActionState } from "react";
 
 const initialState: FinanceOpsState = {};
@@ -60,11 +61,6 @@ function RejectForm({ paymentId }: { paymentId: string }) {
       {state.error && <p className="text-xs text-red-600">{state.error}</p>}
     </form>
   );
-}
-
-function maskDestination(destination: string): string {
-  if (destination.length <= 8) return destination;
-  return `${destination.slice(0, 4)}…${destination.slice(-4)}`;
 }
 
 type AdminWithdrawalsPanelProps = {
@@ -126,7 +122,7 @@ export function AdminWithdrawalsPanel({
                   <div className="mt-2 space-y-1 text-xs text-zinc-600">
                     <p>
                       {item.method}:{" "}
-                      <span className="font-mono">{maskDestination(item.destination)}</span>
+                      <span className="font-mono">{maskPayoutDestination(item.destination)}</span>
                     </p>
                     <p>
                       Баланс: {formatUah(Number(item.user.balance))} ·{" "}

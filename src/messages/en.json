@@ -952,7 +952,17 @@
       "paymentSoonClient": "Soon you will be able to add a card for top-ups here. For now use My finances.",
       "paymentSoonFreelancer": "Soon you will be able to add a card or IBAN for withdrawals. For now use the Withdrawals tab in finances.",
       "goFinancesClient": "Go to My finances →",
-      "goFinancesFreelancer": "Go to withdrawals →"
+      "goFinancesFreelancer": "Go to withdrawals →",
+      "paymentClientInfo": "Balance top-ups are handled via Stripe on the My finances page. You do not need to save a card here.",
+      "payoutMethodLabel": "Payout method",
+      "payoutMethodCard": "Bank card",
+      "payoutMethodIban": "IBAN / bank account",
+      "payoutDestinationLabel": "Card number or IBAN",
+      "payoutDestinationPlaceholder": "4276… or UA00…",
+      "payoutHolderLabel": "Account holder (optional)",
+      "payoutHolderPlaceholder": "Full name or company",
+      "payoutCurrent": "Current payout details: {method} {destination}",
+      "payoutFreelancerHint": "These details are used for withdrawals. Changes apply to future requests."
     },
     "freelancerProfile": {
       "tabs": {
@@ -1020,6 +1030,10 @@
         "withdrawalSubmitting": "Submitting…",
         "withdrawalSubmitted": "Request submitted for review",
         "emptyWithdrawals": "No withdrawal requests yet.",
+        "withdrawalNeedPayoutDetails": "Add payout details in your personal data before withdrawing.",
+        "withdrawalSetupPayoutLink": "Set up payment details →",
+        "withdrawalUsingSavedPayout": "Payout to {method} {destination}.",
+        "withdrawalChangePayoutLink": "Change",
         "colDate": "Date",
         "colCredit": "Credit",
         "colDescription": "Description",

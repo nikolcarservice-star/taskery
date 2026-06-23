@@ -37,3 +37,37 @@ export function parseWithdrawalMetadata(
 export function withdrawalMethodLabel(method: WithdrawalPayoutMethod): string {
   return method === "CARD" ? "Карта" : "IBAN";
 }
+
+export function maskPayoutDestination(destination: string): string {
+  if (destination.length <= 8) return destination;
+  return `${destination.slice(0, 4)}…${destination.slice(-4)}`;
+}
+
+export function validatePayoutDetails(
+  method: string | null,
+  destination: string | null,
+): { method: WithdrawalPayoutMethod; destination: string } | { error: string } {
+  if (method !== "CARD" && method !== "IBAN") {
+    return { error: "Выберите способ выплаты" };
+  }
+
+  const trimmed = destination?.trim();
+  if (!trimmed || trimmed.length < 4) {
+    return { error: "Укажите реквизиты для выплаты" };
+  }
+
+  const normalized =
+    method === "CARD"
+      ? trimmed.replace(/\s/g, "")
+      : trimmed.replace(/\s/g, "").toUpperCase();
+
+  if (method === "CARD" && !/^\d{12,19}$/.test(normalized)) {
+    return { error: "Номер карты должен содержать 12–19 цифр" };
+  }
+
+  if (method === "IBAN" && normalized.length < 15) {
+    return { error: "Укажите корректный IBAN" };
+  }
+
+  return { method, destination: normalized };
+}

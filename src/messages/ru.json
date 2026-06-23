@@ -1381,7 +1381,17 @@
       "paymentSoonClient": "Скоро здесь можно будет указать карту для пополнения баланса. Пока используйте раздел «Мои финансы».",
       "paymentSoonFreelancer": "Скоро здесь можно будет указать карту или IBAN для вывода. Пока используйте вкладку «Выводы» в разделе финансов.",
       "goFinancesClient": "Перейти в «Мои финансы» →",
-      "goFinancesFreelancer": "Перейти к выводам →"
+      "goFinancesFreelancer": "Перейти к выводам →",
+      "paymentClientInfo": "Пополнение баланса выполняется через Stripe на странице «Мои финансы». Сохранять карту здесь не требуется.",
+      "payoutMethodLabel": "Способ выплаты",
+      "payoutMethodCard": "Банковская карта",
+      "payoutMethodIban": "IBAN / расчётный счёт",
+      "payoutDestinationLabel": "Номер карты или IBAN",
+      "payoutDestinationPlaceholder": "4276… или UA00…",
+      "payoutHolderLabel": "Получатель (необязательно)",
+      "payoutHolderPlaceholder": "ФИО или название компании",
+      "payoutCurrent": "Текущие реквизиты: {method} {destination}",
+      "payoutFreelancerHint": "Эти данные используются при выводе средств. Изменения применяются к следующим заявкам."
     },
     "freelancerProfile": {
       "tabs": {
@@ -1457,6 +1467,10 @@
         "withdrawalSubmitting": "Отправка…",
         "withdrawalSubmitted": "Заявка отправлена на рассмотрение",
         "emptyWithdrawals": "Заявок на вывод пока нет.",
+        "withdrawalNeedPayoutDetails": "Перед выводом укажите реквизиты в личных данных.",
+        "withdrawalSetupPayoutLink": "Настроить платёжные данные →",
+        "withdrawalUsingSavedPayout": "Выплата на {method} {destination}.",
+        "withdrawalChangePayoutLink": "Изменить",
         "colDate": "Дата",
         "colCredit": "Зачисление",
         "colDescription": "Описание",

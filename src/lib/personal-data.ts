@@ -23,6 +23,9 @@ export async function getPersonalData(userId: string): Promise<PersonalDataForm>
         select: {
           wantsFreelanceProjects: true,
           wantsRemoteWork: true,
+          payoutMethod: true,
+          payoutDestination: true,
+          payoutHolderName: true,
         },
       },
     },
@@ -62,5 +65,12 @@ export async function getPersonalData(userId: string): Promise<PersonalDataForm>
       user.freelancerProfile?.wantsFreelanceProjects ?? true,
     wantsRemoteWork: user.freelancerProfile?.wantsRemoteWork ?? false,
     languages,
+    payoutMethod:
+      user.freelancerProfile?.payoutMethod === "CARD" ||
+      user.freelancerProfile?.payoutMethod === "IBAN"
+        ? user.freelancerProfile.payoutMethod
+        : null,
+    payoutDestination: user.freelancerProfile?.payoutDestination ?? null,
+    payoutHolderName: user.freelancerProfile?.payoutHolderName ?? null,
   };
 }

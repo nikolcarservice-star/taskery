@@ -8,7 +8,7 @@ import {
 } from "@/lib/withdrawal-ops";
 import {
   MIN_WITHDRAWAL_UAH,
-  type WithdrawalPayoutMethod,
+  validatePayoutDetails,
 } from "@/lib/withdrawals-shared";
 import { revalidatePath } from "next/cache";
 
@@ -31,39 +31,22 @@ export async function requestWithdrawal(
   }
 
   const amountRaw = (formData.get("amount") as string | null)?.trim();
-  const method = (formData.get("method") as string | null)?.trim();
-  const destination = (formData.get("destination") as string | null)?.trim();
+  const method = (formData.get("method") as string | null)?.trim() ?? null;
+  const destination =
+    (formData.get("destination") as string | null)?.trim() ?? null;
 
   const amount = Number(amountRaw?.replace(",", "."));
   if (!Number.isFinite(amount) || amount < MIN_WITHDRAWAL_UAH) {
     return { error: `Минимальная сумма вывода — ${MIN_WITHDRAWAL_UAH} ₴` };
   }
 
-  if (method !== "CARD" && method !== "IBAN") {
-    return { error: "Выберите способ вывода" };
-  }
-
-  if (!destination || destination.length < 4) {
-    return { error: "Укажите реквизиты для выплаты" };
-  }
-
-  if (method === "CARD" && !/^\d{12,19}$/.test(destination.replace(/\s/g, ""))) {
-    return { error: "Номер карты должен содержать 12–19 цифр" };
-  }
-
-  if (method === "IBAN" && destination.replace(/\s/g, "").length < 15) {
-    return { error: "Укажите корректный IBAN" };
-  }
-
-  const normalizedDestination =
-    method === "CARD"
-      ? destination.replace(/\s/g, "")
-      : destination.replace(/\s/g, "").toUpperCase();
+  const validated = validatePayoutDetails(method, destination);
+  if ("error" in validated) return { error: validated.error };
 
   try {
     await atomicRequestWithdrawal(session.user.id, amount, {
-      method: method as WithdrawalPayoutMethod,
-      destination: normalizedDestination,
+      method: validated.method,
+      destination: validated.destination,
     });
   } catch (error) {
     if (error instanceof WithdrawalError) {

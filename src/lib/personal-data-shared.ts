@@ -21,6 +21,9 @@ export type PersonalDataForm = {
   wantsFreelanceProjects: boolean;
   wantsRemoteWork: boolean;
   languages: UserLanguageRow[];
+  payoutMethod: "CARD" | "IBAN" | null;
+  payoutDestination: string | null;
+  payoutHolderName: string | null;
 };
 
 export const LANGUAGE_OPTIONS = [

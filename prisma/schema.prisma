@@ -181,6 +181,11 @@ enum ProfileVerificationStatus {
   REJECTED
 }
 
+enum PayoutMethod {
+  CARD
+  IBAN
+}
+
 model User {
   id                 String           @id @default(cuid())
   email              String           @unique
@@ -280,6 +285,9 @@ model FreelancerProfile {
   verificationReviewedAt DateTime?         @map("verification_reviewed_at")
   verificationNote       String?           @map("verification_note") @db.Text
   verifiedById           String?           @map("verified_by_id")
+  payoutMethod           PayoutMethod?     @map("payout_method")
+  payoutDestination      String?           @map("payout_destination")
+  payoutHolderName       String?           @map("payout_holder_name")
   createdAt              DateTime          @default(now()) @map("created_at")
   updatedAt              DateTime          @updatedAt @map("updated_at")
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { ADMIN_AUDIT_ACTION_LABELS, type AdminAuditEntry } from "@/lib/admin-audit";
+import { ADMIN_AUDIT_ACTION_LABELS, type AdminAuditEntry } from "@/lib/admin-audit-types";
 
 type AdminAuditPanelProps = {
   entries: AdminAuditEntry[];

@@ -9,12 +9,13 @@ import {
   type FinanceTab,
   type MonthlyStat,
   type PendingWithdrawalInfo,
+  type SavedPayoutDetails,
 } from "@/lib/freelancer-finances-shared";
 import {
   requestWithdrawal,
   type WithdrawalRequestState,
 } from "@/lib/actions/withdrawals";
-import { MIN_WITHDRAWAL_UAH } from "@/lib/withdrawals-shared";
+import { MIN_WITHDRAWAL_UAH, maskPayoutDestination } from "@/lib/withdrawals-shared";
 import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -25,6 +26,7 @@ type FreelancerFinancesProps = {
   ledger: FinanceLedgerEntry[];
   withdrawalLedger: FinanceLedgerEntry[];
   pendingWithdrawal: PendingWithdrawalInfo | null;
+  savedPayout: SavedPayoutDetails | null;
   monthlyStats: MonthlyStat[];
   yearTotal: number;
 };
@@ -163,9 +165,13 @@ const withdrawalInitialState: WithdrawalRequestState = {};
 function WithdrawalRequestForm({
   summary,
   pendingWithdrawal,
+  savedPayout,
+  personalPaymentHref,
 }: {
   summary: FinanceSummary;
   pendingWithdrawal: PendingWithdrawalInfo | null;
+  savedPayout: SavedPayoutDetails | null;
+  personalPaymentHref: string;
 }) {
   const dict = useDictionary();
   const t = dict.cabinetForms.finances.freelancer;
@@ -187,55 +193,50 @@ function WithdrawalRequestForm({
     );
   }
 
+  if (!savedPayout) {
+    return (
+      <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 px-4 py-4 text-sm text-zinc-700">
+        <p>{t.withdrawalNeedPayoutDetails}</p>
+        <Link
+          href={personalPaymentHref}
+          className="mt-2 inline-flex font-medium text-indigo-600 hover:underline"
+        >
+          {t.withdrawalSetupPayoutLink}
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <form action={formAction} className="space-y-4 rounded-xl border border-zinc-200 bg-zinc-50/80 p-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="withdraw-amount" className="block text-sm font-medium text-zinc-700">
-            {t.withdrawalAmountLabel}
-          </label>
-          <input
-            id="withdraw-amount"
-            name="amount"
-            type="number"
-            min={MIN_WITHDRAWAL_UAH}
-            max={summary.availableBalance}
-            step="0.01"
-            required
-            placeholder={String(MIN_WITHDRAWAL_UAH)}
-            className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm"
-          />
-          <p className="mt-1 text-xs text-zinc-500">
-            {t.withdrawalMinHint.replace("{min}", String(MIN_WITHDRAWAL_UAH))}
-          </p>
-        </div>
-        <div>
-          <label htmlFor="withdraw-method" className="block text-sm font-medium text-zinc-700">
-            {t.withdrawalMethodLabel}
-          </label>
-          <select
-            id="withdraw-method"
-            name="method"
-            required
-            defaultValue="CARD"
-            className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm"
-          >
-            <option value="CARD">{t.withdrawalMethodCard}</option>
-            <option value="IBAN">{t.withdrawalMethodIban}</option>
-          </select>
-        </div>
-      </div>
+      <p className="text-sm text-zinc-600">
+        {t.withdrawalUsingSavedPayout
+          .replace("{method}", savedPayout.method === "CARD" ? t.withdrawalMethodCard : t.withdrawalMethodIban)
+          .replace("{destination}", maskPayoutDestination(savedPayout.destination))}{" "}
+        <Link href={personalPaymentHref} className="text-indigo-600 hover:underline">
+          {t.withdrawalChangePayoutLink}
+        </Link>
+      </p>
+      <input type="hidden" name="method" value={savedPayout.method} />
+      <input type="hidden" name="destination" value={savedPayout.destination} />
       <div>
-        <label htmlFor="withdraw-destination" className="block text-sm font-medium text-zinc-700">
-          {t.withdrawalDestinationLabel}
+        <label htmlFor="withdraw-amount" className="block text-sm font-medium text-zinc-700">
+          {t.withdrawalAmountLabel}
         </label>
         <input
-          id="withdraw-destination"
-          name="destination"
+          id="withdraw-amount"
+          name="amount"
+          type="number"
+          min={MIN_WITHDRAWAL_UAH}
+          max={summary.availableBalance}
+          step="0.01"
           required
-          placeholder={t.withdrawalDestinationPlaceholder}
+          placeholder={String(MIN_WITHDRAWAL_UAH)}
           className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm"
         />
+        <p className="mt-1 text-xs text-zinc-500">
+          {t.withdrawalMinHint.replace("{min}", String(MIN_WITHDRAWAL_UAH))}
+        </p>
       </div>
       <button
         type="submit"
@@ -254,10 +255,14 @@ function WithdrawalsTab({
   summary,
   withdrawalLedger,
   pendingWithdrawal,
+  savedPayout,
+  personalPaymentHref,
 }: {
   summary: FinanceSummary;
   withdrawalLedger: FinanceLedgerEntry[];
   pendingWithdrawal: PendingWithdrawalInfo | null;
+  savedPayout: SavedPayoutDetails | null;
+  personalPaymentHref: string;
 }) {
   const dict = useDictionary();
   const l = useLocalizedPath();
@@ -280,6 +285,8 @@ function WithdrawalsTab({
       <WithdrawalRequestForm
         summary={summary}
         pendingWithdrawal={pendingWithdrawal}
+        savedPayout={savedPayout}
+        personalPaymentHref={personalPaymentHref}
       />
 
       <p className="text-sm text-zinc-500">{t.withdrawalProcessingHint}</p>
@@ -470,6 +477,7 @@ export function FreelancerFinances({
   ledger,
   withdrawalLedger,
   pendingWithdrawal,
+  savedPayout,
   monthlyStats,
   yearTotal,
 }: FreelancerFinancesProps) {
@@ -484,6 +492,7 @@ export function FreelancerFinances({
     { id: "statistics", label: tabLabels.statistics },
   ];
   const financesBase = l("/dashboard/finances");
+  const personalPaymentHref = l("/dashboard/personal?tab=payment");
   const tabParam = searchParams.get("tab");
   const activeTab: FinanceTab =
     tabParam === "withdrawals" || tabParam === "statistics"
@@ -524,6 +533,8 @@ export function FreelancerFinances({
             summary={summary}
             withdrawalLedger={withdrawalLedger}
             pendingWithdrawal={pendingWithdrawal}
+            savedPayout={savedPayout}
+            personalPaymentHref={personalPaymentHref}
           />
         )}
         {activeTab === "statistics" && (

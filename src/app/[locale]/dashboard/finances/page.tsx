@@ -53,6 +53,7 @@ export default async function FreelancerFinancesPage({ params }: FinancesPagePro
           ledger={data.ledger}
           withdrawalLedger={data.withdrawalLedger}
           pendingWithdrawal={data.pendingWithdrawal}
+          savedPayout={data.savedPayout}
           monthlyStats={data.monthlyStats}
           yearTotal={data.yearTotal}
         />

@@ -35,11 +35,18 @@ export type MonthlyStat = {
   amount: number;
 };
 
+export type SavedPayoutDetails = {
+  method: "CARD" | "IBAN";
+  destination: string;
+  holderName: string | null;
+};
+
 export type FreelancerFinanceData = {
   summary: FinanceSummary;
   ledger: FinanceLedgerEntry[];
   withdrawalLedger: FinanceLedgerEntry[];
   pendingWithdrawal: PendingWithdrawalInfo | null;
+  savedPayout: SavedPayoutDetails | null;
   monthlyStats: MonthlyStat[];
   yearTotal: number;
 };

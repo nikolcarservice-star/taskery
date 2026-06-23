@@ -937,7 +937,17 @@
       "paymentSoonClient": "Незабаром тут можна буде вказати картку для поповнення. Поки використовуйте «Мої фінанси».",
       "paymentSoonFreelancer": "Незабаром тут можна буде вказати картку або IBAN для виведення. Поки використовуйте вкладку «Виведення».",
       "goFinancesClient": "Перейти до «Мої фінанси» →",
-      "goFinancesFreelancer": "Перейти до виведень →"
+      "goFinancesFreelancer": "Перейти до виведень →",
+      "paymentClientInfo": "Поповнення балансу виконується через Stripe на сторінці «Мої фінанси». Зберігати картку тут не потрібно.",
+      "payoutMethodLabel": "Спосіб виплати",
+      "payoutMethodCard": "Банківська картка",
+      "payoutMethodIban": "IBAN / розрахунковий рахунок",
+      "payoutDestinationLabel": "Номер картки або IBAN",
+      "payoutDestinationPlaceholder": "4276… або UA00…",
+      "payoutHolderLabel": "Отримувач (необов'язково)",
+      "payoutHolderPlaceholder": "ПІБ або назва компанії",
+      "payoutCurrent": "Поточні реквізити: {method} {destination}",
+      "payoutFreelancerHint": "Ці дані використовуються при виведенні коштів. Зміни застосовуються до наступних заявок."
     },
     "freelancerProfile": {
       "tabs": {
@@ -1005,6 +1015,10 @@
         "withdrawalSubmitting": "Надсилання…",
         "withdrawalSubmitted": "Заявку надіслано на розгляд",
         "emptyWithdrawals": "Заявок на виведення поки немає.",
+        "withdrawalNeedPayoutDetails": "Перед виведенням вкажіть реквізити в особистих даних.",
+        "withdrawalSetupPayoutLink": "Налаштувати платіжні дані →",
+        "withdrawalUsingSavedPayout": "Виплата на {method} {destination}.",
+        "withdrawalChangePayoutLink": "Змінити",
         "colDate": "Дата",
         "colCredit": "Зарахування",
         "colDescription": "Опис",

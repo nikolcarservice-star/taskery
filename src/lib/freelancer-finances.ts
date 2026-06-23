@@ -68,7 +68,7 @@ export async function getFreelancerFinanceData(
   locale: AppLocale,
   ledgerLabels: FinanceLedgerLabels,
 ): Promise<FreelancerFinanceData> {
-  const [user, contracts, withdrawalPayments] = await Promise.all([
+  const [user, contracts, withdrawalPayments, profile] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { balance: true },
@@ -89,6 +89,14 @@ export async function getFreelancerFinanceData(
         status: true,
         createdAt: true,
         metadata: true,
+      },
+    }),
+    prisma.freelancerProfile.findUnique({
+      where: { userId },
+      select: {
+        payoutMethod: true,
+        payoutDestination: true,
+        payoutHolderName: true,
       },
     }),
   ]);
@@ -192,6 +200,17 @@ export async function getFreelancerFinanceData(
 
   const { monthlyStats, yearTotal } = buildMonthlyStats(contracts, locale);
 
+  const savedPayout =
+    profile?.payoutMethod &&
+    (profile.payoutMethod === "CARD" || profile.payoutMethod === "IBAN") &&
+    profile.payoutDestination
+      ? {
+          method: profile.payoutMethod,
+          destination: profile.payoutDestination,
+          holderName: profile.payoutHolderName,
+        }
+      : null;
+
   return {
     summary: {
       availableBalance,
@@ -203,6 +222,7 @@ export async function getFreelancerFinanceData(
     ledger,
     withdrawalLedger,
     pendingWithdrawal,
+    savedPayout,
     monthlyStats,
     yearTotal,
   };
