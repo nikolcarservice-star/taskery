@@ -918,6 +918,7 @@ export type Dictionary = {
       emptyBody: string;
       you: string;
       participant: string;
+      adminBadge: string;
       placeholder: string;
       attachFiles: string;
       send: string;
