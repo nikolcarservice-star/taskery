@@ -8,6 +8,7 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { localizedPath } from "@/lib/i18n/routing";
 import { markConversationMessagesRead } from "@/lib/messages-inbox";
+import { participantMessagesWhere } from "@/lib/messages-visibility";
 import { shouldWarnExternalLinks } from "@/lib/moderation/message-guard";
 import { createMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
@@ -54,6 +55,8 @@ export default async function ConversationPage({ params }: ConversationPageProps
             select: {
               status: true,
               amount: true,
+              commission: true,
+              freelancerPayout: true,
             },
           },
         },
@@ -61,6 +64,7 @@ export default async function ConversationPage({ params }: ConversationPageProps
       client: { select: { id: true, name: true, avatar: true, balance: true } },
       freelancer: { select: { id: true, name: true, avatar: true } },
       messages: {
+        where: participantMessagesWhere(session.user.role),
         orderBy: { createdAt: "asc" },
         include: {
           sender: { select: { id: true, name: true, avatar: true } },
@@ -83,6 +87,7 @@ export default async function ConversationPage({ params }: ConversationPageProps
   await markConversationMessagesRead(session.user.id, conversation.id);
 
   const isClient = conversation.clientId === session.user.id;
+  const isFreelancerRole = conversation.freelancerId === session.user.id;
   const partner = isClient ? conversation.freelancer : conversation.client;
   const contract = conversation.project.contract;
 
@@ -120,6 +125,24 @@ export default async function ConversationPage({ params }: ConversationPageProps
           name: partner.name,
           avatar: partner.avatar,
         }}
+        projectId={conversation.project.id}
+        projectStatus={conversation.project.status}
+        contractStatus={contract?.status}
+        canOpenDispute={
+          (isClient || isFreelancerRole) &&
+          conversation.project.status === "IN_PROGRESS" &&
+          contract?.status === "ESCROWED"
+        }
+        freelancerPayoutBreakdown={
+          isFreelancerRole && contract
+            ? {
+                amount: Number(contract.amount),
+                commission: Number(contract.commission),
+                payout: Number(contract.freelancerPayout),
+                currency: conversation.project.currency,
+              }
+            : null
+        }
       />
     </div>
   );

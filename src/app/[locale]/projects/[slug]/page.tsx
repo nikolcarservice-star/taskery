@@ -48,6 +48,7 @@ import { markBidMessageNotificationsReadForProject } from "@/lib/notifications";
 
 import { prisma } from "@/lib/prisma";
 import { getProjectDetailById } from "@/lib/queries/project-detail";
+import { filterMessagesForViewer } from "@/lib/messages-visibility";
 import { resolveProjectSlug } from "@/lib/queries/project-lookup";
 import { shouldWarnExternalLinks } from "@/lib/moderation/message-guard";
 
@@ -262,13 +263,26 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
         stripeEnabled={stripeEnabled}
 
-        messages={project.conversation.messages}
+        messages={filterMessagesForViewer(
+          project.conversation.messages,
+          session.user.role,
+        )}
 
         currentUserId={session.user.id}
 
         participantIds={[project.clientId, project.conversation.freelancerId]}
 
         warnExternalLinks={shouldWarnExternalLinks(project.contract?.status)}
+
+        isFreelancer={isAssignedFreelancer}
+
+        contractCommission={
+          project.contract ? Number(project.contract.commission) : null
+        }
+
+        contractPayout={
+          project.contract ? Number(project.contract.freelancerPayout) : null
+        }
 
         partner={
 

@@ -1,4 +1,5 @@
 import { AdminBadge } from "@/components/AdminBadge";
+import { resolveBlobAssetUrl } from "@/lib/blob-url";
 import { isSafeAssetUrl } from "@/lib/safe-url";
 
 type UserAvatarProps = {
@@ -34,7 +35,9 @@ export function UserAvatar({
   const safeAvatar =
     avatar &&
     (avatar.startsWith("blob:") || isSafeAssetUrl(avatar))
-      ? avatar
+      ? avatar.startsWith("blob:")
+        ? avatar
+        : resolveBlobAssetUrl(avatar)
       : null;
 
   return (

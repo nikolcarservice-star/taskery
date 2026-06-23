@@ -15,7 +15,10 @@ type ProjectDiscussionPanelProps = {
   projectStatus?: ProjectStatus;
   contractStatus?: ContractStatus | null;
   contractAmount?: number | null;
+  contractCommission?: number | null;
+  contractPayout?: number | null;
   isClient: boolean;
+  isFreelancer?: boolean;
   clientBalance?: number;
   stripeEnabled?: boolean;
   messages: {
@@ -43,7 +46,10 @@ export function ProjectDiscussionPanel({
   projectStatus = "IN_PROGRESS",
   contractStatus,
   contractAmount,
+  contractCommission,
+  contractPayout,
   isClient,
+  isFreelancer = false,
   clientBalance = 0,
   stripeEnabled = false,
   messages,
@@ -91,6 +97,26 @@ export function ProjectDiscussionPanel({
           participantIds={participantIds}
           warnExternalLinks={warnExternalLinks}
           partner={partner}
+          projectId={projectId}
+          projectStatus={projectStatus}
+          contractStatus={contractStatus}
+          canOpenDispute={
+            projectStatus === "IN_PROGRESS" &&
+            contractStatus === "ESCROWED"
+          }
+          freelancerPayoutBreakdown={
+            isFreelancer &&
+            contractAmount != null &&
+            contractCommission != null &&
+            contractPayout != null
+              ? {
+                  amount: contractAmount,
+                  commission: contractCommission,
+                  payout: contractPayout,
+                  currency,
+                }
+              : null
+          }
         />
       </div>
     </div>

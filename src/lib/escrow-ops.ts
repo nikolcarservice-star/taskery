@@ -158,7 +158,15 @@ export async function atomicReleaseDispute(
   });
 }
 
-export async function atomicOpenDispute(projectId: string, contractId: string) {
+export async function atomicOpenDispute(
+  projectId: string,
+  contractId: string,
+  chat?: {
+    conversationId: string;
+    openedById: string;
+    adminNote: string;
+  },
+) {
   return prisma.$transaction(async (tx) => {
     const contract = await tx.contract.findFirst({
       where: { id: contractId, projectId, status: "ESCROWED" },
@@ -179,6 +187,30 @@ export async function atomicOpenDispute(projectId: string, contractId: string) {
         "Спор можно открыть только для проекта в работе",
         "INVALID_STATUS",
       );
+    }
+
+    if (chat) {
+      await tx.message.createMany({
+        data: [
+          {
+            conversationId: chat.conversationId,
+            kind: "DISPUTE_OPENED",
+            senderId: chat.openedById,
+            content: "",
+          },
+          {
+            conversationId: chat.conversationId,
+            kind: "DISPUTE_ADMIN_NOTE",
+            senderId: chat.openedById,
+            content: chat.adminNote,
+          },
+        ],
+      });
+
+      await tx.conversation.update({
+        where: { id: chat.conversationId },
+        data: { updatedAt: new Date() },
+      });
     }
   });
 }

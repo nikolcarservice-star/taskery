@@ -587,7 +587,13 @@ export async function openDispute(
 
   const projectId = (formData.get("projectId") as string | null)?.trim();
 
+  const reason = (formData.get("reason") as string | null)?.trim();
+
   if (!projectId) return { error: "PROJECT_NOT_FOUND" };
+
+  if (!reason) return { error: "DISPUTE_REASON_REQUIRED" };
+
+  if (reason.length < 10) return { error: "DISPUTE_REASON_TOO_SHORT" };
 
 
 
@@ -595,7 +601,10 @@ export async function openDispute(
 
     where: { id: projectId },
 
-    include: { contract: true },
+    include: {
+      contract: true,
+      conversation: { select: { id: true } },
+    },
 
   });
 
@@ -623,7 +632,17 @@ export async function openDispute(
 
   try {
 
-    await atomicOpenDispute(projectId, project.contract.id);
+    await atomicOpenDispute(
+      projectId,
+      project.contract.id,
+      project.conversation
+        ? {
+            conversationId: project.conversation.id,
+            openedById: session.user.id,
+            adminNote: reason,
+          }
+        : undefined,
+    );
 
   } catch (error) {
 
@@ -646,6 +665,16 @@ export async function openDispute(
   revalidatePath("/dashboard/work");
 
   revalidatePath("/admin");
+
+  if (project.conversation) {
+
+    revalidatePath("/messages");
+
+    revalidatePath(`/messages/${project.conversation.id}`);
+
+    revalidatePath(`/admin/review/conversation/${project.conversation.id}`);
+
+  }
 
 
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { FormActionError } from "@/components/FormActionError";
+import { OpenDisputeButton } from "@/components/OpenDisputeButton";
 import {
-  openDispute,
   releaseContract,
   type ActionState,
 } from "@/lib/actions/contracts";
@@ -76,36 +76,13 @@ function ReleaseForm({ projectId }: { projectId: string }) {
 }
 
 function DisputeForm({ projectId }: { projectId: string }) {
-  const dict = useDictionary();
-  const router = useRouter();
-  const [state, formAction, pending] = useActionState(openDispute, initialState);
-
-  useEffect(() => {
-    if (state.success) {
-      router.refresh();
-    }
-  }, [state.success, router]);
-
   return (
-    <form action={formAction} className="mt-3">
-      <input type="hidden" name="projectId" value={projectId} />
-      <FormActionError error={state.error} className="mb-2 text-sm text-red-600" />
-      {state.success ? (
-        <p className="text-sm font-medium text-amber-700">
-          {dict.projectDetail.contractPanel.disputeSuccess}
-        </p>
-      ) : (
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-full border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
-        >
-          {pending
-            ? dict.projectDetail.contractPanel.disputePending
-            : dict.projectDetail.contractPanel.disputeSubmit}
-        </button>
-      )}
-    </form>
+    <div className="mt-3">
+      <OpenDisputeButton
+        projectId={projectId}
+        className="rounded-full border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+      />
+    </div>
   );
 }
 

@@ -1,15 +1,18 @@
 "use client";
 
+import { DisputeOpenedMessage } from "@/components/DisputeOpenedMessage";
 import { FormActionError } from "@/components/FormActionError";
 import { MessageContent } from "@/components/MessageContent";
 import { ModerationWarningMessage } from "@/components/ModerationWarningMessage";
+import { OpenDisputeButton } from "@/components/OpenDisputeButton";
 import { UserAvatar } from "@/components/UserAvatar";
-import { useDictionary } from "@/lib/i18n/dictionary-context";
+import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
+import { formatMoney } from "@/lib/i18n/currencies";
 import { formatRelativeTime } from "@/lib/i18n/relative-time";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { sendMessage, type ActionState } from "@/lib/actions/messages";
 
-import type { MessageKind } from "@/generated/prisma/client";
+import type { ContractStatus, MessageKind, ProjectStatus } from "@/generated/prisma/client";
 
 type Message = {
   id: string;
@@ -30,6 +33,16 @@ type MessageThreadProps = {
     name: string | null;
     avatar: string | null;
   };
+  projectId?: string;
+  projectStatus?: ProjectStatus;
+  contractStatus?: ContractStatus | null;
+  canOpenDispute?: boolean;
+  freelancerPayoutBreakdown?: {
+    amount: number;
+    commission: number;
+    payout: number;
+    currency: string;
+  } | null;
 };
 
 const initialState: ActionState = {};
@@ -60,9 +73,16 @@ export function MessageThread({
   participantIds,
   warnExternalLinks = false,
   partner,
+  projectId,
+  projectStatus,
+  contractStatus,
+  canOpenDispute = false,
+  freelancerPayoutBreakdown = null,
 }: MessageThreadProps) {
   const dict = useDictionary();
+  const locale = useDictionaryLocale();
   const t = dict.inbox.thread;
+  const disputeT = dict.inbox.dispute;
   const common = dict.cabinetForms.common;
   const [state, formAction, pending] = useActionState(sendMessage, initialState);
   const [draft, setDraft] = useState("");
@@ -114,6 +134,22 @@ export function MessageThread({
                   />
                 );
               }
+
+              if (msg.kind === "DISPUTE_OPENED" && msg.sender) {
+                const openedByName =
+                  msg.sender.name ?? msg.sender.id ?? t.participant;
+
+                return (
+                  <DisputeOpenedMessage
+                    key={msg.id}
+                    openedByName={openedByName}
+                    openedByCurrentUser={msg.sender.id === currentUserId}
+                    createdAt={new Date(msg.createdAt)}
+                  />
+                );
+              }
+
+              if (msg.kind !== "USER") return null;
 
               if (!msg.sender) return null;
 
@@ -206,6 +242,59 @@ export function MessageThread({
       </div>
 
       <div className="border-t border-zinc-200 bg-white p-4 sm:p-5">
+        {freelancerPayoutBreakdown && (
+          <div className="mb-4 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
+            <p className="text-sm font-semibold text-emerald-900">
+              {disputeT.freelancerPayoutTitle}
+            </p>
+            <dl className="mt-3 space-y-2 text-sm">
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-zinc-600">{disputeT.clientPays}</dt>
+                <dd className="font-medium text-zinc-900">
+                  {formatMoney(
+                    freelancerPayoutBreakdown.amount,
+                    freelancerPayoutBreakdown.currency,
+                    locale,
+                  )}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-zinc-600">{disputeT.platformFee}</dt>
+                <dd className="font-medium text-zinc-900">
+                  {formatMoney(
+                    freelancerPayoutBreakdown.commission,
+                    freelancerPayoutBreakdown.currency,
+                    locale,
+                  )}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-4 border-t border-emerald-100 pt-2">
+                <dt className="font-medium text-emerald-900">{disputeT.freelancerReceives}</dt>
+                <dd className="text-base font-bold text-emerald-800">
+                  {formatMoney(
+                    freelancerPayoutBreakdown.payout,
+                    freelancerPayoutBreakdown.currency,
+                    locale,
+                  )}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        )}
+
+        {canOpenDispute && projectId && (
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-100 bg-red-50/50 px-4 py-3">
+            <p className="text-sm text-red-900">{disputeT.openHint}</p>
+            <OpenDisputeButton projectId={projectId} />
+          </div>
+        )}
+
+        {projectStatus === "UNDER_DISPUTE" && contractStatus === "ESCROWED" && (
+          <p className="mb-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-800">
+            {disputeT.activeNotice}
+          </p>
+        )}
+
         <form action={formAction}>
           <input type="hidden" name="conversationId" value={conversationId} />
 

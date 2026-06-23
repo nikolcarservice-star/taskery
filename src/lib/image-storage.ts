@@ -1,4 +1,5 @@
 import { del, put } from "@vercel/blob";
+import { isBlobStorageUrl as isBlobUrl } from "@/lib/blob-url";
 import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
 
@@ -26,7 +27,16 @@ function inferImageExt(file: File): string | null {
 }
 
 export function usesBlobStorage(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+  if (process.env.BLOB_READ_WRITE_TOKEN?.trim()) {
+    return true;
+  }
+
+  // New Vercel Blob stores use OIDC (BLOB_STORE_ID + VERCEL_OIDC_TOKEN) on deploy.
+  if (process.env.VERCEL === "1" && process.env.BLOB_STORE_ID?.trim()) {
+    return true;
+  }
+
+  return false;
 }
 
 export function canUseLocalImageStorage(): boolean {
@@ -50,7 +60,7 @@ export function isLocalUploadUrl(url: string | null | undefined): boolean {
 }
 
 export function isBlobStorageUrl(url: string | null | undefined): boolean {
-  return Boolean(url?.includes(".blob.vercel-storage.com/"));
+  return isBlobUrl(url);
 }
 
 export function isManagedImageUrl(url: string | null | undefined): boolean {
@@ -90,11 +100,26 @@ export async function uploadImage(file: File, storagePath: string): Promise<stri
     const pathname = storagePath.endsWith(`.${ext}`)
       ? storagePath
       : `${storagePath}.${ext}`;
-    const blob = await put(pathname, file, {
-      access: "public",
-      addRandomSuffix: false,
-    });
-    return blob.url;
+
+    try {
+      const blob = await put(pathname, file, {
+        access: "public",
+        addRandomSuffix: false,
+      });
+      return blob.url;
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        /private|access/i.test(error.message)
+      ) {
+        const blob = await put(pathname, file, {
+          access: "private",
+          addRandomSuffix: false,
+        });
+        return blob.url;
+      }
+      throw error;
+    }
   }
 
   if (!canUseLocalImageStorage()) {

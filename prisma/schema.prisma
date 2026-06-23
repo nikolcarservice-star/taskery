@@ -118,6 +118,8 @@ enum ReportStatus {
 enum MessageKind {
   USER
   EXTERNAL_CONTACT_WARNING
+  DISPUTE_OPENED
+  DISPUTE_ADMIN_NOTE
 }
 
 model User {

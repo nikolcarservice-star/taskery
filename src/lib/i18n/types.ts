@@ -937,6 +937,29 @@ export type Dictionary = {
       externalContactBlocked: string;
       policyHint: string;
     };
+    dispute: {
+      openedTitle: string;
+      openedBy: string;
+      openedByYou: string;
+      adminNoteTitle: string;
+      adminNoteFrom: string;
+      openButton: string;
+      dialogTitle: string;
+      dialogBody: string;
+      reasonLabel: string;
+      reasonPlaceholder: string;
+      reasonHint: string;
+      submit: string;
+      pending: string;
+      cancel: string;
+      success: string;
+      openHint: string;
+      activeNotice: string;
+      freelancerPayoutTitle: string;
+      clientPays: string;
+      platformFee: string;
+      freelancerReceives: string;
+    };
   };
   tables: {
     bids: {
@@ -1360,6 +1383,8 @@ export type Dictionary = {
     DEMO_TOPUP_PRODUCTION_ONLY: string;
     USE_STRIPE_FOR_TOPUP: string;
     MESSAGE_REQUIRED: string;
+    DISPUTE_REASON_REQUIRED: string;
+    DISPUTE_REASON_TOO_SHORT: string;
     MESSAGE_EXTERNAL_CONTACT_BLOCKED: string;
     CONVERSATION_NOT_FOUND: string;
     SELECT_CONVERSATIONS: string;

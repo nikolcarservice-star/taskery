@@ -1,5 +1,7 @@
 "use client";
 
+import { DisputeAdminNoteMessage } from "@/components/DisputeAdminNoteMessage";
+import { DisputeOpenedMessage } from "@/components/DisputeOpenedMessage";
 import { MessageContent } from "@/components/MessageContent";
 import { ModerationWarningMessage } from "@/components/ModerationWarningMessage";
 import { UserAvatar } from "@/components/UserAvatar";
@@ -61,6 +63,36 @@ export function AdminChatReviewThread({
             </div>
           );
         }
+
+        if (msg.kind === "DISPUTE_OPENED" && msg.sender) {
+          const openedByName =
+            msg.sender.name ?? nameById.get(msg.sender.id) ?? t.participant;
+
+          return (
+            <DisputeOpenedMessage
+              key={msg.id}
+              openedByName={openedByName}
+              openedByCurrentUser={false}
+              createdAt={new Date(msg.createdAt)}
+            />
+          );
+        }
+
+        if (msg.kind === "DISPUTE_ADMIN_NOTE" && msg.sender) {
+          const openedByName =
+            msg.sender.name ?? nameById.get(msg.sender.id) ?? t.participant;
+
+          return (
+            <DisputeAdminNoteMessage
+              key={msg.id}
+              openedByName={openedByName}
+              content={msg.content}
+              createdAt={new Date(msg.createdAt)}
+            />
+          );
+        }
+
+        if (msg.kind !== "USER") return null;
 
         if (!msg.sender) return null;
 
