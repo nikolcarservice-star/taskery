@@ -63,7 +63,7 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
             type="email"
             required
             autoComplete="email"
-            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
+            className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-base text-zinc-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
             onFocus={scrollFieldIntoView}
           />
         </div>
@@ -80,7 +80,7 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
             type="password"
             required
             autoComplete="current-password"
-            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
+            className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-base text-zinc-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
             onFocus={scrollFieldIntoView}
           />
           <p className="mt-1 text-right">
