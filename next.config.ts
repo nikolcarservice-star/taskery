@@ -21,6 +21,11 @@ const nextConfig: NextConfig = {
     ...(devLanHost ? [devLanHost] : []),
     ...(tunnelHost ? [tunnelHost] : []),
   ],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "6mb",
+    },
+  },
   async headers() {
     return [
       {

@@ -31,7 +31,11 @@ export function UserAvatar({
   adminTitle,
 }: UserAvatarProps) {
   const initial = (name?.[0] ?? "U").toUpperCase();
-  const safeAvatar = avatar && isSafeAssetUrl(avatar) ? avatar : null;
+  const safeAvatar =
+    avatar &&
+    (avatar.startsWith("blob:") || isSafeAssetUrl(avatar))
+      ? avatar
+      : null;
 
   return (
     <div className="relative shrink-0">

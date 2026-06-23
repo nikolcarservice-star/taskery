@@ -25,7 +25,7 @@ import {
 } from "@/lib/personal-data-shared";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 type PersonalDataSettingsProps = {
   data: PersonalDataForm;
@@ -341,6 +341,7 @@ function MyDataTab({ data, isClient }: { data: PersonalDataForm; isClient: boole
 
 function PhotoTab({ data, isClient }: { data: PersonalDataForm; isClient: boolean }) {
   const dict = useDictionary();
+  const router = useRouter();
   const t = dict.cabinetForms.personalData;
   const common = dict.cabinetForms.common;
   const [state, formAction, pending] = useActionState(
@@ -350,6 +351,25 @@ function PhotoTab({ data, isClient }: { data: PersonalDataForm; isClient: boolea
   const [preview, setPreview] = useState(data.avatar);
   const [fileName, setFileName] = useState<string | null>(null);
   const [removePhoto, setRemovePhoto] = useState(false);
+  const [clientError, setClientError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPreview(data.avatar);
+  }, [data.avatar]);
+
+  useEffect(() => {
+    if (!state.success) return;
+
+    router.refresh();
+    setFileName(null);
+    setRemovePhoto(false);
+    setPreview((current) => {
+      if (current?.startsWith("blob:")) {
+        URL.revokeObjectURL(current);
+      }
+      return current;
+    });
+  }, [state.success, router]);
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -357,6 +377,14 @@ function PhotoTab({ data, isClient }: { data: PersonalDataForm; isClient: boolea
       return;
     }
 
+    if (file.size > 5 * 1024 * 1024) {
+      event.target.value = "";
+      setFileName(null);
+      setClientError("FILE_TOO_LARGE");
+      return;
+    }
+
+    setClientError(null);
     setRemovePhoto(false);
     setFileName(file.name);
     setPreview((current) => {
@@ -435,6 +463,7 @@ function PhotoTab({ data, isClient }: { data: PersonalDataForm; isClient: boolea
       <div className="flex flex-wrap items-center gap-4 border-t border-zinc-100 pt-6">
         <SaveButton pending={pending} label={common.save} savingLabel={common.saving} />
         <FormMessage state={state} savedLabel={common.saved} />
+        <FormActionError error={clientError ?? undefined} className="text-sm text-red-600" />
       </div>
     </form>
   );

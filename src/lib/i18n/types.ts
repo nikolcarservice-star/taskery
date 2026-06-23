@@ -1375,6 +1375,8 @@ export type Dictionary = {
     DUPLICATE_LANGUAGE: string;
     USER_NOT_FOUND: string;
     FILE_REQUIRED: string;
+    FILE_TOO_LARGE: string;
+    IMAGE_INVALID_TYPE: string;
     IMAGE_STORAGE_NOT_CONFIGURED: string;
     SELECT_STATUS: string;
     INVALID_RATE: string;

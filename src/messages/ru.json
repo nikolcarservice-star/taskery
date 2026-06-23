@@ -1696,6 +1696,8 @@
     "DUPLICATE_LANGUAGE": "Язык не может повторяться",
     "USER_NOT_FOUND": "Пользователь не найден",
     "FILE_REQUIRED": "Выберите файл для загрузки",
+    "FILE_TOO_LARGE": "Размер файла не более 5 МБ",
+    "IMAGE_INVALID_TYPE": "Допустимы только JPG, PNG и WebP",
     "IMAGE_STORAGE_NOT_CONFIGURED": "Загрузка фото на сервере не настроена. Подключите Vercel Blob в настройках проекта.",
     "SELECT_STATUS": "Выберите статус",
     "INVALID_RATE": "Некорректная ставка",

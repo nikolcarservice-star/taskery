@@ -6,9 +6,24 @@ export const IMAGE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
 const MIME_TO_EXT: Record<string, string> = {
   "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+  "image/pjpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
 };
+
+const EXT_FROM_NAME = /\.(jpe?g|png|webp)$/i;
+
+function inferImageExt(file: File): string | null {
+  const fromMime = MIME_TO_EXT[file.type];
+  if (fromMime) return fromMime;
+
+  const match = file.name.match(EXT_FROM_NAME);
+  if (!match) return null;
+
+  const raw = match[1].toLowerCase();
+  return raw === "jpeg" ? "jpg" : raw;
+}
 
 export function usesBlobStorage(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
@@ -43,17 +58,17 @@ export function isManagedImageUrl(url: string | null | undefined): boolean {
 }
 
 export function validateImageFile(file: File): { ext: string } {
-  const ext = MIME_TO_EXT[file.type];
+  const ext = inferImageExt(file);
   if (!ext) {
-    throw new Error("Допустимы только JPG, PNG и WebP");
+    throw new ImageStorageError("IMAGE_INVALID_TYPE");
   }
 
   if (file.size === 0) {
-    throw new Error("Файл не выбран");
+    throw new ImageStorageError("FILE_REQUIRED");
   }
 
   if (file.size > IMAGE_MAX_SIZE_BYTES) {
-    throw new Error("Размер файла не более 5 МБ");
+    throw new ImageStorageError("FILE_TOO_LARGE");
   }
 
   return { ext };

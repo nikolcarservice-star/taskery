@@ -1705,6 +1705,8 @@
     "DUPLICATE_LANGUAGE": "Język nie może się powtarzać",
     "USER_NOT_FOUND": "Nie znaleziono użytkownika",
     "FILE_REQUIRED": "Wybierz plik do przesłania",
+    "FILE_TOO_LARGE": "Rozmiar pliku nie może przekraczać 5 MB",
+    "IMAGE_INVALID_TYPE": "Dozwolone są tylko JPG, PNG i WebP",
     "IMAGE_STORAGE_NOT_CONFIGURED": "Przesyłanie zdjęć nie jest skonfigurowane na serwerze. Dodaj magazyn Vercel Blob w ustawieniach projektu.",
     "SELECT_STATUS": "Wybierz status",
     "INVALID_RATE": "Nieprawidłowa stawka",
