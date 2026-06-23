@@ -13,6 +13,12 @@ export type WorkAvailability =
 
 export type LegalStatus = "INDIVIDUAL" | "SELF_EMPLOYED" | "COMPANY";
 
+export type ProfileVerificationStatus =
+  | "NONE"
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED";
+
 export type SkillOption = { id: string; name: string };
 
 export type FreelancerProfileData = {
@@ -26,6 +32,9 @@ export type FreelancerProfileData = {
   taxId: string | null;
   website: string | null;
   experienceYears: number | null;
+  verificationStatus: ProfileVerificationStatus;
+  verificationNote: string | null;
+  verificationRequestedAt: string | null;
 };
 
 export const WORK_AVAILABILITY_OPTIONS: {

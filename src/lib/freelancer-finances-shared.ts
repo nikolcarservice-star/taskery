@@ -17,7 +17,15 @@ export type FinanceLedgerEntry = {
   title: string;
   projectSlug: string | null;
   amount: number;
-  direction: "credit" | "debit" | "hold";
+  direction: "credit" | "debit" | "hold" | "pending";
+};
+
+export type PendingWithdrawalInfo = {
+  id: string;
+  amount: number;
+  createdAt: string;
+  method: string;
+  destination: string;
 };
 
 export type MonthlyStat = {
@@ -30,6 +38,8 @@ export type MonthlyStat = {
 export type FreelancerFinanceData = {
   summary: FinanceSummary;
   ledger: FinanceLedgerEntry[];
+  withdrawalLedger: FinanceLedgerEntry[];
+  pendingWithdrawal: PendingWithdrawalInfo | null;
   monthlyStats: MonthlyStat[];
   yearTotal: number;
 };

@@ -1,7 +1,8 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -75,6 +76,12 @@ export async function adminUsersBan(
     }),
   ]);
 
+  await logAdminAction(authResult.admin.id, "USER_BAN", {
+    targetType: "user",
+    targetId: userId,
+    details: { reason },
+  });
+
   revalidatePath("/admin");
   return { success: true };
 }
@@ -99,7 +106,12 @@ export async function adminUsersUnban(
 
   await prisma.user.update({
     where: { id: userId },
-    data: { bannedAt: null, banReason: null },
+    data: { bannedAt: null, bannedUntil: null, banReason: null },
+  });
+
+  await logAdminAction(authResult.admin.id, "USER_UNBAN", {
+    targetType: "user",
+    targetId: userId,
   });
 
   revalidatePath("/admin");
@@ -181,6 +193,12 @@ export async function adminUsersDelete(
       },
     }),
   ]);
+
+  await logAdminAction(authResult.admin.id, "USER_DELETE", {
+    targetType: "user",
+    targetId: userId,
+    details: { reason },
+  });
 
   revalidatePath("/admin");
   return { success: true };

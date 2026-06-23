@@ -8,8 +8,13 @@ import {
   type FinanceLedgerEntry,
   type FreelancerFinanceData,
   type MonthlyStat,
+  type PendingWithdrawalInfo,
 } from "@/lib/freelancer-finances-shared";
 import { prisma } from "@/lib/prisma";
+import {
+  parseWithdrawalMetadata,
+  withdrawalMethodLabel,
+} from "@/lib/withdrawals-shared";
 
 function buildMonthlyStats(
   contracts: Array<{
@@ -63,7 +68,7 @@ export async function getFreelancerFinanceData(
   locale: AppLocale,
   ledgerLabels: FinanceLedgerLabels,
 ): Promise<FreelancerFinanceData> {
-  const [user, contracts] = await Promise.all([
+  const [user, contracts, withdrawalPayments] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { balance: true },
@@ -74,6 +79,17 @@ export async function getFreelancerFinanceData(
         project: { select: { title: true, slug: true } },
       },
       orderBy: { updatedAt: "desc" },
+    }),
+    prisma.payment.findMany({
+      where: { userId, type: "WITHDRAWAL" },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        amount: true,
+        status: true,
+        createdAt: true,
+        metadata: true,
+      },
     }),
   ]);
 
@@ -124,6 +140,56 @@ export async function getFreelancerFinanceData(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 
+  const withdrawalLedger: FinanceLedgerEntry[] = [];
+  let pendingWithdrawal: PendingWithdrawalInfo | null = null;
+
+  for (const payment of withdrawalPayments) {
+    const meta = parseWithdrawalMetadata(payment.metadata);
+    const amount = Number(payment.amount);
+    const createdAt = payment.createdAt.toISOString();
+
+    if (payment.status === "PENDING" && meta) {
+      pendingWithdrawal = {
+        id: payment.id,
+        amount,
+        createdAt,
+        method: withdrawalMethodLabel(meta.method),
+        destination: meta.destination,
+      };
+      withdrawalLedger.push({
+        id: payment.id,
+        createdAt,
+        settledAt: null,
+        title: ledgerLabels.withdrawalPending,
+        projectSlug: null,
+        amount,
+        direction: "pending",
+      });
+    } else if (payment.status === "COMPLETED") {
+      withdrawalLedger.push({
+        id: payment.id,
+        createdAt,
+        settledAt: createdAt,
+        title: ledgerLabels.withdrawalCompleted,
+        projectSlug: null,
+        amount,
+        direction: "debit",
+      });
+    } else if (payment.status === "FAILED") {
+      withdrawalLedger.push({
+        id: payment.id,
+        createdAt,
+        settledAt: createdAt,
+        title: meta?.rejectReason
+          ? `${ledgerLabels.withdrawalRejected}: ${meta.rejectReason}`
+          : ledgerLabels.withdrawalRejected,
+        projectSlug: null,
+        amount,
+        direction: "credit",
+      });
+    }
+  }
+
   const { monthlyStats, yearTotal } = buildMonthlyStats(contracts, locale);
 
   return {
@@ -135,6 +201,8 @@ export async function getFreelancerFinanceData(
       currency: "UAH",
     },
     ledger,
+    withdrawalLedger,
+    pendingWithdrawal,
     monthlyStats,
     yearTotal,
   };

@@ -3,13 +3,18 @@ import { AdminLoginView } from "@/components/AdminLoginView";
 import { AdminPanel } from "@/components/AdminPanel";
 import { PageBackNav } from "@/components/PageBackNav";
 import { SiteFooter } from "@/components/SiteFooter";
-import { hasAdminPermission } from "@/lib/admin-permissions";
+import { hasAdminPermission, isSuperAdmin } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAdminFinanceOverview } from "@/lib/queries/admin-finance";
+import { getRecentAdminAuditLogs } from "@/lib/admin-audit";
+import { getAdminCatalogOverview } from "@/lib/queries/admin-catalog";
+import { getPendingProfileVerifications } from "@/lib/queries/admin-verification";
 import { getModerationAttentionItems } from "@/lib/queries/admin-attention";
 import { getPendingAdminReports } from "@/lib/queries/admin-reports";
 import { getAdminUsers } from "@/lib/queries/admin-users";
+import { getAdminSupportTickets } from "@/lib/queries/admin-support";
+import { getPendingWithdrawals } from "@/lib/queries/admin-withdrawals";
 import { getHomeRouteForRole } from "@/lib/role-redirect";
 import { redirect } from "next/navigation";
 
@@ -42,14 +47,13 @@ export default async function AdminPage() {
     redirect("/admin?error=deactivated");
   }
 
-  const canViewUsers = hasAdminPermission(
-    currentAdmin.adminPermissions,
-    "USERS",
-  );
-  const canViewFinance = hasAdminPermission(
-    currentAdmin.adminPermissions,
-    "FINANCE",
-  );
+  const permissions = currentAdmin.adminPermissions;
+  const canModerate = hasAdminPermission(permissions, "MODERATION");
+  const canManageStaff = hasAdminPermission(permissions, "STAFF_MANAGE");
+  const canViewUsers = hasAdminPermission(permissions, "USERS");
+  const canViewFinance = hasAdminPermission(permissions, "FINANCE");
+
+  const canViewAudit = canManageStaff || isSuperAdmin(permissions);
 
   const [
     disputes,
@@ -63,51 +67,69 @@ export default async function AdminPage() {
     attentionItems,
     users,
     finance,
+    auditLogs,
+    supportTickets,
+    verificationItems,
+    catalogOverview,
+    pendingWithdrawals,
   ] = await Promise.all([
-    prisma.project.findMany({
-      where: { status: "UNDER_DISPUTE" },
-      include: {
-        client: { select: { name: true, email: true } },
-        conversation: { select: { id: true } },
-        contract: {
+    canModerate
+      ? prisma.project.findMany({
+          where: { status: "UNDER_DISPUTE" },
           include: {
-            freelancer: { select: { name: true, email: true } },
+            client: { select: { name: true, email: true } },
+            conversation: { select: { id: true } },
+            contract: {
+              include: {
+                freelancer: { select: { name: true, email: true } },
+              },
+            },
           },
-        },
-      },
-      orderBy: { updatedAt: "desc" },
-    }),
-    prisma.project.findMany({
-      where: { status: "OPEN" },
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        client: { select: { name: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 20,
-    }),
+          orderBy: { updatedAt: "desc" },
+        })
+      : Promise.resolve([]),
+    canModerate
+      ? prisma.project.findMany({
+          where: { status: "OPEN" },
+          select: {
+            id: true,
+            slug: true,
+            title: true,
+            client: { select: { name: true } },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 20,
+        })
+      : Promise.resolve([]),
     prisma.user.count(),
     prisma.project.count(),
     prisma.user.count({ where: { role: "FREELANCER" } }),
     prisma.user.count({ where: { role: "CLIENT" } }),
-    prisma.user.findMany({
-      where: { role: "ADMIN" },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        adminPermissions: true,
-        adminActive: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "asc" },
-    }),
-    getPendingAdminReports(),
-    getModerationAttentionItems(currentAdmin.id),
+    canManageStaff
+      ? prisma.user.findMany({
+          where: { role: "ADMIN" },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            adminPermissions: true,
+            adminActive: true,
+            createdAt: true,
+          },
+          orderBy: { createdAt: "asc" },
+        })
+      : Promise.resolve([]),
+    canModerate ? getPendingAdminReports() : Promise.resolve([]),
+    canModerate
+      ? getModerationAttentionItems(currentAdmin.id)
+      : Promise.resolve([]),
     canViewUsers ? getAdminUsers() : Promise.resolve([]),
     canViewFinance ? getAdminFinanceOverview() : Promise.resolve(null),
+    canViewAudit ? getRecentAdminAuditLogs(30) : Promise.resolve([]),
+    canModerate ? getAdminSupportTickets() : Promise.resolve([]),
+    canViewUsers ? getPendingProfileVerifications() : Promise.resolve([]),
+    canManageStaff ? getAdminCatalogOverview() : Promise.resolve(null),
+    canViewFinance ? getPendingWithdrawals() : Promise.resolve([]),
   ]);
 
   return (
@@ -133,7 +155,7 @@ export default async function AdminPage() {
               freelancers: freelancerCount,
               clients: clientCount,
             }}
-            permissions={currentAdmin.adminPermissions}
+            permissions={permissions}
             currentAdminId={currentAdmin.id}
             admins={admins.map((admin) => ({
               ...admin,
@@ -141,6 +163,12 @@ export default async function AdminPage() {
             }))}
             users={users}
             finance={finance}
+            auditLogs={auditLogs}
+            supportTickets={supportTickets}
+            verificationItems={verificationItems}
+            catalogCategories={catalogOverview?.categories ?? []}
+            catalogSkills={catalogOverview?.skills ?? []}
+            pendingWithdrawals={pendingWithdrawals}
           />
         </div>
       </main>

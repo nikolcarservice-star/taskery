@@ -155,6 +155,7 @@ export default auth((request) => {
     "/profile/edit",
     "/messages",
     "/notifications",
+    "/support",
   ];
   const authRoutes = ["/login", "/register"];
 

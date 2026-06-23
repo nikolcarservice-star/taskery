@@ -54,6 +54,9 @@ enum PaymentType {
   FEATURE_PROJECT
   FEATURE_PROFILE
   COMMISSION
+  ADMIN_ADJUSTMENT
+  FINE
+  WITHDRAWAL
 }
 
 enum PaymentStatus {
@@ -90,6 +93,8 @@ enum NotificationType {
   BID_MESSAGE
   NEW_MESSAGE
   NEW_BID
+  SUPPORT_REPLY
+  USER_WARNING
 }
 
 enum ReportTargetType {
@@ -119,7 +124,61 @@ enum MessageKind {
   USER
   EXTERNAL_CONTACT_WARNING
   DISPUTE_OPENED
+  DISPUTE_REASON
   DISPUTE_ADMIN_NOTE
+}
+
+enum AdminAuditAction {
+  DISPUTE_RELEASE
+  DISPUTE_REFUND
+  DISPUTE_SPLIT
+  PROJECT_CLOSE
+  PROJECT_BLOCK
+  USER_BAN
+  USER_UNBAN
+  USER_DELETE
+  USER_WARNING
+  USER_TEMP_BAN
+  USER_FINE
+  BALANCE_ADJUST
+  REPORT_DISMISS
+  REPORT_RESOLVE
+  REPORT_IN_REVIEW
+  TICKET_REPLY
+  TICKET_CLOSE
+  VERIFICATION_APPROVE
+  VERIFICATION_REJECT
+  CATALOG_CATEGORY_SAVE
+  CATALOG_SKILL_SAVE
+  WITHDRAWAL_APPROVE
+  WITHDRAWAL_REJECT
+  STAFF_CREATE
+  STAFF_UPDATE
+  STAFF_DEACTIVATE
+  STAFF_REACTIVATE
+  STAFF_DELETE
+}
+
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum SupportTicketCategory {
+  GENERAL
+  PAYMENT
+  DISPUTE
+  ACCOUNT
+  OTHER
+}
+
+enum ProfileVerificationStatus {
+  NONE
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model User {
@@ -146,6 +205,7 @@ model User {
   interfaceLanguage  String           @default("ru") @map("interface_language")
   autoTranslate      Boolean          @default(true) @map("auto_translate")
   bannedAt           DateTime?        @map("banned_at")
+  bannedUntil        DateTime?        @map("banned_until")
   banReason          String?          @map("ban_reason") @db.Text
   deletedAt          DateTime?        @map("deleted_at")
   createdAt          DateTime         @default(now()) @map("created_at")
@@ -173,6 +233,13 @@ model User {
   reportsAgainst          Report[]           @relation("ReportsAgainstUser")
   reportsResolved         Report[]           @relation("ReportsResolved")
   contactWarningDismissals AdminContactWarningDismissal[]
+  adminAuditLogs          AdminAuditLog[]
+  warningsReceived        UserWarning[]        @relation("UserWarnings")
+  warningsIssued          UserWarning[]        @relation("WarningsIssued")
+  supportTickets          SupportTicket[]      @relation("UserSupportTickets")
+  assignedSupportTickets  SupportTicket[]      @relation("AssignedSupportTickets")
+  supportTicketMessages   SupportTicketMessage[]
+  verifiedProfiles        FreelancerProfile[]  @relation("VerifiedProfiles")
 
   @@map("users")
 }
@@ -208,13 +275,20 @@ model FreelancerProfile {
   website                String?
   experienceYears        Int?              @map("experience_years")
   portfolioBoostGranted  Boolean           @default(false) @map("portfolio_boost_granted")
+  verificationStatus     ProfileVerificationStatus @default(NONE) @map("verification_status")
+  verificationRequestedAt  DateTime?         @map("verification_requested_at")
+  verificationReviewedAt DateTime?         @map("verification_reviewed_at")
+  verificationNote       String?           @map("verification_note") @db.Text
+  verifiedById           String?           @map("verified_by_id")
   createdAt              DateTime          @default(now()) @map("created_at")
   updatedAt              DateTime          @updatedAt @map("updated_at")
 
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verifiedBy     User?           @relation("VerifiedProfiles", fields: [verifiedById], references: [id], onDelete: SetNull)
   skills         Skill[]         @relation("FreelancerSkills")
   portfolioItems PortfolioItem[]
 
+  @@index([verificationStatus, verificationRequestedAt])
   @@map("freelancer_profiles")
 }
 
@@ -472,6 +546,7 @@ model Payment {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([type, status])
   @@map("payments")
 }
 
@@ -525,4 +600,69 @@ model CategoryMinBudget {
 
   @@unique([categoryId, currency])
   @@map("category_min_budgets")
+}
+
+model AdminAuditLog {
+  id         String           @id @default(cuid())
+  adminId    String           @map("admin_id")
+  action     AdminAuditAction
+  targetType String?          @map("target_type")
+  targetId   String?          @map("target_id")
+  details    Json?
+  createdAt  DateTime         @default(now()) @map("created_at")
+
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId, createdAt])
+  @@index([action, createdAt])
+  @@map("admin_audit_logs")
+}
+
+model UserWarning {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  issuedById String   @map("issued_by_id")
+  reason     String   @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user     User @relation("UserWarnings", fields: [userId], references: [id], onDelete: Cascade)
+  issuedBy User @relation("WarningsIssued", fields: [issuedById], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("user_warnings")
+}
+
+model SupportTicket {
+  id           String                @id @default(cuid())
+  userId       String                @map("user_id")
+  subject      String
+  category     SupportTicketCategory @default(GENERAL)
+  status       SupportTicketStatus   @default(OPEN)
+  assignedToId String?               @map("assigned_to_id")
+  closedAt     DateTime?             @map("closed_at")
+  createdAt    DateTime              @default(now()) @map("created_at")
+  updatedAt    DateTime              @updatedAt @map("updated_at")
+
+  user       User                   @relation("UserSupportTickets", fields: [userId], references: [id], onDelete: Cascade)
+  assignedTo User?                  @relation("AssignedSupportTickets", fields: [assignedToId], references: [id], onDelete: SetNull)
+  messages   SupportTicketMessage[]
+
+  @@index([status, updatedAt])
+  @@index([userId, updatedAt])
+  @@map("support_tickets")
+}
+
+model SupportTicketMessage {
+  id        String   @id @default(cuid())
+  ticketId  String   @map("ticket_id")
+  senderId  String   @map("sender_id")
+  content   String   @db.Text
+  isStaff   Boolean  @default(false) @map("is_staff")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  sender User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId, createdAt])
+  @@map("support_ticket_messages")
 }

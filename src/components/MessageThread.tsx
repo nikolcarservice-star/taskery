@@ -1,6 +1,7 @@
 "use client";
 
 import { DisputeOpenedMessage } from "@/components/DisputeOpenedMessage";
+import { DisputeReasonMessage } from "@/components/DisputeReasonMessage";
 import { FormActionError } from "@/components/FormActionError";
 import { MessageContent } from "@/components/MessageContent";
 import { ModerationWarningMessage } from "@/components/ModerationWarningMessage";
@@ -144,6 +145,20 @@ export function MessageThread({
                     key={msg.id}
                     openedByName={openedByName}
                     openedByCurrentUser={msg.sender.id === currentUserId}
+                    createdAt={new Date(msg.createdAt)}
+                  />
+                );
+              }
+
+              if (msg.kind === "DISPUTE_REASON" && msg.sender && msg.content) {
+                const openedByName =
+                  msg.sender.name ?? msg.sender.id ?? t.participant;
+
+                return (
+                  <DisputeReasonMessage
+                    key={msg.id}
+                    openedByName={openedByName}
+                    content={msg.content}
                     createdAt={new Date(msg.createdAt)}
                   />
                 );

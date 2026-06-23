@@ -19,6 +19,7 @@ import {
   type FreelancerProfileTab,
   type SkillOption,
 } from "@/lib/freelancer-profile-shared";
+import { ProfileVerificationCard } from "@/components/ProfileVerificationCard";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useActionState } from "react";
@@ -409,6 +410,12 @@ export function FreelancerProfileSettings({
           {dict.cabinetForms.freelancerProfile.publicProfile}
         </Link>
       </div>
+
+      <ProfileVerificationCard
+        status={data.verificationStatus}
+        verificationNote={data.verificationNote}
+        verificationRequestedAt={data.verificationRequestedAt}
+      />
 
       <div className="mt-6">
         {activeTab === "about" && <AboutTab data={data} />}

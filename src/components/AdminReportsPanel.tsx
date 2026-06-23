@@ -6,6 +6,7 @@ import {
   adminDeleteUser,
   adminDismissProjectReports,
   adminDismissUserReports,
+  adminTakeReportReview,
   type ModerationActionState,
 } from "@/lib/actions/admin-moderation";
 import type {
@@ -34,12 +35,31 @@ const REASON_LABELS: Record<string, string> = {
   OTHER: "Другое",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "Новая",
+  IN_REVIEW: "В работе",
+};
+
 function ReportRow({ report }: { report: AdminReportItem }) {
+  const [reviewState, reviewAction, reviewPending] = useActionState(
+    adminTakeReportReview,
+    initialState,
+  );
+
   return (
     <li className="rounded-lg border border-orange-100/80 bg-white px-3 py-2.5 text-sm">
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <span className="rounded-full bg-orange-50 px-2 py-0.5 font-medium text-orange-800">
           {REASON_LABELS[report.reason] ?? report.reason}
+        </span>
+        <span
+          className={`rounded-full px-2 py-0.5 font-medium ${
+            report.status === "IN_REVIEW"
+              ? "bg-blue-100 text-blue-800"
+              : "bg-zinc-100 text-zinc-600"
+          }`}
+        >
+          {STATUS_LABELS[report.status] ?? report.status}
         </span>
         <span className="text-zinc-500">
           {new Date(report.createdAt).toLocaleString("ru-RU")}
@@ -50,6 +70,21 @@ function ReportRow({ report }: { report: AdminReportItem }) {
       </p>
       {report.details && (
         <p className="mt-1 text-xs leading-5 text-zinc-600">{report.details}</p>
+      )}
+      {report.status === "PENDING" && (
+        <form action={reviewAction} className="mt-2">
+          <input type="hidden" name="reportId" value={report.id} />
+          <button
+            type="submit"
+            disabled={reviewPending}
+            className="rounded-full border border-blue-300 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-50 disabled:opacity-50"
+          >
+            Взять в работу
+          </button>
+          {reviewState.error && (
+            <p className="mt-1 text-xs text-red-600">{reviewState.error}</p>
+          )}
+        </form>
       )}
     </li>
   );

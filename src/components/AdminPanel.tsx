@@ -2,6 +2,10 @@
 
 import { AdminModerationStack } from "@/components/AdminModerationStack";
 import { AdminFinancePanel } from "@/components/AdminFinancePanel";
+import { AdminAuditPanel } from "@/components/AdminAuditPanel";
+import { AdminCatalogPanel } from "@/components/AdminCatalogPanel";
+import { AdminVerificationPanel } from "@/components/AdminVerificationPanel";
+import { AdminSupportPanel } from "@/components/AdminSupportPanel";
 import { AdminUsersPanel } from "@/components/AdminUsersPanel";
 import {
   AdminStaffManager,
@@ -9,10 +13,17 @@ import {
 } from "@/components/AdminStaffManager";
 import {
   hasAdminPermission,
+  isSuperAdmin,
 } from "@/lib/admin-permissions";
 import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
 import type { AdminFinanceOverview } from "@/lib/queries/admin-finance";
 import type { AdminUserItem } from "@/lib/queries/admin-users";
+import type { AdminAuditEntry } from "@/lib/admin-audit";
+import { AdminWithdrawalsPanel } from "@/components/AdminWithdrawalsPanel";
+import type { AdminWithdrawalItem } from "@/lib/queries/admin-withdrawals";
+import type { AdminSupportTicketItem } from "@/lib/queries/admin-support";
+import type { AdminVerificationItem } from "@/lib/queries/admin-verification";
+import type { AdminCategoryItem, AdminSkillItem } from "@/lib/queries/admin-catalog";
 import type { AdminPermission } from "@/generated/prisma/client";
 
 type DisputeProject = {
@@ -46,6 +57,12 @@ type AdminPanelProps = {
   currentAdminId: string;
   users: AdminUserItem[];
   finance: AdminFinanceOverview | null;
+  auditLogs: AdminAuditEntry[];
+  supportTickets: AdminSupportTicketItem[];
+  verificationItems: AdminVerificationItem[];
+  catalogCategories: AdminCategoryItem[];
+  catalogSkills: AdminSkillItem[];
+  pendingWithdrawals: AdminWithdrawalItem[];
 };
 
 export function AdminPanel({
@@ -59,11 +76,18 @@ export function AdminPanel({
   currentAdminId,
   users,
   finance,
+  auditLogs,
+  supportTickets,
+  verificationItems,
+  catalogCategories,
+  catalogSkills,
+  pendingWithdrawals,
 }: AdminPanelProps) {
   const canModerate = hasAdminPermission(permissions, "MODERATION");
   const canManageStaff = hasAdminPermission(permissions, "STAFF_MANAGE");
   const canViewUsers = hasAdminPermission(permissions, "USERS");
   const canViewFinance = hasAdminPermission(permissions, "FINANCE");
+  const canViewAudit = canManageStaff || isSuperAdmin(permissions);
 
   return (
     <div className="space-y-10">
@@ -104,9 +128,34 @@ export function AdminPanel({
         />
       )}
 
-      {canViewUsers && <AdminUsersPanel users={users} />}
+      {canModerate && (
+        <AdminSupportPanel tickets={supportTickets} />
+      )}
 
-      {canViewFinance && finance && <AdminFinancePanel finance={finance} />}
+      {canViewUsers && (
+        <>
+          <AdminVerificationPanel items={verificationItems} />
+          <AdminUsersPanel users={users} />
+        </>
+      )}
+
+      {canManageStaff && (
+        <AdminCatalogPanel
+          categories={catalogCategories}
+          skills={catalogSkills}
+        />
+      )}
+
+      {canViewFinance && finance && (
+        <>
+          <AdminWithdrawalsPanel withdrawals={pendingWithdrawals} />
+          <AdminFinancePanel finance={finance} />
+        </>
+      )}
+
+      {canViewAudit && auditLogs.length > 0 && (
+        <AdminAuditPanel entries={auditLogs} />
+      )}
     </div>
   );
 }

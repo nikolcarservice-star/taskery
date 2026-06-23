@@ -128,6 +128,7 @@ export default async function FreelancerPage({ params }: FreelancerPageProps) {
           wantsRemoteWork: profile.wantsRemoteWork,
           skills: profile.skills,
           portfolioItems: profile.portfolioItems,
+          isVerified: profile.verificationStatus === "APPROVED",
         }}
         reviews={user.reviewsReceived}
         isOwnProfile={isOwnProfile}

@@ -196,7 +196,7 @@ export function FreelancerSidebar({ isAdmin = false }: FreelancerSidebarProps) {
     {
       type: "link",
       label: nav.support,
-      href: l("/contact"),
+      href: l("/support"),
       icon: "🎧",
     },
     {

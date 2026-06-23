@@ -804,6 +804,8 @@ export type Dictionary = {
       BID_MESSAGE: string;
       NEW_MESSAGE: string;
       NEW_BID: string;
+      SUPPORT_REPLY: string;
+      USER_WARNING: string;
     };
     projectStatus: {
       OPEN: string;
@@ -943,6 +945,8 @@ export type Dictionary = {
       openedByYou: string;
       adminNoteTitle: string;
       adminNoteFrom: string;
+      reasonTitle: string;
+      reasonFrom: string;
       openButton: string;
       dialogTitle: string;
       dialogBody: string;
@@ -1109,6 +1113,9 @@ export type Dictionary = {
         balanceTopUp: string;
         projectPayment: string;
         projectEscrow: string;
+        withdrawalPending: string;
+        withdrawalCompleted: string;
+        withdrawalRejected: string;
       };
       freelancer: {
         tabs: {
@@ -1131,7 +1138,19 @@ export type Dictionary = {
         escrowInfoLink: string;
         escrowInfoAfterLink: string;
         requestWithdrawal: string;
-        withdrawalSoon: string;
+        withdrawalProcessingHint: string;
+        withdrawalPendingTitle: string;
+        withdrawalPendingBody: string;
+        withdrawalAmountLabel: string;
+        withdrawalMethodLabel: string;
+        withdrawalMethodCard: string;
+        withdrawalMethodIban: string;
+        withdrawalDestinationLabel: string;
+        withdrawalDestinationPlaceholder: string;
+        withdrawalMinHint: string;
+        withdrawalSubmitting: string;
+        withdrawalSubmitted: string;
+        emptyWithdrawals: string;
         colDate: string;
         colCredit: string;
         colDescription: string;
@@ -1340,6 +1359,7 @@ export type Dictionary = {
         credit: string;
         debit: string;
         hold: string;
+        pending: string;
       };
     };
   };
@@ -1477,6 +1497,8 @@ export type Dictionary = {
     BID_MESSAGE: { title: string; body: string };
     NEW_MESSAGE: { title: string; body: string };
     NEW_BID: { title: string; body: string };
+    SUPPORT_REPLY: { title: string; body: string };
+    USER_WARNING: { title: string; body: string };
   };
   faq: FaqItem[];
 };

@@ -1,5 +1,7 @@
 "use client";
 
+import { AdminBalanceAdjustForm } from "@/components/AdminBalanceAdjustForm";
+
 import type {
   AdminFinanceOverview,
   AdminPaymentItem,
@@ -15,6 +17,9 @@ const PAYMENT_TYPE_LABELS: Record<PaymentType, string> = {
   FEATURE_PROJECT: "Продвижение проекта",
   FEATURE_PROFILE: "Продвижение профиля",
   COMMISSION: "Комиссия",
+  ADMIN_ADJUSTMENT: "Корректировка",
+  FINE: "Штраф",
+  WITHDRAWAL: "Вывод",
 };
 
 const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
@@ -92,7 +97,9 @@ export function AdminFinancePanel({ finance, mobile = false }: AdminFinancePanel
   ];
 
   return (
-    <section className={mobile ? "space-y-4" : "space-y-6"}>
+    <div className={mobile ? "space-y-4" : "space-y-10"}>
+      {!mobile && <AdminBalanceAdjustForm />}
+      <section className={mobile ? "space-y-4" : "space-y-6"}>
       <div
         className={
           mobile
@@ -251,5 +258,6 @@ export function AdminFinancePanel({ finance, mobile = false }: AdminFinancePanel
         )}
       </div>
     </section>
+    </div>
   );
 }

@@ -61,6 +61,10 @@ export function getAdminMobilePageTitle(path: string): string {
   if (path.startsWith(`${ADMIN_MOBILE_ROOT}/moderation`)) return "Модерация";
   if (path.startsWith(`${ADMIN_MOBILE_ROOT}/users`)) return "Пользователи";
   if (path.startsWith(`${ADMIN_MOBILE_ROOT}/finance`)) return "Финансы";
+  if (path.startsWith(`${ADMIN_MOBILE_ROOT}/support`)) return "Поддержка";
+  if (path.startsWith(`${ADMIN_MOBILE_ROOT}/verification`)) return "Верификация";
+  if (path.startsWith(`${ADMIN_MOBILE_ROOT}/catalog`)) return "Каталог";
+  if (path.startsWith(`${ADMIN_MOBILE_ROOT}/withdrawals`)) return "Выводы";
   if (path.startsWith(`${ADMIN_MOBILE_ROOT}/staff`)) return "Команда";
   if (path.startsWith(`${ADMIN_MOBILE_ROOT}/more`)) return "Ещё";
   return "Админ";

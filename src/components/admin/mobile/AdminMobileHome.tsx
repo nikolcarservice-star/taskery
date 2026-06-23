@@ -41,11 +41,34 @@ export function AdminMobileHome({
       permission: "MODERATION",
     },
     {
+      href: `${ADMIN_MOBILE_ROOT}/support`,
+      label: "Поддержка",
+      description: "Обращения пользователей",
+      icon: "💬",
+      permission: "MODERATION",
+    },
+    {
+      href: `${ADMIN_MOBILE_ROOT}/verification`,
+      label: "Верификация",
+      description: "Заявки на подтверждение профиля",
+      icon: "✓",
+      badge: badges.verification,
+      permission: "USERS",
+    },
+    {
       href: `${ADMIN_MOBILE_ROOT}/users`,
       label: "Пользователи",
       description: "Поиск, блокировка, удаление",
       icon: "👥",
       permission: "USERS",
+    },
+    {
+      href: `${ADMIN_MOBILE_ROOT}/withdrawals`,
+      label: "Выводы",
+      description: "Заявки на перевод средств",
+      icon: "💸",
+      badge: badges.withdrawals,
+      permission: "FINANCE",
     },
     {
       href: `${ADMIN_MOBILE_ROOT}/finance`,
@@ -54,6 +77,13 @@ export function AdminMobileHome({
       icon: "💰",
       badge: badges.finance,
       permission: "FINANCE",
+    },
+    {
+      href: `${ADMIN_MOBILE_ROOT}/catalog`,
+      label: "Каталог",
+      description: "Категории и навыки",
+      icon: "📚",
+      permission: "STAFF_MANAGE",
     },
     {
       href: `${ADMIN_MOBILE_ROOT}/staff`,

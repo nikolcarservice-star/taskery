@@ -8,15 +8,23 @@ import {
   type FinanceSummary,
   type FinanceTab,
   type MonthlyStat,
+  type PendingWithdrawalInfo,
 } from "@/lib/freelancer-finances-shared";
+import {
+  requestWithdrawal,
+  type WithdrawalRequestState,
+} from "@/lib/actions/withdrawals";
+import { MIN_WITHDRAWAL_UAH } from "@/lib/withdrawals-shared";
 import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useActionState, useMemo } from "react";
 
 type FreelancerFinancesProps = {
   summary: FinanceSummary;
   ledger: FinanceLedgerEntry[];
+  withdrawalLedger: FinanceLedgerEntry[];
+  pendingWithdrawal: PendingWithdrawalInfo | null;
   monthlyStats: MonthlyStat[];
   yearTotal: number;
 };
@@ -118,6 +126,17 @@ function LedgerAmount({ entry }: { entry: FinanceLedgerEntry }) {
     );
   }
 
+  if (entry.direction === "pending") {
+    return (
+      <span className="inline-flex items-center gap-1.5 font-semibold tabular-nums text-amber-700">
+        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-xs">
+          …
+        </span>
+        −{formatUah(entry.amount)}
+      </span>
+    );
+  }
+
   const isCredit = entry.direction === "credit";
 
   return (
@@ -139,18 +158,111 @@ function LedgerAmount({ entry }: { entry: FinanceLedgerEntry }) {
   );
 }
 
-function WithdrawalsTab({
+const withdrawalInitialState: WithdrawalRequestState = {};
+
+function WithdrawalRequestForm({
   summary,
-  ledger,
+  pendingWithdrawal,
 }: {
   summary: FinanceSummary;
-  ledger: FinanceLedgerEntry[];
+  pendingWithdrawal: PendingWithdrawalInfo | null;
+}) {
+  const dict = useDictionary();
+  const t = dict.cabinetForms.finances.freelancer;
+  const [state, formAction, pending] = useActionState(
+    requestWithdrawal,
+    withdrawalInitialState,
+  );
+
+  if (pendingWithdrawal) {
+    return (
+      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="font-medium">{t.withdrawalPendingTitle}</p>
+        <p className="mt-1">
+          {t.withdrawalPendingBody
+            .replace("{amount}", formatUah(pendingWithdrawal.amount))
+            .replace("{method}", pendingWithdrawal.method)}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form action={formAction} className="space-y-4 rounded-xl border border-zinc-200 bg-zinc-50/80 p-4">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="withdraw-amount" className="block text-sm font-medium text-zinc-700">
+            {t.withdrawalAmountLabel}
+          </label>
+          <input
+            id="withdraw-amount"
+            name="amount"
+            type="number"
+            min={MIN_WITHDRAWAL_UAH}
+            max={summary.availableBalance}
+            step="0.01"
+            required
+            placeholder={String(MIN_WITHDRAWAL_UAH)}
+            className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm"
+          />
+          <p className="mt-1 text-xs text-zinc-500">
+            {t.withdrawalMinHint.replace("{min}", String(MIN_WITHDRAWAL_UAH))}
+          </p>
+        </div>
+        <div>
+          <label htmlFor="withdraw-method" className="block text-sm font-medium text-zinc-700">
+            {t.withdrawalMethodLabel}
+          </label>
+          <select
+            id="withdraw-method"
+            name="method"
+            required
+            defaultValue="CARD"
+            className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm"
+          >
+            <option value="CARD">{t.withdrawalMethodCard}</option>
+            <option value="IBAN">{t.withdrawalMethodIban}</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label htmlFor="withdraw-destination" className="block text-sm font-medium text-zinc-700">
+          {t.withdrawalDestinationLabel}
+        </label>
+        <input
+          id="withdraw-destination"
+          name="destination"
+          required
+          placeholder={t.withdrawalDestinationPlaceholder}
+          className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm"
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={pending || summary.availableBalance < MIN_WITHDRAWAL_UAH}
+        className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+      >
+        {pending ? t.withdrawalSubmitting : t.requestWithdrawal}
+      </button>
+      {state.error && <p className="text-sm text-red-600">{state.error}</p>}
+      {state.success && <p className="text-sm text-emerald-700">{t.withdrawalSubmitted}</p>}
+    </form>
+  );
+}
+
+function WithdrawalsTab({
+  summary,
+  withdrawalLedger,
+  pendingWithdrawal,
+}: {
+  summary: FinanceSummary;
+  withdrawalLedger: FinanceLedgerEntry[];
+  pendingWithdrawal: PendingWithdrawalInfo | null;
 }) {
   const dict = useDictionary();
   const l = useLocalizedPath();
   const locale = useDictionaryLocale();
   const t = dict.cabinetForms.finances.freelancer;
-  const common = dict.cabinetForms.common;
 
   return (
     <div className="space-y-6">
@@ -163,17 +275,14 @@ function WithdrawalsTab({
             {formatUah(summary.availableBalance)}
           </p>
         </div>
-        <button
-          type="button"
-          disabled
-          title={common.soon}
-          className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white opacity-60"
-        >
-          {t.requestWithdrawal}
-        </button>
       </div>
 
-      <p className="text-sm text-zinc-500">{t.withdrawalSoon}</p>
+      <WithdrawalRequestForm
+        summary={summary}
+        pendingWithdrawal={pendingWithdrawal}
+      />
+
+      <p className="text-sm text-zinc-500">{t.withdrawalProcessingHint}</p>
 
       <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
@@ -187,14 +296,14 @@ function WithdrawalsTab({
               </tr>
             </thead>
             <tbody>
-              {ledger.length === 0 ? (
+              {withdrawalLedger.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-5 py-12 text-center text-zinc-500">
-                    {t.emptyLedger}
+                    {t.emptyWithdrawals}
                   </td>
                 </tr>
               ) : (
-                ledger.map((entry, index) => (
+                withdrawalLedger.map((entry, index) => (
                   <tr
                     key={entry.id}
                     className={`border-b border-zinc-100 ${
@@ -359,6 +468,8 @@ function StatisticsTab({
 export function FreelancerFinances({
   summary,
   ledger,
+  withdrawalLedger,
+  pendingWithdrawal,
   monthlyStats,
   yearTotal,
 }: FreelancerFinancesProps) {
@@ -409,7 +520,11 @@ export function FreelancerFinances({
       <div className="mt-6">
         {activeTab === "balance" && <BalanceTab summary={summary} />}
         {activeTab === "withdrawals" && (
-          <WithdrawalsTab summary={summary} ledger={ledger} />
+          <WithdrawalsTab
+            summary={summary}
+            withdrawalLedger={withdrawalLedger}
+            pendingWithdrawal={pendingWithdrawal}
+          />
         )}
         {activeTab === "statistics" && (
           <StatisticsTab monthlyStats={monthlyStats} yearTotal={yearTotal} />

@@ -158,6 +158,83 @@ export async function atomicReleaseDispute(
   });
 }
 
+export async function atomicSplitDispute(
+  contractId: string,
+  projectId: string,
+  freelancerId: string,
+  clientId: string,
+  totalAmount: number,
+  totalCommission: number,
+  totalPayout: number,
+  freelancerPercent: number,
+) {
+  if (freelancerPercent <= 0 || freelancerPercent >= 100) {
+    throw new EscrowError(
+      "Для частичного решения укажите процент от 1 до 99",
+      "INVALID_STATUS",
+    );
+  }
+
+  const payout =
+    Math.round(((totalPayout * freelancerPercent) / 100) * 100) / 100;
+  const commission =
+    Math.round(((totalCommission * freelancerPercent) / 100) * 100) / 100;
+  const clientRefund =
+    Math.round((totalAmount - payout - commission) * 100) / 100;
+
+  if (clientRefund < 0) {
+    throw new EscrowError("Некорректное распределение суммы", "INVALID_STATUS");
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const contractResult = await tx.contract.updateMany({
+      where: { id: contractId, status: "ESCROWED" },
+      data: { status: "RELEASED" },
+    });
+
+    if (contractResult.count === 0) {
+      throw new EscrowError("Средства уже обработаны", "ALREADY_PROCESSED");
+    }
+
+    if (payout > 0) {
+      await tx.user.update({
+        where: { id: freelancerId },
+        data: { balance: { increment: payout } },
+      });
+    }
+
+    if (clientRefund > 0) {
+      await tx.user.update({
+        where: { id: clientId },
+        data: { balance: { increment: clientRefund } },
+      });
+    }
+
+    await tx.project.updateMany({
+      where: { id: projectId, status: "UNDER_DISPUTE" },
+      data: { status: "CLOSED" },
+    });
+
+    if (commission > 0) {
+      await tx.payment.create({
+        data: {
+          userId: clientId,
+          amount: commission,
+          type: "COMMISSION",
+          status: "COMPLETED",
+          metadata: {
+            projectId,
+            contractId,
+            dispute: true,
+            split: true,
+            freelancerPercent,
+          },
+        },
+      });
+    }
+  });
+}
+
 export async function atomicOpenDispute(
   projectId: string,
   contractId: string,
@@ -200,7 +277,7 @@ export async function atomicOpenDispute(
           },
           {
             conversationId: chat.conversationId,
-            kind: "DISPUTE_ADMIN_NOTE",
+            kind: "DISPUTE_REASON",
             senderId: chat.openedById,
             content: chat.adminNote,
           },

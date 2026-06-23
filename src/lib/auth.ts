@@ -1,4 +1,5 @@
 import { Role } from "@/generated/prisma/client";
+import { isUserCurrentlyBanned, clearExpiredTemporaryBan } from "@/lib/user-ban";
 import { authConfig } from "@/lib/auth.config";
 import { getRegistrationBoostFields } from "@/lib/taskboost-promotion.shared";
 import { prisma } from "@/lib/prisma";
@@ -28,8 +29,17 @@ async function loadUserIntoToken(token: {
 
   if (!dbUser) return token;
 
-  if (dbUser.bannedAt || dbUser.deletedAt) {
-    if (dbUser.role !== "ADMIN") {
+  await clearExpiredTemporaryBan(dbUser.id);
+
+  const refreshedUser =
+    dbUser.bannedUntil && dbUser.bannedUntil <= new Date()
+      ? await prisma.user.findUnique({ where: { id: dbUser.id } })
+      : dbUser;
+
+  const activeUser = refreshedUser ?? dbUser;
+
+  if (isUserCurrentlyBanned(activeUser)) {
+    if (activeUser.role !== "ADMIN") {
       token.isBanned = true;
       return token;
     }

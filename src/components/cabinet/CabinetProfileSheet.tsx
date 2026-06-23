@@ -89,7 +89,7 @@ export function CabinetProfileSheet({
     { label: dict.header.findFreelancer, href: l("/freelancers"), icon: "👥" },
     { label: c.personal, href: l("/client/personal"), icon: "🗄️" },
     { label: c.settings, href: l("/client/settings"), icon: "⚙️" },
-    { label: nav.support, href: l("/contact"), icon: "🎧" },
+    { label: nav.support, href: l("/support"), icon: "🎧" },
     { label: nav.whatsNew, href: l("/faq"), icon: "📣" },
   ];
 
@@ -113,7 +113,7 @@ export function CabinetProfileSheet({
     { label: f.freelancerProfile, href: l("/dashboard/profile"), icon: "💻" },
     { label: f.settings, href: l("/dashboard/settings"), icon: "⚙️" },
     { label: f.boost, href: l("/boost"), icon: "⚡" },
-    { label: nav.support, href: l("/contact"), icon: "🎧" },
+    { label: nav.support, href: l("/support"), icon: "🎧" },
     { label: nav.whatsNew, href: l("/faq"), icon: "📣" },
   ];
 

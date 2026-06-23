@@ -34,6 +34,10 @@ export async function getFreelancerProfileData(
     taxId: profile.taxId,
     website: profile.website,
     experienceYears: profile.experienceYears,
+    verificationStatus: profile.verificationStatus as FreelancerProfileData["verificationStatus"],
+    verificationNote: profile.verificationNote,
+    verificationRequestedAt:
+      profile.verificationRequestedAt?.toISOString() ?? null,
   };
 }
 

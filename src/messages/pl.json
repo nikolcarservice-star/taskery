@@ -574,7 +574,9 @@
       "BID_ACCEPTED": "Wybrano Cię",
       "BID_MESSAGE": "Wiadomość do oferty",
       "NEW_MESSAGE": "Nowa wiadomość",
-      "NEW_BID": "Nowa oferta"
+      "NEW_BID": "Nowa oferta",
+      "SUPPORT_REPLY": "Wsparcie",
+      "USER_WARNING": "Ostrzeżenie"
     },
     "projectStatus": {
       "OPEN": "Otwarty",
@@ -782,12 +784,14 @@
       "openedByYou": "Otworzyłeś(aś) spór w tym projekcie",
       "adminNoteTitle": "Komentarz dla administratora",
       "adminNoteFrom": "Od {name}",
+      "reasonTitle": "Powód sporu",
+      "reasonFrom": "Od {name}",
       "openButton": "Otwórz spór",
       "dialogTitle": "Otwórz spór",
-      "dialogBody": "Środki pozostaną w escrow do decyzji administratora. Uczestnicy zobaczą powiadomienie na czacie; tylko administrator zobaczy Twój komentarz.",
+      "dialogBody": "Środki pozostaną w escrow do decyzji administratora. Uczestnicy zobaczą powiadomienie i Twój powód na czacie.",
       "reasonLabel": "Powód sporu",
       "reasonPlaceholder": "Opisz, co się stało i dlaczego otwierasz spór…",
-      "reasonHint": "Minimum 10 znaków. Tylko administrator zobaczy ten tekst.",
+      "reasonHint": "Minimum 10 znaków. Powód zobaczą obie strony i administrator.",
       "submit": "Otwórz spór",
       "pending": "Otwieranie…",
       "cancel": "Anuluj",
@@ -982,7 +986,19 @@
         "escrowInfoLink": "bazie wiedzy",
         "escrowInfoAfterLink": ".",
         "requestWithdrawal": "Poproś o wypłatę",
-        "withdrawalSoon": "Wypłaty na kartę i IBAN wkrótce. Minimalna kwota — 500 ₴.",
+        "withdrawalProcessingHint": "Wnioski są przetwarzane ręcznie w ciągu 1–3 dni roboczych. Minimalna kwota — 500 ₴.",
+        "withdrawalPendingTitle": "Wniosek o wypłatę w trakcie",
+        "withdrawalPendingBody": "{amount} przez {method}. Poczekaj na decyzję administratora.",
+        "withdrawalAmountLabel": "Kwota, ₴",
+        "withdrawalMethodLabel": "Metoda wypłaty",
+        "withdrawalMethodCard": "Karta bankowa",
+        "withdrawalMethodIban": "IBAN / konto bankowe",
+        "withdrawalDestinationLabel": "Dane do wypłaty",
+        "withdrawalDestinationPlaceholder": "Numer karty lub IBAN",
+        "withdrawalMinHint": "Minimum {min} ₴",
+        "withdrawalSubmitting": "Wysyłanie…",
+        "withdrawalSubmitted": "Wniosek wysłany do rozpatrzenia",
+        "emptyWithdrawals": "Brak wniosków o wypłatę.",
         "colDate": "Data",
         "colCredit": "Uznanie",
         "colDescription": "Opis",
@@ -1016,7 +1032,10 @@
       "ledger": {
         "balanceTopUp": "Doładowanie salda",
         "projectPayment": "Płatność za projekt «{project}»",
-        "projectEscrow": "Rezerwa za projekt «{project}»"
+        "projectEscrow": "Rezerwa za projekt «{project}»",
+        "withdrawalPending": "Wniosek o wypłatę (w trakcie)",
+        "withdrawalCompleted": "Wypłata",
+        "withdrawalRejected": "Wypłata odrzucona — zwrot na saldo"
       }
     },
     "reviews": {
@@ -1190,7 +1209,8 @@
       "ledgerDirection": {
         "credit": "Doładowanie",
         "debit": "Płatność",
-        "hold": "Depozyt"
+        "hold": "Depozyt",
+        "pending": "W trakcie weryfikacji"
       }
     },
     "escrowNotice": {
@@ -1782,6 +1802,14 @@
     "NEW_MESSAGE": {
       "title": "Nowa wiadomość",
       "body": "{name} · {project}"
+    },
+    "SUPPORT_REPLY": {
+      "title": "Odpowiedź wsparcia",
+      "body": "{project}"
+    },
+    "USER_WARNING": {
+      "title": "Ostrzeżenie od administracji",
+      "body": "{project}"
     }
   },
   "reports": {

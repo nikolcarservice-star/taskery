@@ -1,5 +1,6 @@
 "use server";
 
+import { logAdminAction } from "@/lib/admin-audit";
 import { auth } from "@/lib/auth";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { prisma } from "@/lib/prisma";
@@ -73,8 +74,45 @@ export async function adminDismissReport(
     return { error: "Жалоба не найдена" };
   }
 
+  await logAdminAction(authResult.admin.id, "REPORT_DISMISS", {
+    targetType: "report",
+    targetId: reportId,
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/mobile");
+  revalidatePath("/admin/mobile/moderation");
+  return { success: true };
+}
+
+export async function adminTakeReportReview(
+  _prevState: ModerationActionState,
+  formData: FormData,
+): Promise<ModerationActionState> {
+  const authResult = await requireModerationAdmin();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const reportId = (formData.get("reportId") as string | null)?.trim();
+  if (!reportId) return { error: "Жалоба не найдена" };
+
+  try {
+    await prisma.report.update({
+      where: { id: reportId, status: "PENDING" },
+      data: {
+        status: "IN_REVIEW",
+        resolvedById: authResult.admin.id,
+      },
+    });
+  } catch {
+    return { error: "Жалоба не найдена или уже в работе" };
+  }
+
+  await logAdminAction(authResult.admin.id, "REPORT_IN_REVIEW", {
+    targetType: "report",
+    targetId: reportId,
+  });
+
+  revalidatePath("/admin");
   revalidatePath("/admin/mobile/moderation");
   return { success: true };
 }
@@ -138,6 +176,12 @@ export async function adminDismissProjectReports(
 
   await recalculateProjectReportStats(projectId);
 
+  await logAdminAction(authResult.admin.id, "REPORT_DISMISS", {
+    targetType: "project",
+    targetId: projectId,
+    details: { note },
+  });
+
   revalidatePath("/admin");
   return { success: true };
 }
@@ -165,6 +209,12 @@ export async function adminDismissUserReports(
       resolvedAt: new Date(),
       adminNote: note ?? null,
     },
+  });
+
+  await logAdminAction(authResult.admin.id, "REPORT_DISMISS", {
+    targetType: "user",
+    targetId: userId,
+    details: { note },
   });
 
   revalidatePath("/admin");
@@ -238,6 +288,12 @@ export async function adminBlockProject(
   }
 
   await recalculateProjectReportStats(projectId);
+
+  await logAdminAction(authResult.admin.id, "PROJECT_BLOCK", {
+    targetType: "project",
+    targetId: projectId,
+    details: { reason },
+  });
 
   revalidatePath("/admin");
   revalidatePath(`/projects/${project.slug}`);
@@ -313,6 +369,12 @@ export async function adminBanUser(
       // ignore
     }
   }
+
+  await logAdminAction(authResult.admin.id, "USER_BAN", {
+    targetType: "user",
+    targetId: userId,
+    details: { reason },
+  });
 
   revalidatePath("/admin");
   return { success: true };
@@ -416,6 +478,12 @@ export async function adminDeleteUser(
       // ignore
     }
   }
+
+  await logAdminAction(authResult.admin.id, "USER_DELETE", {
+    targetType: "user",
+    targetId: userId,
+    details: { reason },
+  });
 
   revalidatePath("/admin");
   return { success: true };

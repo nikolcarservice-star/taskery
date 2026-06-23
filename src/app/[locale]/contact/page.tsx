@@ -58,6 +58,12 @@ export default async function ContactPage({ params }: ContactPageProps) {
 
           <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5 sm:bg-white sm:p-6 sm:shadow-sm">
             <ContactForm />
+            <p className="mt-4 text-sm text-zinc-600">
+              Уже зарегистрированы?{" "}
+              <a href={`/${locale}/support`} className="font-medium text-indigo-600 hover:underline">
+                Открыть обращение в личном кабинете
+              </a>
+            </p>
           </div>
         </div>
       </>

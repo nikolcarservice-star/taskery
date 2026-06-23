@@ -1024,7 +1024,9 @@
       "BID_ACCEPTED": "Вас выбрали",
       "BID_MESSAGE": "Сообщение по отклику",
       "NEW_MESSAGE": "Новое сообщение",
-      "NEW_BID": "Новый отклик"
+      "NEW_BID": "Новый отклик",
+      "SUPPORT_REPLY": "Поддержка",
+      "USER_WARNING": "Предупреждение"
     },
     "projectStatus": {
       "OPEN": "Открыт",
@@ -1232,12 +1234,14 @@
       "openedByYou": "Вы открыли спор по проекту",
       "adminNoteTitle": "Комментарий для администратора",
       "adminNoteFrom": "От {name}",
+      "reasonTitle": "Причина спора",
+      "reasonFrom": "От {name}",
       "openButton": "Открыть спор",
       "dialogTitle": "Открыть спор",
-      "dialogBody": "Средства останутся в эскроу до решения администратора. Участники увидят уведомление в чате; ваш комментарий увидит только администратор.",
+      "dialogBody": "Средства останутся в эскроу до решения администратора. Участники увидят уведомление и вашу причину в чате.",
       "reasonLabel": "Причина спора",
       "reasonPlaceholder": "Опишите, что произошло и почему вы открываете спор…",
-      "reasonHint": "Минимум 10 символов. Этот текст увидит только администратор.",
+      "reasonHint": "Минимум 10 символов. Причину увидят оба участника сделки и администратор.",
       "submit": "Открыть спор",
       "pending": "Открываем…",
       "cancel": "Отмена",
@@ -1414,7 +1418,10 @@
       "ledger": {
         "balanceTopUp": "Пополнение баланса",
         "projectPayment": "Оплата по проекту «{project}»",
-        "projectEscrow": "Резерв по проекту «{project}»"
+        "projectEscrow": "Резерв по проекту «{project}»",
+        "withdrawalPending": "Заявка на вывод (на рассмотрении)",
+        "withdrawalCompleted": "Вывод средств",
+        "withdrawalRejected": "Вывод отклонён — возврат на баланс"
       },
       "freelancer": {
         "tabs": {
@@ -1437,7 +1444,19 @@
         "escrowInfoLink": "базе знаний",
         "escrowInfoAfterLink": ".",
         "requestWithdrawal": "Запросить вывод",
-        "withdrawalSoon": "Вывод на карту и IBAN скоро будет доступен. Минимальная сумма — 500 ₴.",
+        "withdrawalProcessingHint": "Заявки обрабатываются вручную в течение 1–3 рабочих дней. Минимальная сумма — 500 ₴.",
+        "withdrawalPendingTitle": "Заявка на вывод в обработке",
+        "withdrawalPendingBody": "{amount} через {method}. Дождитесь решения администратора.",
+        "withdrawalAmountLabel": "Сумма, ₴",
+        "withdrawalMethodLabel": "Способ вывода",
+        "withdrawalMethodCard": "Банковская карта",
+        "withdrawalMethodIban": "IBAN / расчётный счёт",
+        "withdrawalDestinationLabel": "Реквизиты",
+        "withdrawalDestinationPlaceholder": "Номер карты или IBAN",
+        "withdrawalMinHint": "Минимум {min} ₴",
+        "withdrawalSubmitting": "Отправка…",
+        "withdrawalSubmitted": "Заявка отправлена на рассмотрение",
+        "emptyWithdrawals": "Заявок на вывод пока нет.",
         "colDate": "Дата",
         "colCredit": "Зачисление",
         "colDescription": "Описание",
@@ -1660,7 +1679,8 @@
       "ledgerDirection": {
         "credit": "Пополнение",
         "debit": "Оплата",
-        "hold": "Резерв"
+        "hold": "Резерв",
+        "pending": "На рассмотрении"
       }
     }
   },
@@ -1773,6 +1793,14 @@
     "NEW_MESSAGE": {
       "title": "Новое сообщение",
       "body": "{name} · {project}"
+    },
+    "SUPPORT_REPLY": {
+      "title": "Ответ службы поддержки",
+      "body": "{project}"
+    },
+    "USER_WARNING": {
+      "title": "Предупреждение от администрации",
+      "body": "{project}"
     }
   },
   "faq": [

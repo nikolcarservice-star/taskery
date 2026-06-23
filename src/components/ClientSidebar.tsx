@@ -178,7 +178,7 @@ export function ClientSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
     {
       type: "link",
       label: nav.support,
-      href: l("/contact"),
+      href: l("/support"),
       icon: "🎧",
     },
     {

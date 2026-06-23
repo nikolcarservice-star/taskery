@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminUserSanctions } from "@/components/AdminUserSanctions";
 import {
   adminUsersBan,
   adminUsersDelete,
@@ -89,6 +90,7 @@ function UserActions({ user }: { user: AdminUserItem }) {
 
       {error && <p className="text-xs text-red-600">{error}</p>}
       {success && <p className="text-xs text-green-700">Готово</p>}
+      <AdminUserSanctions user={user} />
     </div>
   );
 }
@@ -102,9 +104,11 @@ function UserStatusBadge({ user }: { user: AdminUserItem }) {
     );
   }
   if (user.bannedAt) {
+    const isTemp =
+      user.bannedUntil && new Date(user.bannedUntil) > new Date();
     return (
       <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-        Заблокирован
+        {isTemp ? "Временный бан" : "Заблокирован"}
       </span>
     );
   }
@@ -118,23 +122,81 @@ function UserStatusBadge({ user }: { user: AdminUserItem }) {
 type AdminUsersPanelProps = {
   users: AdminUserItem[];
   mobile?: boolean;
+  initialQuery?: string;
+  initialRole?: Role | "ALL";
+  initialStatus?: "active" | "banned" | "deleted" | "all";
 };
 
-export function AdminUsersPanel({ users, mobile = false }: AdminUsersPanelProps) {
-  const [query, setQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<Role | "ALL">("ALL");
+export function AdminUsersPanel({
+  users,
+  mobile = false,
+  initialQuery = "",
+  initialRole = "ALL",
+  initialStatus = "all",
+}: AdminUsersPanelProps) {
+  const [query, setQuery] = useState(initialQuery);
+  const [roleFilter, setRoleFilter] = useState<Role | "ALL">(initialRole);
+  const [statusFilter, setStatusFilter] = useState<
+    "active" | "banned" | "deleted" | "all"
+  >(initialStatus);
 
   const filtered = useMemo(() => {
+    if (mobile) return users;
+
     const q = query.trim().toLowerCase();
     return users.filter((user) => {
       if (roleFilter !== "ALL" && user.role !== roleFilter) return false;
+      if (statusFilter === "active" && (user.bannedAt || user.deletedAt)) {
+        return false;
+      }
+      if (statusFilter === "banned" && !user.bannedAt) return false;
+      if (statusFilter === "deleted" && !user.deletedAt) return false;
       if (!q) return true;
       return (
         user.email.toLowerCase().includes(q) ||
-        (user.name?.toLowerCase().includes(q) ?? false)
+        (user.name?.toLowerCase().includes(q) ?? false) ||
+        user.id.toLowerCase().includes(q)
       );
     });
-  }, [users, query, roleFilter]);
+  }, [users, query, roleFilter, statusFilter, mobile]);
+
+  const searchFields = (
+    <>
+      <input
+        type="search"
+        name="q"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Email, имя или ID"
+        className={`rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm ${mobile ? "w-full" : ""}`}
+      />
+      <select
+        name="role"
+        value={roleFilter}
+        onChange={(e) => setRoleFilter(e.target.value as Role | "ALL")}
+        className={`rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm ${mobile ? "w-full" : ""}`}
+      >
+        <option value="ALL">Все роли</option>
+        <option value="CLIENT">Заказчики</option>
+        <option value="FREELANCER">Фрилансеры</option>
+      </select>
+      <select
+        name="status"
+        value={statusFilter}
+        onChange={(e) =>
+          setStatusFilter(
+            e.target.value as "active" | "banned" | "deleted" | "all",
+          )
+        }
+        className={`rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm ${mobile ? "w-full" : ""}`}
+      >
+        <option value="all">Все статусы</option>
+        <option value="active">Активные</option>
+        <option value="banned">Заблокированные</option>
+        <option value="deleted">Удалённые</option>
+      </select>
+    </>
+  );
 
   return (
     <section
@@ -156,22 +218,19 @@ export function AdminUsersPanel({ users, mobile = false }: AdminUsersPanelProps)
           </div>
         )}
         <div className={`flex flex-col gap-2 ${mobile ? "w-full" : "flex-wrap sm:flex-row"}`}>
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Email или имя"
-            className={`rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm ${mobile ? "w-full" : ""}`}
-          />
-          <select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value as Role | "ALL")}
-            className={`rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm ${mobile ? "w-full" : ""}`}
-          >
-            <option value="ALL">Все роли</option>
-            <option value="CLIENT">Заказчики</option>
-            <option value="FREELANCER">Фрилансеры</option>
-          </select>
+          {mobile ? (
+            <form method="get" className="flex flex-col gap-2">
+              {searchFields}
+              <button
+                type="submit"
+                className="rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white"
+              >
+                Найти
+              </button>
+            </form>
+          ) : (
+            searchFields
+          )}
         </div>
       </div>
 

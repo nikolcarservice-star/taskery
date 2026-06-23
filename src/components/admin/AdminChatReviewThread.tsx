@@ -2,6 +2,7 @@
 
 import { DisputeAdminNoteMessage } from "@/components/DisputeAdminNoteMessage";
 import { DisputeOpenedMessage } from "@/components/DisputeOpenedMessage";
+import { DisputeReasonMessage } from "@/components/DisputeReasonMessage";
 import { MessageContent } from "@/components/MessageContent";
 import { ModerationWarningMessage } from "@/components/ModerationWarningMessage";
 import { UserAvatar } from "@/components/UserAvatar";
@@ -73,6 +74,20 @@ export function AdminChatReviewThread({
               key={msg.id}
               openedByName={openedByName}
               openedByCurrentUser={false}
+              createdAt={new Date(msg.createdAt)}
+            />
+          );
+        }
+
+        if (msg.kind === "DISPUTE_REASON" && msg.sender) {
+          const openedByName =
+            msg.sender.name ?? nameById.get(msg.sender.id) ?? t.participant;
+
+          return (
+            <DisputeReasonMessage
+              key={msg.id}
+              openedByName={openedByName}
+              content={msg.content}
               createdAt={new Date(msg.createdAt)}
             />
           );

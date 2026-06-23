@@ -1,6 +1,7 @@
 "use client";
 
 import { ProBadge } from "@/components/ProBadge";
+import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { ReportUserButton } from "@/components/ReportUserButton";
 import { ReviewList } from "@/components/ReviewForm";
 import { UserAvatar } from "@/components/UserAvatar";
@@ -60,6 +61,7 @@ export type FreelancerPublicProfileProps = {
     wantsRemoteWork: boolean;
     skills: { id: string; name: string }[];
     portfolioItems: FreelancerPortfolioItem[];
+    isVerified: boolean;
   };
   reviews: FreelancerReviewItem[];
   isOwnProfile: boolean;
@@ -230,6 +232,7 @@ export function FreelancerPublicProfile({
                     {user.name ?? dict.freelancerProfile.fallbackName}
                   </h1>
                   {isBoost && <ProBadge />}
+                  {profile.isVerified && <VerifiedBadge />}
                 </div>
                 {profile.title && (
                   <p className="mt-1 text-base text-zinc-600 sm:text-lg">

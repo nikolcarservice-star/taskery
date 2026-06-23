@@ -78,8 +78,11 @@ export function getReviewerRoleLabel(dict: Dictionary, role: Role): string {
 
 export function getLedgerDirectionLabel(
   dict: Dictionary,
-  direction: "credit" | "debit" | "hold",
+  direction: "credit" | "debit" | "hold" | "pending",
 ): string {
+  if (direction === "pending") {
+    return dict.cabinetForms.options.ledgerDirection.pending;
+  }
   return dict.cabinetForms.options.ledgerDirection[direction];
 }
 
