@@ -2,10 +2,11 @@ import { auth } from "@/lib/auth";
 import type { AdminPermission } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getHomeRouteForRole } from "@/lib/role-redirect";
+import type { Session } from "next-auth";
 import { redirect } from "next/navigation";
 
 export type AdminPageContext = {
-  session: NonNullable<Awaited<ReturnType<typeof auth>>>;
+  session: Session;
   admin: {
     id: string;
     name: string | null;

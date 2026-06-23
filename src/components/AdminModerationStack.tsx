@@ -38,6 +38,7 @@ type AdminModerationStackProps = {
     client: { name: string | null };
   }[];
   compact?: boolean;
+  moderationBackHref?: string;
 };
 
 const initialState: ActionState = {};
@@ -115,12 +116,16 @@ export function AdminModerationStack({
   disputes,
   openProjects,
   compact = false,
+  moderationBackHref = "/admin",
 }: AdminModerationStackProps) {
   const gap = compact ? "space-y-4" : "space-y-10";
 
   return (
     <div className={gap}>
-      <AdminAttentionPanel items={attentionItems} />
+      <AdminAttentionPanel
+        items={attentionItems}
+        moderationBackHref={moderationBackHref}
+      />
       <AdminReportsPanel reports={reports} />
 
       <section className="rounded-2xl border border-red-200 bg-white p-4 shadow-sm sm:p-6">

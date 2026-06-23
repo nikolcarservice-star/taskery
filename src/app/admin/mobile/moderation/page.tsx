@@ -51,6 +51,7 @@ export default async function AdminMobileModerationPage() {
       disputes={disputes}
       openProjects={openProjects}
       compact
+      moderationBackHref={`${ADMIN_MOBILE_ROOT}/moderation`}
     />
   );
 }

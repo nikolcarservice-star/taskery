@@ -145,6 +145,7 @@ export default auth((request) => {
 
   const isAdminRoot = pathnameWithoutLocale === "/admin";
   const isAdminMobile = pathnameWithoutLocale.startsWith(ADMIN_MOBILE_ROOT);
+  const isAdminReview = pathnameWithoutLocale.startsWith("/admin/review");
   const isAdminCabinet = pathnameWithoutLocale.startsWith("/cabinet");
 
   const protectedPrefixes = [
@@ -178,9 +179,10 @@ export default auth((request) => {
     );
   }
 
-  if (isAdminMobile) {
+  if (isAdminMobile || isAdminReview) {
     if (session?.user?.role === "ADMIN") {
       if (
+        isAdminMobile &&
         !isMobileUserAgent(request) &&
         !request.nextUrl.searchParams.has("mobile")
       ) {

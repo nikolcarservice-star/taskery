@@ -1,7 +1,13 @@
+import {
+  adminBidReviewPath,
+  adminConversationReviewPath,
+} from "@/lib/admin-review";
 import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
+import Link from "next/link";
 
 type AdminAttentionPanelProps = {
   items: ModerationAttentionItem[];
+  moderationBackHref?: string;
 };
 
 const SOURCE_LABELS: Record<ModerationAttentionItem["source"], string> = {
@@ -9,7 +15,10 @@ const SOURCE_LABELS: Record<ModerationAttentionItem["source"], string> = {
   bid: "Переписка по отклику",
 };
 
-export function AdminAttentionPanel({ items }: AdminAttentionPanelProps) {
+export function AdminAttentionPanel({
+  items,
+  moderationBackHref = "/admin",
+}: AdminAttentionPanelProps) {
   if (items.length === 0) {
     return (
       <section className="rounded-2xl border border-amber-200 bg-white p-6 shadow-sm">
@@ -66,6 +75,27 @@ export function AdminAttentionPanel({ items }: AdminAttentionPanelProps) {
               <p className="mt-2 rounded-lg border border-amber-100 bg-white px-3 py-2 text-xs leading-relaxed text-zinc-600">
                 Заблокированный текст: «{item.blockedSnippet}»
               </p>
+            )}
+
+            {item.source === "conversation" && item.conversationId && (
+              <Link
+                href={adminConversationReviewPath(
+                  item.conversationId,
+                  moderationBackHref,
+                )}
+                className="mt-3 inline-flex items-center rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700"
+              >
+                Открыть переписку
+              </Link>
+            )}
+
+            {item.source === "bid" && item.bidId && (
+              <Link
+                href={adminBidReviewPath(item.bidId, moderationBackHref)}
+                className="mt-3 inline-flex items-center rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700"
+              >
+                Открыть переписку
+              </Link>
             )}
           </li>
         ))}
