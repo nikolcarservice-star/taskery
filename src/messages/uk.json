@@ -1354,7 +1354,9 @@
         "10% fee from completed deal amount"
       ],
       "freeAvailable": "Available to everyone after registration",
-      "activeBoost": "TaskBoost is already active",
+      "activeBoost": "TaskBoost уже активен",
+      "freeBoostPrice": "Безкоштовно",
+      "freeBoostOffer": "{registrationDays} днів при реєстрації + {portfolioDays} днів за портфоліо",
       "connectPrefix": "Activate",
       "roleRestricted": "Available for another role",
       "loginToConnect": "Sign in to activate"
@@ -1406,6 +1408,9 @@
     "activated": "✓ TaskBoost уже активний на вашому акаунті",
     "connect": "Підключити {name}",
     "paymentSoon": "Оплата підписки скоро буде доступна",
+    "freePromoOffer": "{registrationDays} днів безкоштовно при реєстрації + {portfolioDays} днів за портфоліо",
+    "fillPortfolioCta": "Заповнити портфоліо",
+    "subscriptionLater": "Платна підписка з’явиться пізніше",
     "publishProject": "Опублікувати проєкт",
     "registerFreelancer": "Зареєструватися як фрілансер",
     "allPricing": "Усі тарифи Taskery",
@@ -1501,8 +1506,12 @@
         "answer": "TaskBoost додає просування профілю, бейдж преміум-виконавця та пріоритет у каталозі. Базові угоди та ескроу доступні всім."
       },
       {
-        "question": "Чи можна скасувати підписку?",
-        "answer": "Так. Підписка поновлюється щомісяця, вимкнути автопродовження можна будь-коли в налаштуваннях оплати Stripe."
+        "question": "Як отримати TaskBoost безкоштовно?",
+        "answer": "При реєстрації фрілансер отримує 20 днів просування. Ще 10 днів додаються, коли ви заповните портфоліо — додайте хоча б одну роботу."
+      },
+      {
+        "question": "Чи можна купити підписку?",
+        "answer": "Платна підписка TaskBoost з’явиться пізніше. Зараз просування доступне безкоштовно за умовами вище."
       },
       {
         "question": "TaskBoost для замовників?",

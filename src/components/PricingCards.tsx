@@ -3,6 +3,11 @@
 import { StripeCheckoutButton } from "@/components/StripeCheckoutButton";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { PRICING } from "@/lib/stripe-config";
+import {
+  TASKBOOST_PORTFOLIO_BONUS_DAYS,
+  TASKBOOST_REGISTRATION_DAYS,
+  taskBoostPurchaseEnabled,
+} from "@/lib/taskboost-promotion";
 import { Role } from "@/generated/prisma/client";
 
 type PricingCardsProps = {
@@ -17,6 +22,9 @@ export function PricingCards({
   stripeEnabled,
 }: PricingCardsProps) {
   const dict = useDictionary();
+  const freeBoostOffer = dict.pricingUi.cards.freeBoostOffer
+    .replace("{registrationDays}", String(TASKBOOST_REGISTRATION_DAYS))
+    .replace("{portfolioDays}", String(TASKBOOST_PORTFOLIO_BONUS_DAYS));
   const cards = [
     {
       key: "free",
@@ -29,9 +37,16 @@ export function PricingCards({
     {
       key: "pro_freelancer",
       name: PRICING.proFreelancer.name,
-      price: `${PRICING.proFreelancer.priceUah} ₴`,
-      period: "/ month",
-      features: PRICING.proFreelancer.features,
+      price: taskBoostPurchaseEnabled
+        ? `${PRICING.proFreelancer.priceUah} ₴`
+        : dict.pricingUi.cards.freeBoostPrice,
+      period: taskBoostPurchaseEnabled ? "/ month" : "",
+      features: taskBoostPurchaseEnabled
+        ? PRICING.proFreelancer.features
+        : [
+            freeBoostOffer,
+            ...PRICING.proFreelancer.features,
+          ],
       cta: "pro_freelancer" as const,
       forRole: "FREELANCER" as const,
     },
@@ -41,6 +56,7 @@ export function PricingCards({
     <div className="grid gap-6 lg:grid-cols-2">
       {cards.map((card) => {
         const showCta =
+          taskBoostPurchaseEnabled &&
           card.cta &&
           stripeEnabled &&
           !isPro &&
@@ -84,6 +100,8 @@ export function PricingCards({
                   className="w-full"
                 />
               </div>
+            ) : card.key === "pro_freelancer" && !taskBoostPurchaseEnabled ? (
+              <p className="mt-6 text-sm text-zinc-600">{freeBoostOffer}</p>
             ) : card.key === "free" ? (
               <p className="mt-6 text-sm text-zinc-500">
                 {dict.pricingUi.cards.freeAvailable}

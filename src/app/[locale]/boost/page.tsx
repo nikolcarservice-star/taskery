@@ -5,6 +5,8 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { createMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
+import { isProUser } from "@/lib/slug";
+import { taskBoostPurchaseEnabled } from "@/lib/taskboost-promotion";
 import { stripeEnabled } from "@/lib/stripe-config";
 
 type BoostPageProps = {
@@ -31,9 +33,11 @@ export default async function LocalizedBoostPage({ params }: BoostPageProps) {
   if (session?.user?.id) {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { subscriptionPlan: true },
+      select: { subscriptionPlan: true, featuredUntil: true },
     });
-    isPro = user?.subscriptionPlan === "PRO";
+    isPro = user
+      ? isProUser(user.subscriptionPlan, user.featuredUntil)
+      : false;
   }
 
   return (
@@ -41,7 +45,7 @@ export default async function LocalizedBoostPage({ params }: BoostPageProps) {
       <TaskBoostLanding
         isPro={isPro}
         userRole={session?.user?.role}
-        stripeEnabled={stripeEnabled}
+        stripeEnabled={stripeEnabled && taskBoostPurchaseEnabled}
         compact={Boolean(session?.user)}
       />
     </AccountBrowsePage>

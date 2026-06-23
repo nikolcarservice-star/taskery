@@ -4,6 +4,11 @@ import { StripeCheckoutButton } from "@/components/StripeCheckoutButton";
 import { useLocalizedPath } from "@/components/LocalizedLink";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { PRICING } from "@/lib/stripe-config";
+import {
+  TASKBOOST_PORTFOLIO_BONUS_DAYS,
+  TASKBOOST_REGISTRATION_DAYS,
+  taskBoostPurchaseEnabled,
+} from "@/lib/taskboost-promotion";
 import type { Role } from "@/generated/prisma/client";
 import Link from "next/link";
 
@@ -68,6 +73,10 @@ export function TaskBoostLanding({
   const l = useLocalizedPath();
   const isFreelancer = userRole === "FREELANCER" || userRole === "ADMIN";
   const priceUah = PRICING.proFreelancer.priceUah;
+  const showPurchase = stripeEnabled && taskBoostPurchaseEnabled;
+  const freePromoOffer = boost.freePromoOffer
+    .replace("{registrationDays}", String(TASKBOOST_REGISTRATION_DAYS))
+    .replace("{portfolioDays}", String(TASKBOOST_PORTFOLIO_BONUS_DAYS));
 
   return (
     <div className={compact ? "space-y-10" : "space-y-16"}>
@@ -92,15 +101,23 @@ export function TaskBoostLanding({
                 {boost.activated}
               </div>
             ) : isFreelancer ? (
-              stripeEnabled ? (
+              showPurchase ? (
                 <StripeCheckoutButton
                   type="pro_freelancer"
                   label={boost.connect.replace("{name}", boost.brandName)}
                   className="!rounded-lg !bg-white !px-6 !py-3 !text-base !font-semibold !text-indigo-700 hover:!bg-indigo-50"
                 />
               ) : (
-                <div className="rounded-lg bg-white/15 px-4 py-2.5 text-sm font-medium backdrop-blur">
-                  {boost.paymentSoon}
+                <div className="space-y-3">
+                  <div className="rounded-lg bg-white/15 px-4 py-2.5 text-sm font-medium backdrop-blur">
+                    {freePromoOffer}
+                  </div>
+                  <Link
+                    href={l("/dashboard/portfolio")}
+                    className="inline-flex rounded-lg bg-white px-6 py-3 text-sm font-semibold text-indigo-700 transition-colors hover:bg-indigo-50"
+                  >
+                    {boost.fillPortfolioCta}
+                  </Link>
                 </div>
               )
             ) : userRole === "CLIENT" ? (
@@ -229,13 +246,21 @@ export function TaskBoostLanding({
             <span className="text-sm font-medium text-indigo-700">{boost.sidebarRole}</span>
           </div>
           <p className="mt-4">
-            <span className="text-4xl font-bold text-zinc-900">
-              {priceUah} ₴
-            </span>
-            <span className="text-sm text-zinc-500">
-              {" "}
-              {boost.pricePerMonthShort}
-            </span>
+            {showPurchase ? (
+              <>
+                <span className="text-4xl font-bold text-zinc-900">
+                  {priceUah} ₴
+                </span>
+                <span className="text-sm text-zinc-500">
+                  {" "}
+                  {boost.pricePerMonthShort}
+                </span>
+              </>
+            ) : (
+              <span className="text-2xl font-bold text-zinc-900">
+                {freePromoOffer}
+              </span>
+            )}
           </p>
           <ul className="mt-5 space-y-2 text-sm text-zinc-700">
             {boost.planFeatures.map((feature) => (
@@ -251,7 +276,7 @@ export function TaskBoostLanding({
                 {boost.sidebarActive}
               </p>
             ) : isFreelancer ? (
-              stripeEnabled ? (
+              showPurchase ? (
                 <StripeCheckoutButton
                   type="pro_freelancer"
                   label={boost.connect.replace(
@@ -261,7 +286,15 @@ export function TaskBoostLanding({
                   className="w-full !rounded-lg !bg-indigo-600 !text-white hover:!bg-indigo-700"
                 />
               ) : (
-                <p className="text-sm text-zinc-500">{boost.paymentSoon}</p>
+                <div className="space-y-3">
+                  <p className="text-sm text-zinc-600">{boost.subscriptionLater}</p>
+                  <Link
+                    href={l("/dashboard/portfolio")}
+                    className="inline-flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
+                  >
+                    {boost.fillPortfolioCta}
+                  </Link>
+                </div>
               )
             ) : userRole === "CLIENT" ? (
               <p className="text-sm text-zinc-500">{boost.availableForFreelancers}</p>

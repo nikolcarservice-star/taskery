@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { grantPortfolioBoostIfEligible } from "@/lib/taskboost-promotion";
 import { sanitizeOptionalHttpUrl } from "@/lib/safe-url";
 import { revalidatePath } from "next/cache";
 
@@ -113,6 +114,8 @@ export async function addPortfolioItem(
       projectUrl,
     },
   });
+
+  await grantPortfolioBoostIfEligible(session.user.id, profile.id);
 
   revalidatePath("/profile/edit");
   revalidatePath("/dashboard/portfolio");

@@ -1370,6 +1370,8 @@
       ],
       "freeAvailable": "Available to everyone after registration",
       "activeBoost": "TaskBoost is already active",
+      "freeBoostPrice": "Free",
+      "freeBoostOffer": "{registrationDays} days on signup + {portfolioDays} days for portfolio",
       "connectPrefix": "Activate",
       "roleRestricted": "Available for another role",
       "loginToConnect": "Sign in to activate"
@@ -1421,6 +1423,9 @@
     "activated": "✓ TaskBoost is already active on your account",
     "connect": "Activate {name}",
     "paymentSoon": "Subscription payments will be available soon",
+    "freePromoOffer": "{registrationDays} days free on signup + {portfolioDays} days for portfolio",
+    "fillPortfolioCta": "Fill out portfolio",
+    "subscriptionLater": "Paid subscription coming later",
     "publishProject": "Post a project",
     "registerFreelancer": "Register as freelancer",
     "allPricing": "All Taskery pricing",
@@ -1516,8 +1521,12 @@
         "answer": "TaskBoost adds profile promotion, a premium badge, and catalog priority. Basic deals and escrow are available to everyone."
       },
       {
-        "question": "Can I cancel the subscription?",
-        "answer": "Yes. The subscription renews monthly; you can turn off auto-renewal anytime in Stripe billing settings."
+        "question": "How do I get TaskBoost for free?",
+        "answer": "Freelancers receive 20 days of promotion when they sign up. Another 10 days are added when you fill out your portfolio — add at least one work sample."
+      },
+      {
+        "question": "Can I buy a subscription?",
+        "answer": "Paid TaskBoost subscription is coming later. For now, promotion is free under the conditions above."
       },
       {
         "question": "Is TaskBoost for clients?",

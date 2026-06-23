@@ -1,5 +1,6 @@
 import { Role } from "@/generated/prisma/client";
 import { authConfig } from "@/lib/auth.config";
+import { getRegistrationBoostFields } from "@/lib/taskboost-promotion";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
@@ -147,7 +148,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           avatar: user.image ?? null,
           role: role as Role,
           ...(role === "FREELANCER"
-            ? { freelancerProfile: { create: {} } }
+            ? {
+                freelancerProfile: { create: {} },
+                ...getRegistrationBoostFields(),
+              }
             : {}),
         },
       });

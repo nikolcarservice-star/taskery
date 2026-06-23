@@ -15,6 +15,7 @@ import {
   validateTopUpAmount,
 } from "@/lib/stripe-checkout";
 import { stripe, stripeEnabled, PRICING } from "@/lib/stripe-config";
+import { taskBoostPurchaseEnabled } from "@/lib/taskboost-promotion";
 
 type CheckoutBody = {
   type: string;
@@ -210,6 +211,12 @@ export async function POST(request: NextRequest) {
       break;
     }
     case "pro_freelancer": {
+      if (!taskBoostPurchaseEnabled) {
+        return NextResponse.json(
+          { error: "Покупка TaskBoost временно недоступна" },
+          { status: 403 },
+        );
+      }
       if (session.user.role !== "FREELANCER" && session.user.role !== "ADMIN") {
         return NextResponse.json({ error: "Только для фрилансеров" }, { status: 403 });
       }

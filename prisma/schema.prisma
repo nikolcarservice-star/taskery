@@ -168,6 +168,7 @@ model FreelancerProfile {
   taxId                  String?           @map("tax_id")
   website                String?
   experienceYears        Int?              @map("experience_years")
+  portfolioBoostGranted  Boolean           @default(false) @map("portfolio_boost_granted")
   createdAt              DateTime          @default(now()) @map("created_at")
   updatedAt              DateTime          @updatedAt @map("updated_at")
 

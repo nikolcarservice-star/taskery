@@ -1348,7 +1348,9 @@
         "10% fee from completed deal amount"
       ],
       "freeAvailable": "Available to everyone after registration",
-      "activeBoost": "TaskBoost is already active",
+      "activeBoost": "TaskBoost jest już aktywny",
+      "freeBoostPrice": "Za darmo",
+      "freeBoostOffer": "{registrationDays} dni przy rejestracji + {portfolioDays} dni za portfolio",
       "connectPrefix": "Activate",
       "roleRestricted": "Available for another role",
       "loginToConnect": "Sign in to activate"
@@ -1400,6 +1402,9 @@
     "activated": "✓ TaskBoost jest już aktywny na Twoim koncie",
     "connect": "Aktywuj {name}",
     "paymentSoon": "Płatności za subskrypcję wkrótce będą dostępne",
+    "freePromoOffer": "{registrationDays} dni gratis przy rejestracji + {portfolioDays} dni za portfolio",
+    "fillPortfolioCta": "Uzupełnij portfolio",
+    "subscriptionLater": "Płatna subskrypcja pojawi się później",
     "publishProject": "Opublikuj projekt",
     "registerFreelancer": "Zarejestruj się jako freelancer",
     "allPricing": "Wszystkie cenniki Taskery",
@@ -1495,8 +1500,12 @@
         "answer": "TaskBoost dodaje promocję profilu, odznakę premium i priorytet w katalogu. Podstawowe transakcje i escrow są dostępne dla wszystkich."
       },
       {
-        "question": "Czy mogę anulować subskrypcję?",
-        "answer": "Tak. Subskrypcja odnawia się co miesiąc; automatyczne odnowienie można wyłączyć w ustawieniach płatności Stripe."
+        "question": "Jak zdobyć TaskBoost za darmo?",
+        "answer": "Po rejestracji freelancer otrzymuje 20 dni promocji. Kolejne 10 dni dodaje się po uzupełnieniu portfolio — dodaj co najmniej jedną pracę."
+      },
+      {
+        "question": "Czy mogę kupić subskrypcję?",
+        "answer": "Płatna subskrypcja TaskBoost pojawi się później. Na razie promocja jest darmowa na warunkach opisanych powyżej."
       },
       {
         "question": "Czy TaskBoost jest dla zleceniodawców?",

@@ -9,6 +9,7 @@ import {
   getClientIp,
   rateLimitResponse,
 } from "@/lib/rate-limit";
+import { getRegistrationBoostFields } from "@/lib/taskboost-promotion";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -101,7 +102,10 @@ export async function POST(request: Request) {
         role,
         ...(interfaceLanguage ? { interfaceLanguage } : {}),
         ...(role === "FREELANCER"
-          ? { freelancerProfile: { create: {} } }
+          ? {
+              freelancerProfile: { create: {} },
+              ...getRegistrationBoostFields(),
+            }
           : {}),
       },
     });
