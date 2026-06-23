@@ -275,7 +275,8 @@
       "forgotPassword": "Nie pamiętasz hasła?",
       "errors": {
         "invalid": "Nieprawidłowy email lub hasło",
-        "admin": "Dla administratora użyj osobnego logowania."
+        "admin": "Dla administratora użyj osobnego logowania.",
+        "session": "Nie udało się zapisać sesji. Sprawdź email i hasło albo spróbuj ponownie później."
       }
     },
     "register": {

@@ -52,7 +52,8 @@ async function authorizeWithPassword(
 ) {
   if (!email || !password) return null;
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  const normalizedEmail = email.trim().toLowerCase();
+  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
   if (!user?.passwordHash) return null;
 
   const valid = await bcrypt.compare(password, user.passwordHash);

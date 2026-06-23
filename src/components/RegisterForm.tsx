@@ -2,12 +2,12 @@
 
 import { GoogleAuthButton } from "@/components/GoogleAuthButton";
 import { scrollFieldIntoView } from "@/lib/mobile-form-scroll";
-import { buildAuthContinueUrl } from "@/lib/auth-continue";
+import { signInAfterRegister } from "@/lib/actions/login";
 import { getHomeRouteForRole } from "@/lib/role-redirect";
 import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
 import { useLocalizedPath } from "@/components/LocalizedLink";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
@@ -54,19 +54,19 @@ function RegisterFormInner({ googleEnabled }: { googleEnabled: boolean }) {
       return;
     }
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
-    if (result?.error) {
+    try {
+      await signInAfterRegister(
+        email,
+        password,
+        getHomeRouteForRole(role, locale),
+      );
+    } catch (error) {
+      if (isRedirectError(error)) {
+        throw error;
+      }
       setError(dict.auth.register.errors.autoLoginFailed);
       setLoading(false);
-      return;
     }
-
-    window.location.assign(buildAuthContinueUrl(getHomeRouteForRole(role, locale)));
   }
 
   return (

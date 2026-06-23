@@ -296,7 +296,8 @@
       "forgotPassword": "Forgot password?",
       "errors": {
         "invalid": "Invalid email or password",
-        "admin": "Use the separate admin login."
+        "admin": "Use the separate admin login.",
+        "session": "Could not keep you signed in. Check your email and password, or try again later."
       }
     },
     "register": {

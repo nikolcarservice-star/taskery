@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
     const locale =
       cookieLocale && isAppLocale(cookieLocale) ? cookieLocale : defaultLocale;
     const loginUrl = new URL(getLoginPath(locale), request.url);
+    loginUrl.searchParams.set("error", "session");
     if (callbackUrl) {
       loginUrl.searchParams.set("callbackUrl", callbackUrl);
     }

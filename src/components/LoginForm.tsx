@@ -1,52 +1,35 @@
 "use client";
 
-import { buildAuthContinueUrl } from "@/lib/auth-continue";
-import { safeRedirectPath } from "@/lib/safe-redirect";
-import { isAdminEmail } from "@/lib/actions/auth-hints";
+import { loginWithCredentials, type LoginActionState } from "@/lib/actions/login";
 import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
 import { localizedPath } from "@/lib/i18n/routing";
 import { GoogleAuthButton } from "@/components/GoogleAuthButton";
 import { scrollFieldIntoView } from "@/lib/mobile-form-scroll";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useActionState } from "react";
+
+const initialState: LoginActionState = {};
 
 function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
   const dict = useDictionary();
   const locale = useDictionaryLocale();
   const searchParams = useSearchParams();
-  const callbackUrl = safeRedirectPath(searchParams.get("callbackUrl"), "/");
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  const sessionError = searchParams.get("error") === "session";
+  const [state, formAction, pending] = useActionState(
+    loginWithCredentials,
+    initialState,
+  );
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
-    if (result?.error) {
-      const adminAccount = await isAdminEmail(email);
-      setError(
-        adminAccount
-          ? dict.auth.login.errors.admin
-          : dict.auth.login.errors.invalid,
-      );
-      setLoading(false);
-      return;
-    }
-
-    window.location.assign(buildAuthContinueUrl(callbackUrl));
-  }
+  const errorMessage =
+    state.error === "admin"
+      ? dict.auth.login.errors.admin
+      : state.error === "invalid"
+        ? dict.auth.login.errors.invalid
+        : sessionError
+          ? dict.auth.login.errors.session
+          : null;
 
   return (
     <>
@@ -55,7 +38,7 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
           <GoogleAuthButton
             label={dict.auth.login.google}
             mode="login"
-            disabled={loading}
+            disabled={pending}
           />
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
@@ -68,17 +51,18 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
         </>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form action={formAction} className="space-y-4">
+        <input type="hidden" name="callbackUrl" value={callbackUrl} />
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-zinc-700">
             {dict.auth.login.email}
           </label>
           <input
             id="email"
+            name="email"
             type="email"
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
             onFocus={scrollFieldIntoView}
           />
@@ -92,10 +76,10 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
           </label>
           <input
             id="password"
+            name="password"
             type="password"
             required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
             className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
             onFocus={scrollFieldIntoView}
           />
@@ -108,10 +92,10 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
             </a>
           </p>
         </div>
-        {error && (
+        {errorMessage && (
           <p className="text-sm text-red-600" role="alert">
-            {error}
-            {error === dict.auth.login.errors.admin && (
+            {errorMessage}
+            {state.error === "admin" && (
               <>
                 {" "}
                 <Link href={localizedPath(locale, "/admin")} className="font-medium underline">
@@ -123,10 +107,10 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
         )}
         <button
           type="submit"
-          disabled={loading}
+          disabled={pending}
           className="w-full rounded-full bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
         >
-          {loading ? dict.auth.login.loading : dict.auth.login.submit}
+          {pending ? dict.auth.login.loading : dict.auth.login.submit}
         </button>
       </form>
     </>

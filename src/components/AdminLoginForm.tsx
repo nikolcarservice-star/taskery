@@ -1,53 +1,35 @@
 "use client";
 
-import { buildAuthContinueUrl } from "@/lib/auth-continue";
-import { safeRedirectPath } from "@/lib/safe-redirect";
-import { signIn } from "next-auth/react";
+import {
+  loginWithAdminCredentials,
+  type AdminLoginActionState,
+} from "@/lib/actions/login";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useActionState } from "react";
+
+const initialState: AdminLoginActionState = {};
 
 function AdminLoginFormInner() {
   const searchParams = useSearchParams();
-  const callbackUrl = safeRedirectPath(searchParams.get("callbackUrl"), "/cabinet");
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const result = await signIn("admin", {
-      email,
-      password,
-      redirect: false,
-    });
-
-    if (result?.error) {
-      setError("Неверный email, пароль или недостаточно прав");
-      setLoading(false);
-      return;
-    }
-
-    window.location.assign(buildAuthContinueUrl(callbackUrl));
-  }
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/cabinet";
+  const [state, formAction, pending] = useActionState(
+    loginWithAdminCredentials,
+    initialState,
+  );
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form action={formAction} className="space-y-4">
+      <input type="hidden" name="callbackUrl" value={callbackUrl} />
       <div>
         <label htmlFor="admin-email" className="block text-sm font-medium text-zinc-700">
           Email администратора
         </label>
         <input
           id="admin-email"
+          name="email"
           type="email"
           required
           autoComplete="username"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
           className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
         />
       </div>
@@ -60,25 +42,24 @@ function AdminLoginFormInner() {
         </label>
         <input
           id="admin-password"
+          name="password"
           type="password"
           required
           autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
           className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
         />
       </div>
-      {error && (
+      {state.error && (
         <p className="text-sm text-red-600" role="alert">
-          {error}
+          Неверный email, пароль или недостаточно прав
         </p>
       )}
       <button
         type="submit"
-        disabled={loading}
+        disabled={pending}
         className="w-full rounded-full bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
       >
-        {loading ? "Входим…" : "Войти"}
+        {pending ? "Входим…" : "Войти"}
       </button>
     </form>
   );
