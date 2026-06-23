@@ -7,6 +7,7 @@ import {
   parseAdminPermissions,
 } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
+import { deleteUserAccount } from "@/lib/delete-user";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
@@ -233,6 +234,71 @@ export async function deactivateAdminStaff(
     where: { id: adminId },
     data: { adminActive: false },
   });
+
+  revalidatePath("/admin");
+  return { success: true };
+}
+
+export async function reactivateAdminStaff(
+  _prevState: StaffActionState,
+  formData: FormData,
+): Promise<StaffActionState> {
+  const authResult = await requireStaffManager();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const adminId = (formData.get("adminId") as string | null)?.trim();
+  if (!adminId) return { error: "Администратор не найден" };
+
+  const target = await prisma.user.findUnique({
+    where: { id: adminId },
+    select: { role: true, adminActive: true },
+  });
+
+  if (!target || target.role !== "ADMIN") {
+    return { error: "Администратор не найден" };
+  }
+
+  if (target.adminActive) {
+    return { error: "Администратор уже активен" };
+  }
+
+  await prisma.user.update({
+    where: { id: adminId },
+    data: { adminActive: true },
+  });
+
+  revalidatePath("/admin");
+  return { success: true };
+}
+
+export async function deleteAdminStaff(
+  _prevState: StaffActionState,
+  formData: FormData,
+): Promise<StaffActionState> {
+  const authResult = await requireStaffManager();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const adminId = (formData.get("adminId") as string | null)?.trim();
+  if (!adminId) return { error: "Администратор не найден" };
+
+  if (adminId === authResult.actor.id) {
+    return { error: "Нельзя удалить свой аккаунт" };
+  }
+
+  const target = await prisma.user.findUnique({
+    where: { id: adminId },
+    select: { role: true, adminActive: true },
+  });
+
+  if (!target || target.role !== "ADMIN") {
+    return { error: "Администратор не найден" };
+  }
+
+  if (target.adminActive) {
+    return { error: "Сначала деактивируйте администратора" };
+  }
+
+  await deleteUserAccount(adminId);
 
   revalidatePath("/admin");
   return { success: true };

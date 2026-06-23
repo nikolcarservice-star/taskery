@@ -3,6 +3,8 @@
 import {
   createAdminStaff,
   deactivateAdminStaff,
+  deleteAdminStaff,
+  reactivateAdminStaff,
   updateAdminStaff,
   type StaffActionState,
 } from "@/lib/actions/admin-staff";
@@ -317,6 +319,73 @@ function DeactivateAdminButton({
   );
 }
 
+function ReactivateAdminButton({ adminId }: { adminId: string }) {
+  const [state, formAction, pending] = useActionState(
+    reactivateAdminStaff,
+    initialState,
+  );
+
+  return (
+    <form action={formAction}>
+      <input type="hidden" name="adminId" value={adminId} />
+      {state.error && <p className="mb-2 text-sm text-red-600">{state.error}</p>}
+      {state.success && (
+        <p className="mb-2 text-sm text-green-700">Администратор восстановлен</p>
+      )}
+      <button
+        type="submit"
+        disabled={pending}
+        className="rounded-lg border border-green-200 bg-white px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50 disabled:opacity-50"
+      >
+        {pending ? "Восстановление…" : "Восстановить"}
+      </button>
+    </form>
+  );
+}
+
+function DeleteAdminButton({
+  adminId,
+  currentAdminId,
+}: {
+  adminId: string;
+  currentAdminId: string;
+}) {
+  const [state, formAction, pending] = useActionState(
+    deleteAdminStaff,
+    initialState,
+  );
+
+  if (adminId === currentAdminId) return null;
+
+  return (
+    <form
+      action={formAction}
+      onSubmit={(event) => {
+        if (
+          !confirm(
+            "Удалить администратора навсегда? Это действие нельзя отменить.",
+          )
+        ) {
+          event.preventDefault();
+        }
+      }}
+    >
+      <input type="hidden" name="adminId" value={adminId} />
+      {state.error && <p className="mb-2 text-sm text-red-600">{state.error}</p>}
+      {state.success && (
+        <p className="mb-2 text-sm text-green-700">Администратор удалён</p>
+      )}
+      <button
+        type="submit"
+        disabled={pending}
+        className="rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-800 hover:bg-red-100 disabled:opacity-50"
+      >
+        {pending ? "Удаление…" : "Удалить навсегда"}
+      </button>
+    </form>
+  );
+}
+
 export function AdminStaffManager({
   admins,
   currentAdminId,
@@ -361,10 +430,18 @@ export function AdminStaffManager({
                   <PermissionBadges permissions={admin.adminPermissions} />
                 </div>
               </div>
-              {admin.adminActive && (
+              {admin.adminActive ? (
                 <div className="flex flex-col items-start gap-2">
                   <EditAdminForm admin={admin} currentAdminId={currentAdminId} />
                   <DeactivateAdminButton
+                    adminId={admin.id}
+                    currentAdminId={currentAdminId}
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col items-start gap-2">
+                  <ReactivateAdminButton adminId={admin.id} />
+                  <DeleteAdminButton
                     adminId={admin.id}
                     currentAdminId={currentAdminId}
                   />
