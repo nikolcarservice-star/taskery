@@ -67,7 +67,7 @@ export function CabinetProfileSheet({
   const adminLinks: SheetLink[] = isAdmin
     ? [
         { label: nav.adminCabinet, href: l("/cabinet"), icon: "🛡️" },
-        { label: nav.adminPanel, href: l("/admin"), icon: "⚙️" },
+        { label: nav.adminPanel, href: "/admin/mobile", icon: "⚙️" },
       ]
     : [];
 

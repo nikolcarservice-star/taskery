@@ -44,6 +44,29 @@ textarea:-webkit-autofill:focus {
 }
 
 @media (max-width: 1023px) {
+  body[data-admin-mobile-app] {
+    background: #f4f4f5;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body[data-admin-mobile-app] .admin-mobile-content {
+    padding-bottom: calc(
+      var(--account-mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 1rem
+    );
+  }
+
+  body[data-admin-mobile-app] .admin-mobile-header {
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  body[data-admin-mobile-app] .admin-mobile-bottom-nav {
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+}
+
+@media (max-width: 1023px) {
   body[data-account-mobile-app] {
     background: #f4f4f5;
   }

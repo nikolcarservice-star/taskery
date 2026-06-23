@@ -40,12 +40,13 @@ export default function AdminCabinetPage() {
           </p>
         </AdminModeLink>
         <Link
-          href="/admin"
+          href="/admin/mobile"
           className="rounded-xl border border-red-200 bg-red-50 px-5 py-4 transition-colors hover:bg-red-100 sm:col-span-2"
         >
           <p className="font-semibold text-red-900">Админ-панель</p>
           <p className="mt-1 text-sm text-red-700/80">
-            Модерация проектов, разрешение споров и статистика платформы.
+            Модерация, пользователи, финансы. На телефоне —{" "}
+            <span className="font-medium underline">мобильная версия</span>.
           </p>
         </Link>
         <AdminModeLink

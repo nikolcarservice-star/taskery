@@ -11,7 +11,7 @@ const initialState: AdminLoginActionState = {};
 
 function AdminLoginFormInner() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/cabinet";
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/admin/mobile";
   const [state, formAction, pending] = useActionState(
     loginWithAdminCredentials,
     initialState,

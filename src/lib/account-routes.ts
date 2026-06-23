@@ -56,6 +56,7 @@ export function isProfileAreaPath(path: string, role: "client" | "freelancer"): 
     "/billing",
     "/cabinet",
     "/admin",
+    "/admin/mobile",
   ];
 
   const freelancerPaths = [
@@ -73,6 +74,7 @@ export function isProfileAreaPath(path: string, role: "client" | "freelancer"): 
     "/billing",
     "/cabinet",
     "/admin",
+    "/admin/mobile",
   ];
 
   const prefixes = role === "client" ? clientPaths : freelancerPaths;

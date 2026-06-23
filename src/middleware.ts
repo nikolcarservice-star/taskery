@@ -19,10 +19,19 @@ import {
 import { resolveRequestLocale } from "@/lib/i18n/resolve-request-locale";
 import type { AppLocale } from "@/lib/i18n/types";
 import { getHomeRouteForRole, getLoginPath } from "@/lib/role-redirect";
+import { ADMIN_MOBILE_ROOT } from "@/lib/admin-mobile-routes";
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 const { auth } = NextAuth(authConfig);
+
+function isMobileUserAgent(request: NextRequest): boolean {
+  const ua = request.headers.get("user-agent") ?? "";
+  return /Android|iPhone|iPad|iPod|Mobile|webOS|BlackBerry|Opera Mini|IEMobile/i.test(
+    ua,
+  );
+}
 
 function withAdminWorkModeCookie(
   response: NextResponse,
@@ -135,6 +144,7 @@ export default auth((request) => {
   }
 
   const isAdminRoot = pathnameWithoutLocale === "/admin";
+  const isAdminMobile = pathnameWithoutLocale.startsWith(ADMIN_MOBILE_ROOT);
   const isAdminCabinet = pathnameWithoutLocale.startsWith("/cabinet");
 
   const protectedPrefixes = [
@@ -168,8 +178,77 @@ export default auth((request) => {
     );
   }
 
+  if (isAdminMobile) {
+    if (session?.user?.role === "ADMIN") {
+      if (
+        !isMobileUserAgent(request) &&
+        !request.nextUrl.searchParams.has("mobile")
+      ) {
+        return withPathnameHeader(
+          withLocaleHeaders(
+            NextResponse.redirect(new URL("/admin", request.url)),
+            activeLocale,
+          ),
+          pathname,
+        );
+      }
+
+      return withPathnameHeader(
+        withLocaleHeaders(
+          withAdminWorkModeCookie(
+            NextResponse.next(),
+            pathnameWithoutLocale,
+            session.user.role,
+          ),
+          activeLocale,
+        ),
+        pathname,
+      );
+    }
+
+    if (!session?.user) {
+      const adminLoginUrl = new URL("/admin", request.url);
+      adminLoginUrl.searchParams.set("callbackUrl", pathnameWithoutLocale);
+      return NextResponse.redirect(adminLoginUrl);
+    }
+
+    return withLocaleHeaders(
+      NextResponse.redirect(
+        new URL(getHomeRouteForRole(session.user.role, activeLocale), request.url),
+      ),
+      activeLocale,
+    );
+  }
+
   if (isAdminRoot) {
-    if (session?.user?.role === "ADMIN" || !session?.user) {
+    if (session?.user?.role === "ADMIN") {
+      if (
+        isMobileUserAgent(request) &&
+        !request.nextUrl.searchParams.has("desktop")
+      ) {
+        return withPathnameHeader(
+          withLocaleHeaders(
+            NextResponse.redirect(new URL(ADMIN_MOBILE_ROOT, request.url)),
+            activeLocale,
+          ),
+          pathname,
+        );
+      }
+
+      return withPathnameHeader(
+        withLocaleHeaders(
+          withAdminWorkModeCookie(
+            NextResponse.next(),
+            pathnameWithoutLocale,
+            session.user.role,
+          ),
+          activeLocale,
+        ),
+        pathname,
+      );
+    }
+
+    if (!session?.user) {
       return withPathnameHeader(
         withLocaleHeaders(
           withAdminWorkModeCookie(NextResponse.next(), pathnameWithoutLocale, session?.user?.role),

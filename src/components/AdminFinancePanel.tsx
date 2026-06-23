@@ -62,9 +62,10 @@ function PaymentRow({ payment }: { payment: AdminPaymentItem }) {
 
 type AdminFinancePanelProps = {
   finance: AdminFinanceOverview;
+  mobile?: boolean;
 };
 
-export function AdminFinancePanel({ finance }: AdminFinancePanelProps) {
+export function AdminFinancePanel({ finance, mobile = false }: AdminFinancePanelProps) {
   const { stats, recentPayments, activeContracts } = finance;
 
   const statCards = [
@@ -91,18 +92,38 @@ export function AdminFinancePanel({ finance }: AdminFinancePanelProps) {
   ];
 
   return (
-    <section className="space-y-6">
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-zinc-900">Финансы</h2>
-        <p className="mt-1 text-sm text-zinc-600">
-          Балансы, эскроу, комиссии и история платежей платформы.
-        </p>
+    <section className={mobile ? "space-y-4" : "space-y-6"}>
+      <div
+        className={
+          mobile
+            ? "grid grid-cols-2 gap-3"
+            : "rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        }
+      >
+        {!mobile && (
+          <>
+            <h2 className="text-lg font-semibold text-zinc-900">Финансы</h2>
+            <p className="mt-1 text-sm text-zinc-600">
+              Балансы, эскроу, комиссии и история платежей платформы.
+            </p>
+          </>
+        )}
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          className={
+            mobile
+              ? "contents"
+              : "mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          }
+        >
           {statCards.map((card) => (
             <div
               key={card.label}
-              className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-4"
+              className={
+                mobile
+                  ? "rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
+                  : "rounded-xl border border-zinc-200 bg-zinc-50/50 p-4"
+              }
             >
               <p className="text-xs text-zinc-500">{card.label}</p>
               <p className="mt-1 text-2xl font-bold text-zinc-900">
@@ -114,7 +135,13 @@ export function AdminFinancePanel({ finance }: AdminFinancePanelProps) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-amber-200 bg-white p-6 shadow-sm">
+      <div
+        className={
+          mobile
+            ? "rounded-2xl border border-amber-200 bg-white p-4 shadow-sm"
+            : "rounded-2xl border border-amber-200 bg-white p-6 shadow-sm"
+        }
+      >
         <h3 className="text-base font-semibold text-amber-900">
           Активные сделки ({activeContracts.length})
         </h3>
@@ -157,12 +184,51 @@ export function AdminFinancePanel({ finance }: AdminFinancePanelProps) {
         )}
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <div
+        className={
+          mobile
+            ? "rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
+            : "rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+        }
+      >
         <h3 className="text-base font-semibold text-zinc-900">
           Последние платежи ({recentPayments.length})
         </h3>
         {recentPayments.length === 0 ? (
           <p className="mt-3 text-sm text-zinc-600">Платежей пока нет</p>
+        ) : mobile ? (
+          <ul className="mt-4 space-y-3">
+            {recentPayments.map((payment) => (
+              <li
+                key={payment.id}
+                className="rounded-xl border border-zinc-100 bg-zinc-50/60 p-4"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="font-medium text-zinc-900">
+                      {payment.user.name ?? payment.user.email}
+                    </p>
+                    <p className="text-xs text-zinc-500">
+                      {PAYMENT_TYPE_LABELS[payment.type]}
+                    </p>
+                  </div>
+                  <p className="shrink-0 font-semibold text-zinc-900">
+                    {formatBudget(payment.amount, payment.currency)}
+                  </p>
+                </div>
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${PAYMENT_STATUS_COLORS[payment.status]}`}
+                  >
+                    {PAYMENT_STATUS_LABELS[payment.status]}
+                  </span>
+                  <span className="text-xs text-zinc-500">
+                    {new Date(payment.createdAt).toLocaleString("ru-RU")}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
         ) : (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[640px] text-left text-sm">

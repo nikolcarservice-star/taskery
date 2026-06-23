@@ -5,6 +5,7 @@ import { Providers } from "@/components/Providers";
 import { auth } from "@/lib/auth";
 import { getAccountMobileChromeProps } from "@/lib/account-mobile-chrome";
 import { isAccountMobileAppPath } from "@/lib/account-routes";
+import { isAdminMobileAppPath } from "@/lib/admin-mobile-routes";
 import { createMetadata } from "@/lib/metadata";
 import { defaultLocale, getLocaleConfig, isAppLocale } from "@/lib/i18n/config";
 import { DictionaryProvider } from "@/lib/i18n/dictionary-context";
@@ -69,6 +70,7 @@ export default async function RootLayout({
   const accountMobilePath =
     Boolean(session?.user) &&
     isAccountMobileAppPath(stripLocalePrefix(pathname));
+  const adminMobilePath = isAdminMobileAppPath(stripLocalePrefix(pathname));
   const mobileChrome =
     accountMobilePath && session
       ? await getAccountMobileChromeProps(session)
@@ -85,6 +87,7 @@ export default async function RootLayout({
       <body
         className="min-h-full flex flex-col"
         {...(accountMobilePath ? { "data-account-mobile-app": "true" } : {})}
+        {...(adminMobilePath ? { "data-admin-mobile-app": "true" } : {})}
       >
         <Providers>
           <DictionaryProvider locale={locale} dict={dict}>

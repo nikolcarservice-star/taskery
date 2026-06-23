@@ -90,9 +90,9 @@ export function AdminSidebar() {
     },
     {
       label: "Админ-панель",
-      href: "/admin",
+      href: "/admin/mobile",
       icon: "🛡️",
-      match: (path) => path === "/admin",
+      match: (path) => path === "/admin" || path.startsWith("/admin/"),
       highlight: true,
     },
   ];
