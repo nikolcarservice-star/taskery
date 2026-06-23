@@ -48,6 +48,7 @@ type ProjectBidListProps = {
   currency: string;
   projectStatus: ProjectStatus;
   canAcceptBids: boolean;
+  clientId: string;
   currentUserId?: string;
   locale?: AppLocale;
 };
@@ -56,12 +57,14 @@ function BidCard({
   bid,
   currency,
   showAccept,
+  clientId,
   currentUserId,
   locale,
 }: {
   bid: BidListItem;
   currency: string;
   showAccept: boolean;
+  clientId: string;
   currentUserId?: string;
   locale?: AppLocale;
 }) {
@@ -141,6 +144,7 @@ function BidCard({
           bidId={bid.id}
           messages={bid.messages ?? []}
           currentUserId={currentUserId}
+          participantIds={[clientId, bid.freelancer.id]}
           partner={{
             name: bid.freelancer.name,
             avatar: bid.freelancer.avatar ?? null,
@@ -167,6 +171,7 @@ export function ProjectBidList({
   currency,
   projectStatus,
   canAcceptBids,
+  clientId,
   currentUserId,
   locale,
 }: ProjectBidListProps) {
@@ -193,6 +198,7 @@ export function ProjectBidList({
             bid={bid}
             currency={currency}
             showAccept={showAccept}
+            clientId={clientId}
             currentUserId={currentUserId}
             locale={locale}
           />
@@ -206,12 +212,14 @@ export function FreelancerBidStatus({
   bid,
   currency,
   currentUserId,
+  clientId,
   client,
   locale,
 }: {
   bid: BidListItem;
   currency: string;
   currentUserId?: string;
+  clientId: string;
   locale?: AppLocale;
   client?: {
     name: string | null;
@@ -263,6 +271,7 @@ export function FreelancerBidStatus({
           bidId={bid.id}
           messages={bid.messages ?? []}
           currentUserId={currentUserId}
+          participantIds={[clientId, bid.freelancer.id]}
           partner={client}
           defaultOpen
         />

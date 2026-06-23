@@ -9,6 +9,7 @@ import { formatRelativeTime } from "@/lib/i18n/relative-time";
 
 type AdminChatReviewThreadProps = {
   messages: AdminReviewMessage[];
+  adminId: string;
   participants: {
     client: { id: string; name: string | null; avatar?: string | null };
     freelancer: { id: string; name: string | null; avatar?: string | null };
@@ -17,6 +18,7 @@ type AdminChatReviewThreadProps = {
 
 export function AdminChatReviewThread({
   messages,
+  adminId,
   participants,
 }: AdminChatReviewThreadProps) {
   const dict = useDictionary();
@@ -35,7 +37,8 @@ export function AdminChatReviewThread({
   if (messages.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-zinc-500">
-        Сообщений в переписке пока нет
+        Сообщений в переписке пока нет. Вы можете написать первым от имени
+        администратора.
       </p>
     );
   }
@@ -61,10 +64,11 @@ export function AdminChatReviewThread({
 
         if (!msg.sender) return null;
 
+        const isAdminMessage = msg.sender.id === adminId;
         const senderName =
           msg.sender.name ??
           nameById.get(msg.sender.id) ??
-          t.participant;
+          (isAdminMessage ? "Администратор" : t.participant);
         const prev = messages[index - 1];
         const showAvatar =
           !prev ||
@@ -87,11 +91,22 @@ export function AdminChatReviewThread({
             </div>
             <div className="min-w-0 flex-1">
               {showAvatar && (
-                <p className="mb-1 text-xs font-medium text-zinc-500">
-                  {senderName}
-                </p>
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  <p className="text-xs font-medium text-zinc-500">{senderName}</p>
+                  {isAdminMessage && (
+                    <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-800">
+                      Администратор
+                    </span>
+                  )}
+                </div>
               )}
-              <div className="rounded-2xl rounded-tl-md border border-zinc-100 bg-white px-4 py-2.5 text-sm leading-relaxed text-zinc-900 shadow-sm">
+              <div
+                className={`rounded-2xl rounded-tl-md px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
+                  isAdminMessage
+                    ? "border border-red-200 bg-red-50 text-red-950"
+                    : "border border-zinc-100 bg-white text-zinc-900"
+                }`}
+              >
                 <MessageContent content={msg.content} warnExternalLinks />
               </div>
               <time

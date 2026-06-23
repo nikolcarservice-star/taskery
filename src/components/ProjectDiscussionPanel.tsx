@@ -27,6 +27,7 @@ type ProjectDiscussionPanelProps = {
     violationUser: { id: string; name: string | null } | null;
   }[];
   currentUserId: string;
+  participantIds: string[];
   warnExternalLinks?: boolean;
   partner: {
     name: string | null;
@@ -47,6 +48,7 @@ export function ProjectDiscussionPanel({
   stripeEnabled = false,
   messages,
   currentUserId,
+  participantIds,
   warnExternalLinks = false,
   partner,
 }: ProjectDiscussionPanelProps) {
@@ -86,6 +88,7 @@ export function ProjectDiscussionPanel({
           conversationId={conversationId}
           messages={messages}
           currentUserId={currentUserId}
+          participantIds={participantIds}
           warnExternalLinks={warnExternalLinks}
           partner={partner}
         />

@@ -9,6 +9,7 @@ import {
 import { AdminAttentionPanel } from "@/components/AdminAttentionPanel";
 import { AdminReportsPanel } from "@/components/AdminReportsPanel";
 import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
+import { adminConversationReviewPath } from "@/lib/admin-review-paths";
 import { formatBudget } from "@/lib/project-labels";
 import { contractStatusLabels } from "@/lib/contract-labels";
 import { useActionState } from "react";
@@ -19,6 +20,7 @@ type DisputeProject = {
   status: string;
   currency: string;
   client: { name: string | null; email: string };
+  conversation: { id: string } | null;
   contract: {
     id: string;
     amount: { toString(): string };
@@ -155,6 +157,17 @@ export function AdminModerationStack({
                       {project.contract.freelancer.name ??
                         project.contract.freelancer.email}
                     </p>
+                    {project.conversation && (
+                      <a
+                        href={adminConversationReviewPath(
+                          project.conversation.id,
+                          moderationBackHref,
+                        )}
+                        className="mt-3 inline-flex items-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-medium text-white active:bg-red-700"
+                      >
+                        Открыть чат спора
+                      </a>
+                    )}
                     <DisputeActions projectId={project.id} />
                   </>
                 )}

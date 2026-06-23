@@ -23,6 +23,7 @@ type BidMessageThreadProps = {
   bidId: string;
   messages: BidMessage[];
   currentUserId: string;
+  participantIds: string[];
   partner: {
     name: string | null;
     avatar: string | null;
@@ -36,6 +37,7 @@ export function BidMessageThread({
   bidId,
   messages,
   currentUserId,
+  participantIds,
   partner,
   defaultOpen = false,
 }: BidMessageThreadProps) {
@@ -115,32 +117,58 @@ export function BidMessageThread({
                   if (!msg.sender) return null;
 
                   const isMine = msg.sender.id === currentUserId;
+                  const isAdminMessage =
+                    !isMine && !participantIds.includes(msg.sender.id);
                   const senderName = isMine
                     ? (msg.sender.name ?? thread.you)
-                    : (msg.sender.name ?? partner.name ?? thread.participant);
+                    : isAdminMessage
+                      ? (msg.sender.name ?? thread.adminBadge)
+                      : (msg.sender.name ?? partner.name ?? thread.participant);
 
                   return (
                     <div
                       key={msg.id}
-                      className={`flex gap-2 ${isMine ? "flex-row-reverse" : "flex-row"}`}
+                      className={`flex gap-2 ${
+                        isMine && !isAdminMessage ? "flex-row-reverse" : "flex-row"
+                      }`}
                     >
                       <UserAvatar
                         name={senderName}
-                        avatar={isMine ? msg.sender.avatar : (msg.sender.avatar ?? partner.avatar)}
+                        avatar={
+                          isMine
+                            ? msg.sender.avatar
+                            : (msg.sender.avatar ?? partner.avatar)
+                        }
                         size="sm"
                       />
                       <div
-                        className={`max-w-[min(100%,20rem)] ${isMine ? "text-right" : "text-left"}`}
+                        className={`max-w-[min(100%,20rem)] ${
+                          isMine && !isAdminMessage ? "text-right" : "text-left"
+                        }`}
                       >
-                        <p className="text-xs font-medium text-zinc-500">{senderName}</p>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-xs font-medium text-zinc-500">
+                            {senderName}
+                          </p>
+                          {isAdminMessage && (
+                            <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-800">
+                              {thread.adminBadge}
+                            </span>
+                          )}
+                        </div>
                         <div
                           className={`mt-1 rounded-2xl px-3 py-2 text-sm leading-relaxed ${
-                            isMine
-                              ? "rounded-tr-md bg-indigo-600 text-white"
-                              : "rounded-tl-md border border-zinc-100 bg-zinc-50 text-zinc-900"
+                            isAdminMessage
+                              ? "rounded-tl-md border border-red-200 bg-red-50 text-red-950"
+                              : isMine
+                                ? "rounded-tr-md bg-indigo-600 text-white"
+                                : "rounded-tl-md border border-zinc-100 bg-zinc-50 text-zinc-900"
                           }`}
                         >
-                          <MessageContent content={msg.content} inverse={isMine} />
+                          <MessageContent
+                            content={msg.content}
+                            inverse={isMine && !isAdminMessage}
+                          />
                         </div>
                         <time
                           dateTime={new Date(msg.createdAt).toISOString()}

@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 export default async function AdminMobileModerationPage() {
-  const { permissions } = await getAdminPageContext(
+  const { permissions, admin } = await getAdminPageContext(
     `${ADMIN_MOBILE_ROOT}/moderation`,
   );
 
@@ -17,12 +17,13 @@ export default async function AdminMobileModerationPage() {
   }
 
   const [attentionItems, reports, disputes, openProjects] = await Promise.all([
-    getModerationAttentionItems(),
+    getModerationAttentionItems(admin.id),
     getPendingAdminReports(),
     prisma.project.findMany({
       where: { status: "UNDER_DISPUTE" },
       include: {
         client: { select: { name: true, email: true } },
+        conversation: { select: { id: true } },
         contract: {
           include: {
             freelancer: { select: { name: true, email: true } },

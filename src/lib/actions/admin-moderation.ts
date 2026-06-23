@@ -11,7 +11,7 @@ export type ModerationActionState = {
   success?: boolean;
 };
 
-async function requireModerationAdmin() {
+export async function requireModerationAdmin() {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
     return { error: "Доступ запрещён" } as const;
@@ -74,6 +74,40 @@ export async function adminDismissReport(
   }
 
   revalidatePath("/admin");
+  revalidatePath("/admin/mobile");
+  revalidatePath("/admin/mobile/moderation");
+  return { success: true };
+}
+
+export async function adminDismissContactWarning(
+  _prevState: ModerationActionState,
+  formData: FormData,
+): Promise<ModerationActionState> {
+  const authResult = await requireModerationAdmin();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const attentionItemId = (
+    formData.get("attentionItemId") as string | null
+  )?.trim();
+  if (!attentionItemId) return { error: "Уведомление не найдено" };
+
+  await prisma.adminContactWarningDismissal.upsert({
+    where: {
+      adminId_attentionItemId: {
+        adminId: authResult.admin.id,
+        attentionItemId,
+      },
+    },
+    create: {
+      adminId: authResult.admin.id,
+      attentionItemId,
+    },
+    update: {},
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/mobile");
+  revalidatePath("/admin/mobile/moderation");
   return { success: true };
 }
 

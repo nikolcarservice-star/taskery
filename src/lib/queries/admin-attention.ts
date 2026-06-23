@@ -13,11 +13,13 @@ export type ModerationAttentionItem = {
 
 const ATTENTION_WINDOW_DAYS = 30;
 
-export async function getModerationAttentionItems(): Promise<ModerationAttentionItem[]> {
+export async function getModerationAttentionItems(
+  adminId: string,
+): Promise<ModerationAttentionItem[]> {
   const since = new Date();
   since.setDate(since.getDate() - ATTENTION_WINDOW_DAYS);
 
-  const [conversationWarnings, bidWarnings] = await Promise.all([
+  const [conversationWarnings, bidWarnings, dismissed] = await Promise.all([
     prisma.message.findMany({
       where: {
         kind: "EXTERNAL_CONTACT_WARNING",
@@ -50,14 +52,22 @@ export async function getModerationAttentionItems(): Promise<ModerationAttention
         },
       },
     }),
+    prisma.adminContactWarningDismissal.findMany({
+      where: { adminId },
+      select: { attentionItemId: true },
+    }),
   ]);
+
+  const dismissedIds = new Set(dismissed.map((item) => item.attentionItemId));
 
   const items: ModerationAttentionItem[] = [];
 
   for (const warning of conversationWarnings) {
     if (!warning.violationUser || !warning.conversation?.project) continue;
+    const itemId = warning.id;
+    if (dismissedIds.has(itemId)) continue;
     items.push({
-      id: warning.id,
+      id: itemId,
       source: "conversation",
       createdAt: warning.createdAt.toISOString(),
       blockedSnippet: warning.blockedSnippet,
@@ -70,8 +80,10 @@ export async function getModerationAttentionItems(): Promise<ModerationAttention
 
   for (const warning of bidWarnings) {
     if (!warning.violationUser || !warning.bid?.project) continue;
+    const itemId = `bid-${warning.id}`;
+    if (dismissedIds.has(itemId)) continue;
     items.push({
-      id: `bid-${warning.id}`,
+      id: itemId,
       source: "bid",
       createdAt: warning.createdAt.toISOString(),
       blockedSnippet: warning.blockedSnippet,

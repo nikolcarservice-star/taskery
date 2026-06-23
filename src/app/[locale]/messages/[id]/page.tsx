@@ -114,6 +114,7 @@ export default async function ConversationPage({ params }: ConversationPageProps
         conversationId={conversation.id}
         messages={conversation.messages}
         currentUserId={session.user.id}
+        participantIds={[conversation.clientId, conversation.freelancerId]}
         warnExternalLinks={shouldWarnExternalLinks(contract?.status)}
         partner={{
           name: partner.name,

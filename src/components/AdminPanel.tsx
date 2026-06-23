@@ -21,6 +21,7 @@ type DisputeProject = {
   status: string;
   currency: string;
   client: { name: string | null; email: string };
+  conversation: { id: string } | null;
   contract: {
     id: string;
     amount: { toString(): string };

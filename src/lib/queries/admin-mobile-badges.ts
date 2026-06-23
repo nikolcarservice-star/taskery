@@ -11,6 +11,7 @@ export type AdminMobileBadges = {
 
 export async function getAdminMobileBadges(
   permissions: AdminPermission[],
+  adminId: string,
 ): Promise<AdminMobileBadges> {
   const badges: AdminMobileBadges = { moderation: 0, finance: 0 };
 
@@ -20,7 +21,7 @@ export async function getAdminMobileBadges(
     tasks.push(
       (async () => {
         const [attention, reports, disputes] = await Promise.all([
-          getModerationAttentionItems(),
+          getModerationAttentionItems(adminId),
           getPendingAdminReports(),
           prisma.project.count({ where: { status: "UNDER_DISPUTE" } }),
         ]);

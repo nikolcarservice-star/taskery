@@ -170,6 +170,7 @@ model User {
   reportsFiled            Report[]           @relation("ReportsFiled")
   reportsAgainst          Report[]           @relation("ReportsAgainstUser")
   reportsResolved         Report[]           @relation("ReportsResolved")
+  contactWarningDismissals AdminContactWarningDismissal[]
 
   @@map("users")
 }
@@ -364,6 +365,19 @@ model BidMessage {
 
   @@index([bidId, createdAt])
   @@map("bid_messages")
+}
+
+model AdminContactWarningDismissal {
+  id              String   @id @default(cuid())
+  adminId         String   @map("admin_id")
+  attentionItemId String   @map("attention_item_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@unique([adminId, attentionItemId])
+  @@index([adminId])
+  @@map("admin_contact_warning_dismissals")
 }
 
 model Contract {

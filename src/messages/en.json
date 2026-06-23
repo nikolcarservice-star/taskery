@@ -778,6 +778,7 @@
       "emptyBody": "Send the first message — your partner will get a notification.",
       "you": "You",
       "participant": "Participant",
+      "adminBadge": "Administrator",
       "placeholder": "Type your message…",
       "attachFiles": "Attach files",
       "send": "Send",

@@ -68,6 +68,7 @@ export default async function AdminPage() {
       where: { status: "UNDER_DISPUTE" },
       include: {
         client: { select: { name: true, email: true } },
+        conversation: { select: { id: true } },
         contract: {
           include: {
             freelancer: { select: { name: true, email: true } },
@@ -104,7 +105,7 @@ export default async function AdminPage() {
       orderBy: { createdAt: "asc" },
     }),
     getPendingAdminReports(),
-    getModerationAttentionItems(),
+    getModerationAttentionItems(currentAdmin.id),
     canViewUsers ? getAdminUsers() : Promise.resolve([]),
     canViewFinance ? getAdminFinanceOverview() : Promise.resolve(null),
   ]);

@@ -15,7 +15,7 @@ export default async function AdminMobileLayout({
   children,
 }: AdminMobileLayoutProps) {
   const { admin, permissions } = await getAdminPageContext("/admin/mobile");
-  const badges = await getAdminMobileBadges(permissions);
+  const badges = await getAdminMobileBadges(permissions, admin.id);
 
   return (
     <AdminMobileShell

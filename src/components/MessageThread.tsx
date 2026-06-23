@@ -24,6 +24,7 @@ type MessageThreadProps = {
   conversationId: string;
   messages: Message[];
   currentUserId: string;
+  participantIds: string[];
   warnExternalLinks?: boolean;
   partner: {
     name: string | null;
@@ -56,6 +57,7 @@ export function MessageThread({
   conversationId,
   messages,
   currentUserId,
+  participantIds,
   warnExternalLinks = false,
   partner,
 }: MessageThreadProps) {
@@ -116,6 +118,8 @@ export function MessageThread({
               if (!msg.sender) return null;
 
               const isMine = msg.sender.id === currentUserId;
+              const isAdminMessage =
+                !isMine && !participantIds.includes(msg.sender.id);
               const prev = messages[index - 1];
               const showAvatar =
                 !prev ||
@@ -124,7 +128,9 @@ export function MessageThread({
                 prev.sender.id !== msg.sender.id;
               const senderName = isMine
                 ? (msg.sender.name ?? t.you)
-                : (msg.sender.name ?? partner.name ?? t.participant);
+                : isAdminMessage
+                  ? (msg.sender.name ?? t.adminBadge)
+                  : (msg.sender.name ?? partner.name ?? t.participant);
               const senderAvatar = isMine
                 ? msg.sender.avatar
                 : (msg.sender.avatar ?? partner.avatar);
@@ -132,7 +138,9 @@ export function MessageThread({
               return (
                 <div
                   key={msg.id}
-                  className={`flex gap-3 ${isMine ? "flex-row-reverse" : "flex-row"}`}
+                  className={`flex gap-3 ${
+                    isMine && !isAdminMessage ? "flex-row-reverse" : "flex-row"
+                  }`}
                 >
                   <div className="w-9 shrink-0">
                     {showAvatar ? (
@@ -147,26 +155,39 @@ export function MessageThread({
                   </div>
 
                   <div
-                    className={`flex max-w-[min(100%,28rem)] flex-col ${isMine ? "items-end" : "items-start"}`}
+                    className={`flex max-w-[min(100%,28rem)] flex-col ${
+                      isMine && !isAdminMessage ? "items-end" : "items-start"
+                    }`}
                   >
                     {showAvatar && (
-                      <p
-                        className={`mb-1.5 text-xs font-medium text-zinc-500 ${isMine ? "text-right" : "text-left"}`}
+                      <div
+                        className={`mb-1.5 flex flex-wrap items-center gap-2 ${
+                          isMine && !isAdminMessage ? "justify-end" : "justify-start"
+                        }`}
                       >
-                        {senderName}
-                      </p>
+                        <p className="text-xs font-medium text-zinc-500">
+                          {senderName}
+                        </p>
+                        {isAdminMessage && (
+                          <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-800">
+                            {t.adminBadge}
+                          </span>
+                        )}
+                      </div>
                     )}
                     <div
                       className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
-                        isMine
-                          ? "rounded-tr-md bg-indigo-600 text-white"
-                          : "rounded-tl-md border border-zinc-100 bg-white text-zinc-900"
+                        isAdminMessage
+                          ? "rounded-tl-md border border-red-200 bg-red-50 text-red-950"
+                          : isMine
+                            ? "rounded-tr-md bg-indigo-600 text-white"
+                            : "rounded-tl-md border border-zinc-100 bg-white text-zinc-900"
                       }`}
                     >
                       <MessageContent
                         content={msg.content}
                         warnExternalLinks={warnExternalLinks}
-                        inverse={isMine}
+                        inverse={isMine && !isAdminMessage}
                       />
                     </div>
                     <time

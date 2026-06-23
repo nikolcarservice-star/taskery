@@ -266,6 +266,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
         currentUserId={session.user.id}
 
+        participantIds={[project.clientId, project.conversation.freelancerId]}
+
         warnExternalLinks={shouldWarnExternalLinks(project.contract?.status)}
 
         partner={
@@ -312,6 +314,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       canAcceptBids={!project.contract}
 
+      clientId={project.clientId}
+
       currentUserId={session?.user?.id}
 
     />
@@ -333,6 +337,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               currency={project.currency}
 
               currentUserId={session.user.id}
+
+              clientId={project.clientId}
 
               client={{
 
@@ -394,6 +400,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       currentUserId={session?.user?.id}
 
+      clientId={project.clientId}
+
       client={{
 
         name: project.client.name,
@@ -419,6 +427,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       projectStatus={project.status}
 
       canAcceptBids={false}
+
+      clientId={project.clientId}
 
     />
 

@@ -24,7 +24,7 @@ export function AdminReviewShell({
         </Link>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-gradient-to-b from-zinc-50/50 to-white shadow-sm">
         <div className="border-b border-zinc-100 bg-zinc-50/80 px-4 py-4 sm:px-6">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-red-600">
             Просмотр для модерации
@@ -34,12 +34,11 @@ export function AdminReviewShell({
             <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>
           )}
           <p className="mt-2 text-xs text-zinc-500">
-            Режим только для чтения — администратор не участвует в переписке
+            Администратор может писать в чат от своего имени — участники увидят
+            сообщение с пометкой «Администратор»
           </p>
         </div>
-        <div className="max-h-[min(70dvh,720px)] overflow-y-auto bg-gradient-to-b from-zinc-50/50 to-white px-4 py-5 sm:px-6">
-          {children}
-        </div>
+        {children}
       </div>
     </div>
   );

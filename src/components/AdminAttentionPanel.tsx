@@ -2,6 +2,7 @@ import {
   adminBidReviewPath,
   adminConversationReviewPath,
 } from "@/lib/admin-review-paths";
+import { AdminAttentionDismissButton } from "@/components/admin/AdminAttentionDismissButton";
 import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
 import Link from "next/link";
 
@@ -45,13 +46,16 @@ export function AdminAttentionPanel({
             key={item.id}
             className="rounded-xl border border-amber-100 bg-amber-50/60 p-4"
           >
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="rounded-full bg-amber-100 px-2.5 py-0.5 font-semibold text-amber-900">
-                {SOURCE_LABELS[item.source]}
-              </span>
-              <span className="text-zinc-500">
-                {new Date(item.createdAt).toLocaleString("ru-RU")}
-              </span>
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="rounded-full bg-amber-100 px-2.5 py-0.5 font-semibold text-amber-900">
+                  {SOURCE_LABELS[item.source]}
+                </span>
+                <span className="text-zinc-500">
+                  {new Date(item.createdAt).toLocaleString("ru-RU")}
+                </span>
+              </div>
+              <AdminAttentionDismissButton attentionItemId={item.id} />
             </div>
 
             <a

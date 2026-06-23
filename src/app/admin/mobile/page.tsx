@@ -4,10 +4,10 @@ import { getAdminMobileBadges } from "@/lib/queries/admin-mobile-badges";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminMobileHomePage() {
-  const { permissions } = await getAdminPageContext("/admin/mobile");
+  const { permissions, admin } = await getAdminPageContext("/admin/mobile");
   const [badges, userCount, projectCount, freelancerCount, clientCount] =
     await Promise.all([
-      getAdminMobileBadges(permissions),
+      getAdminMobileBadges(permissions, admin.id),
       prisma.user.count(),
       prisma.project.count(),
       prisma.user.count({ where: { role: "FREELANCER" } }),
