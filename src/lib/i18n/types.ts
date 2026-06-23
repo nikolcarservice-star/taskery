@@ -196,6 +196,7 @@ export type Dictionary = {
         invalid: string;
         admin: string;
         session: string;
+        config: string;
       };
     };
     register: {

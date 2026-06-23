@@ -36,9 +36,6 @@ export async function loginWithCredentials(
   } catch (error) {
     if (isRedirectError(error)) throw error;
     if (error instanceof AuthError) {
-      if (error.type === "Configuration") {
-        return { error: "config" };
-      }
       if (await isAdminEmail(email)) {
         return { error: "admin" };
       }
@@ -78,9 +75,6 @@ export async function loginWithAdminCredentials(
   } catch (error) {
     if (isRedirectError(error)) throw error;
     if (error instanceof AuthError) {
-      if (error.type === "Configuration") {
-        return { error: "config" };
-      }
       return { error: "invalid" };
     }
     throw error;
