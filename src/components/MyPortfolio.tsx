@@ -121,6 +121,7 @@ function AddPortfolioForm() {
   return (
     <form
       action={formAction}
+      encType="multipart/form-data"
       className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50/60 p-5 sm:p-6"
     >
       <h2 className="text-base font-semibold text-zinc-900">{t.addTitle}</h2>
@@ -151,6 +152,19 @@ function AddPortfolioForm() {
             className={inputClassName}
           />
         </div>
+        <div className="sm:col-span-2">
+          <label htmlFor="portfolio-image-file" className="block text-sm font-medium text-zinc-700">
+            {t.fieldImageFile}
+          </label>
+          <input
+            id="portfolio-image-file"
+            name="imageFile"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="mt-1 block w-full text-sm text-zinc-700 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100"
+          />
+          <p className="mt-1 text-xs text-zinc-500">{t.fieldImageFileHint}</p>
+        </div>
         <div>
           <label htmlFor="portfolio-image" className="block text-sm font-medium text-zinc-700">
             {t.fieldImageUrl}
@@ -162,6 +176,7 @@ function AddPortfolioForm() {
             placeholder="https://…"
             className={inputClassName}
           />
+          <p className="mt-1 text-xs text-zinc-500">{t.fieldImageUrlOptional}</p>
         </div>
         <div>
           <label htmlFor="portfolio-url" className="block text-sm font-medium text-zinc-700">

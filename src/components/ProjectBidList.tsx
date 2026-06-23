@@ -12,14 +12,17 @@ import {
 } from "@/lib/project-labels";
 import type { AppLocale } from "@/lib/i18n/types";
 import { isProUser } from "@/lib/slug";
+import type { MessageKind } from "@/generated/prisma/client";
 import { BidStatus, ProjectStatus } from "@/generated/prisma/client";
 import Link from "next/link";
 
 export type BidMessageItem = {
   id: string;
+  kind: MessageKind;
   content: string;
   createdAt: Date;
-  sender: { id: string; name: string | null; avatar?: string | null };
+  sender: { id: string; name: string | null; avatar?: string | null } | null;
+  violationUser: { id: string; name: string | null } | null;
 };
 
 export type BidListItem = {
@@ -219,7 +222,10 @@ export function FreelancerBidStatus({
   const canMessage =
     Boolean(currentUserId) && bid.status === "PENDING";
   const clientHasWritten = (bid.messages ?? []).some(
-    (message) => message.sender.id !== currentUserId,
+    (message) =>
+      message.kind === "USER" &&
+      message.sender != null &&
+      message.sender.id !== currentUserId,
   );
   const showMessageThread =
     canMessage && currentUserId && client && clientHasWritten;

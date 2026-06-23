@@ -32,6 +32,7 @@ const projectDetailInclude = {
         orderBy: { createdAt: "asc" },
         include: {
           sender: { select: { id: true, name: true, avatar: true } },
+          violationUser: { select: { id: true, name: true } },
         },
       },
     },
@@ -53,6 +54,7 @@ const projectDetailInclude = {
         orderBy: { createdAt: "asc" },
         include: {
           sender: { select: { id: true, name: true, avatar: true } },
+          violationUser: { select: { id: true, name: true } },
         },
       },
     },

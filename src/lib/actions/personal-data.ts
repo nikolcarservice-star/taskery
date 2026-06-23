@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import {
   deleteLocalAvatar,
-  isLocalAvatarUrl,
+  isManagedImageUrl,
   saveUserAvatar,
 } from "@/lib/avatar-upload";
 import type { LanguageLevel } from "@/lib/personal-data-shared";
@@ -153,7 +153,7 @@ export async function updateProfilePhoto(
   }
 
   try {
-    if (isLocalAvatarUrl(user.avatar)) {
+    if (isManagedImageUrl(user.avatar)) {
       await deleteLocalAvatar(user.avatar);
     }
 

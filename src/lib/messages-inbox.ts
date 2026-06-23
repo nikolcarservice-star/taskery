@@ -18,6 +18,7 @@ export async function getUnreadConversationMessageCount(
   return prisma.message.count({
     where: {
       readAt: null,
+      kind: "USER",
       senderId: { not: userId },
       conversation: visibleConversationWhere(userId),
     },
@@ -113,6 +114,7 @@ export async function getRecentMessagePreviews(
       client: { select: { id: true, name: true } },
       freelancer: { select: { id: true, name: true } },
       messages: {
+        where: { kind: "USER" },
         orderBy: { createdAt: "desc" },
         take: 1,
         select: { content: true, createdAt: true },
@@ -129,6 +131,7 @@ export async function getRecentMessagePreviews(
     where: {
       conversationId: { in: conversations.map((conv) => conv.id) },
       readAt: null,
+      kind: "USER",
       senderId: { not: userId },
     },
     _count: { id: true },
@@ -162,6 +165,7 @@ export async function markConversationMessagesRead(
   const result = await prisma.message.updateMany({
     where: {
       conversationId,
+      kind: "USER",
       senderId: { not: userId },
       readAt: null,
     },

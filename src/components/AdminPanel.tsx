@@ -6,6 +6,7 @@ import {
   adminReleaseDispute,
   type ActionState,
 } from "@/lib/actions/admin";
+import { AdminAttentionPanel } from "@/components/AdminAttentionPanel";
 import { AdminReportsPanel } from "@/components/AdminReportsPanel";
 import { AdminFinancePanel } from "@/components/AdminFinancePanel";
 import { AdminUsersPanel } from "@/components/AdminUsersPanel";
@@ -16,6 +17,7 @@ import {
 import {
   hasAdminPermission,
 } from "@/lib/admin-permissions";
+import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
 import type { AdminFinanceOverview } from "@/lib/queries/admin-finance";
 import type { AdminUserItem } from "@/lib/queries/admin-users";
 import type { AdminPermission } from "@/generated/prisma/client";
@@ -43,6 +45,7 @@ type AdminPanelProps = {
   disputes: DisputeProject[];
   openProjects: { id: string; slug: string; title: string; client: { name: string | null } }[];
   reports: import("@/lib/reports-shared").AdminReportItem[];
+  attentionItems: ModerationAttentionItem[];
   stats: {
     users: number;
     projects: number;
@@ -129,6 +132,7 @@ export function AdminPanel({
   disputes,
   openProjects,
   reports,
+  attentionItems,
   stats,
   permissions,
   admins,
@@ -170,6 +174,8 @@ export function AdminPanel({
       {canManageStaff && (
         <AdminStaffManager admins={admins} currentAdminId={currentAdminId} />
       )}
+
+      {canModerate && <AdminAttentionPanel items={attentionItems} />}
 
       {canModerate && <AdminReportsPanel reports={reports} />}
 

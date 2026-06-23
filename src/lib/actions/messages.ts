@@ -1,6 +1,13 @@
 "use server";
 
 import { auth } from "@/lib/auth";
+import { actionError } from "@/lib/action-errors";
+import { createConversationContactWarning } from "@/lib/moderation/contact-warnings";
+import {
+  detectExternalContactAttempt,
+  detectOffPlatformContacts,
+  shouldGuardProjectMessages,
+} from "@/lib/moderation/message-guard";
 import { prisma } from "@/lib/prisma";
 import { safeRedirectPath } from "@/lib/safe-redirect";
 import { revalidatePath } from "next/cache";
@@ -13,30 +20,66 @@ export async function sendMessage(
   formData: FormData,
 ): Promise<ActionState> {
   const session = await auth();
-  if (!session?.user?.id) return { error: "AUTH_REQUIRED" };
+  if (!session?.user?.id) return actionError("AUTH_REQUIRED");
 
   const conversationId = (formData.get("conversationId") as string | null)?.trim();
   const content = (formData.get("content") as string | null)?.trim();
 
   if (!conversationId || !content) {
-    return { error: "MESSAGE_REQUIRED" };
+    return actionError("MESSAGE_REQUIRED");
   }
 
   const conversation = await prisma.conversation.findUnique({
     where: { id: conversationId },
     include: {
-      project: { select: { slug: true, title: true } },
+      project: {
+        select: {
+          slug: true,
+          title: true,
+          contract: { select: { status: true } },
+        },
+      },
     },
   });
 
-  if (!conversation) return { error: "CONVERSATION_NOT_FOUND" };
+  if (!conversation) return actionError("CONVERSATION_NOT_FOUND");
 
   const isParticipant =
     conversation.clientId === session.user.id ||
     conversation.freelancerId === session.user.id ||
     session.user.role === "ADMIN";
 
-  if (!isParticipant) return { error: "ACCESS_DENIED" };
+  if (!isParticipant) return actionError("ACCESS_DENIED");
+
+  const guardMessages = shouldGuardProjectMessages(
+    conversation.project.contract?.status,
+  );
+
+  if (session.user.role !== "ADMIN") {
+    const violation = guardMessages
+      ? detectExternalContactAttempt(content)
+      : detectOffPlatformContacts(content);
+
+    if (violation.blocked) {
+      await createConversationContactWarning({
+        conversationId,
+        violationUserId: session.user.id,
+        blockedContent: content,
+      });
+
+      await prisma.conversation.update({
+        where: { id: conversationId },
+        data: { updatedAt: new Date() },
+      });
+
+      revalidatePath("/messages");
+      revalidatePath(`/messages/${conversationId}`);
+      revalidatePath(`/projects/${conversation.project.slug}`);
+      revalidatePath("/admin");
+
+      return actionError("MESSAGE_EXTERNAL_CONTACT_BLOCKED");
+    }
+  }
 
   await prisma.message.create({
     data: {
@@ -69,7 +112,7 @@ export async function hideConversations(
   formData: FormData,
 ): Promise<ActionState> {
   const session = await auth();
-  if (!session?.user?.id) return { error: "AUTH_REQUIRED" };
+  if (!session?.user?.id) return actionError("AUTH_REQUIRED");
 
   const conversationIds = formData
     .getAll("conversationIds")
@@ -77,7 +120,7 @@ export async function hideConversations(
     .filter(Boolean);
 
   if (conversationIds.length === 0) {
-    return { error: "SELECT_CONVERSATIONS" };
+    return actionError("SELECT_CONVERSATIONS");
   }
 
   const conversations = await prisma.conversation.findMany({
@@ -85,7 +128,7 @@ export async function hideConversations(
   });
 
   if (conversations.length === 0) {
-    return { error: "CONVERSATIONS_NOT_FOUND" };
+    return actionError("CONVERSATIONS_NOT_FOUND");
   }
 
   const now = new Date();
@@ -95,7 +138,7 @@ export async function hideConversations(
     const isFreelancer = conversation.freelancerId === session.user.id;
 
     if (!isClient && !isFreelancer) {
-      return { error: "ACCESS_DENIED" };
+      return actionError("ACCESS_DENIED");
     }
 
     await prisma.conversation.update({

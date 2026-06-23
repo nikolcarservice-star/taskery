@@ -1,9 +1,11 @@
 "use server";
 
 import { auth } from "@/lib/auth";
+import { deleteStoredImage, isManagedImageUrl, uploadImage } from "@/lib/image-storage";
 import { prisma } from "@/lib/prisma";
 import { grantPortfolioBoostIfEligible } from "@/lib/taskboost-promotion";
 import { sanitizeOptionalHttpUrl } from "@/lib/safe-url";
+import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 
 export type ActionState = {
@@ -90,7 +92,8 @@ export async function addPortfolioItem(
 
   const title = (formData.get("title") as string | null)?.trim();
   const description = (formData.get("description") as string | null)?.trim() || null;
-  const imageUrl = sanitizeOptionalHttpUrl(
+  const imageFile = formData.get("imageFile");
+  let imageUrl = sanitizeOptionalHttpUrl(
     (formData.get("imageUrl") as string | null)?.trim(),
   );
   const projectUrl = sanitizeOptionalHttpUrl(
@@ -98,6 +101,20 @@ export async function addPortfolioItem(
   );
 
   if (!title) return { error: "PORTFOLIO_TITLE_REQUIRED" };
+
+  if (imageFile instanceof File && imageFile.size > 0) {
+    try {
+      imageUrl = await uploadImage(
+        imageFile,
+        `portfolio/${session.user.id}/${nanoid()}`,
+      );
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error ? error.message : "Не удалось загрузить изображение",
+      };
+    }
+  }
 
   const profile = await prisma.freelancerProfile.upsert({
     where: { userId: session.user.id },
@@ -141,6 +158,10 @@ export async function deletePortfolioItem(
 
   if (!item || item.freelancerProfile.userId !== session.user.id) {
     return { error: "ACCESS_DENIED" };
+  }
+
+  if (isManagedImageUrl(item.imageUrl)) {
+    await deleteStoredImage(item.imageUrl);
   }
 
   await prisma.portfolioItem.delete({ where: { id: itemId } });

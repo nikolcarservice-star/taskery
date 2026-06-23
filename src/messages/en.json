@@ -790,7 +790,28 @@
       "placeholder": "Your message…",
       "send": "Send",
       "sending": "…"
+    },
+    "moderation": {
+      "adminLabel": "Administrator notice",
+      "externalContactBlocked": "{name} tried to share external contacts or a link to a third-party service. The message was not delivered.",
+      "policyHint": "Until the project is paid, links, emails, phones, and social contacts are blocked. After payment, links open through Taskery's safety screen, but off-platform contacts remain forbidden."
     }
+  },
+  "externalLeave": {
+    "metaTitle": "Leaving Taskery",
+    "metaDescription": "Taskery safety screen before opening an external website.",
+    "title": "You are leaving Taskery's protected zone",
+    "subtitle": "This link leads to an external website. We do not control third-party resources and cannot guarantee their safety. Make sure you trust the address and the person who sent the link.",
+    "destinationLabel": "Destination",
+    "proceed": "Continue to website",
+    "stay": "Back to Taskery",
+    "remember": "I understand the risks — don't show this warning for 30 days",
+    "tips": [
+      "Check the domain carefully — scammers often change one or two letters.",
+      "Never enter your Taskery password on external websites.",
+      "Do not download password-protected files from strangers.",
+      "Keep agreements and deliverables in Taskery chat under escrow protection."
+    ]
   },
   "notificationsPage": {
     "emptyTitle": "No notifications yet",
@@ -1036,6 +1057,9 @@
       "fieldDescription": "Description",
       "fieldDescriptionPlaceholder": "Briefly describe the task and your contribution",
       "fieldImageUrl": "Image URL",
+      "fieldImageFile": "Image file",
+      "fieldImageFileHint": "JPG, PNG or WebP, up to 5 MB.",
+      "fieldImageUrlOptional": "Optional if you uploaded a file.",
       "fieldProjectUrl": "Project link",
       "adding": "Adding…",
       "addButton": "Add to portfolio",
@@ -1685,6 +1709,7 @@
     "DEMO_TOPUP_PRODUCTION_ONLY": "Demo top-up is not available in production",
     "USE_STRIPE_FOR_TOPUP": "Use Stripe to top up your balance",
     "MESSAGE_REQUIRED": "Enter a message",
+    "MESSAGE_EXTERNAL_CONTACT_BLOCKED": "Off-platform contacts are not allowed: email, phone numbers, social media, and messengers. Links are also blocked until the project is paid.",
     "CONVERSATION_NOT_FOUND": "Conversation not found",
     "SELECT_CONVERSATIONS": "Select conversations to delete",
     "CONVERSATIONS_NOT_FOUND": "Conversations not found",

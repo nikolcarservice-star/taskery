@@ -1,17 +1,22 @@
 "use client";
 
-import { UserAvatar } from "@/components/UserAvatar";
 import { FormActionError } from "@/components/FormActionError";
+import { MessageContent } from "@/components/MessageContent";
+import { ModerationWarningMessage } from "@/components/ModerationWarningMessage";
+import { UserAvatar } from "@/components/UserAvatar";
 import { sendBidMessage, type ActionState } from "@/lib/actions/bid-messages";
+import type { MessageKind } from "@/generated/prisma/client";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { formatRelativeTime } from "@/lib/i18n/relative-time";
 import { useActionState, useEffect, useRef, useState } from "react";
 
 type BidMessage = {
   id: string;
+  kind: MessageKind;
   content: string;
   createdAt: Date;
-  sender: { id: string; name: string | null; avatar?: string | null };
+  sender: { id: string; name: string | null; avatar?: string | null } | null;
+  violationUser: { id: string; name: string | null } | null;
 };
 
 type BidMessageThreadProps = {
@@ -93,6 +98,22 @@ export function BidMessageThread({
             ) : (
               <div className="space-y-3">
                 {messages.map((msg) => {
+                  if (msg.kind === "EXTERNAL_CONTACT_WARNING") {
+                    const offenderName =
+                      msg.violationUser?.name ??
+                      msg.violationUser?.id ??
+                      thread.participant;
+
+                    return (
+                      <ModerationWarningMessage
+                        key={msg.id}
+                        violationUserName={offenderName}
+                      />
+                    );
+                  }
+
+                  if (!msg.sender) return null;
+
                   const isMine = msg.sender.id === currentUserId;
                   const senderName = isMine
                     ? (msg.sender.name ?? thread.you)
@@ -119,7 +140,7 @@ export function BidMessageThread({
                               : "rounded-tl-md border border-zinc-100 bg-zinc-50 text-zinc-900"
                           }`}
                         >
-                          <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                          <MessageContent content={msg.content} inverse={isMine} />
                         </div>
                         <time
                           dateTime={new Date(msg.createdAt).toISOString()}

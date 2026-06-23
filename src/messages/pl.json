@@ -769,7 +769,28 @@
       "placeholder": "Twoja wiadomość…",
       "send": "Wyślij",
       "sending": "…"
+    },
+    "moderation": {
+      "adminLabel": "Ostrzeżenie administratora",
+      "externalContactBlocked": "Użytkownik {name} próbował wysłać zewnętrzne kontakty lub link do usługi zewnętrznej. Wiadomość nie została dostarczona.",
+      "policyHint": "Do opłacenia projektu zablokowane są linki, e-maile, telefony i kontakty społecznościowe. Po opłacie linki otwierają się przez ekran bezpieczeństwa Taskery, ale kontakty poza platformą nadal są zabronione."
     }
+  },
+  "externalLeave": {
+    "metaTitle": "Przejście na zewnętrzną stronę",
+    "metaDescription": "Ostrzeżenie Taskery przed otwarciem zewnętrznej witryny.",
+    "title": "Opuszczasz chronioną strefę Taskery",
+    "subtitle": "Link prowadzi na zewnętrzną stronę. Nie kontrolujemy zasobów stron trzecich i nie możemy zagwarantować ich bezpieczeństwa. Upewnij się, że ufasz adresowi i osobie, która wysłała link.",
+    "destinationLabel": "Adres docelowy",
+    "proceed": "Przejdź na stronę",
+    "stay": "Wróć do Taskery",
+    "remember": "Rozumiem ryzyko — nie pokazuj tego ostrzeżenia przez 30 dni",
+    "tips": [
+      "Sprawdź domenę — oszuści często zmieniają jedną lub dwie litery.",
+      "Nigdy nie wpisuj hasła Taskery na zewnętrznych stronach.",
+      "Nie pobieraj plików i archiwów z hasłem od nieznajomych.",
+      "Ważne ustalenia i pliki trzymaj na czacie Taskery pod ochroną escrow."
+    ]
   },
   "notificationsPage": {
     "emptyTitle": "Brak powiadomień",
@@ -1015,6 +1036,9 @@
       "fieldDescription": "Opis",
       "fieldDescriptionPlaceholder": "Krótko opisz zadanie i swój wkład",
       "fieldImageUrl": "URL obrazu",
+      "fieldImageFile": "Plik obrazu",
+      "fieldImageFileHint": "JPG, PNG lub WebP, do 5 MB.",
+      "fieldImageUrlOptional": "Opcjonalnie, jeśli przesłałeś plik.",
       "fieldProjectUrl": "Link do projektu",
       "adding": "Dodawanie…",
       "addButton": "Dodaj do portfolio",
@@ -1664,6 +1688,7 @@
     "DEMO_TOPUP_PRODUCTION_ONLY": "Doładowanie demo niedostępne w produkcji",
     "USE_STRIPE_FOR_TOPUP": "Użyj Stripe, aby doładować saldo",
     "MESSAGE_REQUIRED": "Wpisz wiadomość",
+    "MESSAGE_EXTERNAL_CONTACT_BLOCKED": "Nie można wysyłać kontaktów poza Taskery: e-mail, telefony, media społecznościowe i komunikatory. Do opłacenia projektu blokowane są też linki.",
     "CONVERSATION_NOT_FOUND": "Nie znaleziono rozmowy",
     "SELECT_CONVERSATIONS": "Wybierz rozmowy do usunięcia",
     "CONVERSATIONS_NOT_FOUND": "Nie znaleziono rozmów",

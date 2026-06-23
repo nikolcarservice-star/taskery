@@ -218,7 +218,11 @@ function PortfolioSection({ portfolio }: { portfolio: PortfolioItem[] }) {
         </ul>
       )}
 
-      <form action={addAction} className="mt-6 space-y-3 rounded-xl border border-dashed border-zinc-300 p-4">
+      <form
+        action={addAction}
+        encType="multipart/form-data"
+        className="mt-6 space-y-3 rounded-xl border border-dashed border-zinc-300 p-4"
+      >
         <p className="text-sm font-medium text-zinc-700">Добавить работу</p>
         <input
           name="title"
@@ -233,9 +237,15 @@ function PortfolioSection({ portfolio }: { portfolio: PortfolioItem[] }) {
           className={inputClassName}
         />
         <input
+          name="imageFile"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="block w-full text-sm text-zinc-700 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-100 file:px-3 file:py-2 file:text-sm file:font-medium hover:file:bg-zinc-200"
+        />
+        <input
           name="imageUrl"
           type="url"
-          placeholder="URL изображения"
+          placeholder="URL изображения (если без файла)"
           className={inputClassName}
         />
         <input

@@ -8,6 +8,7 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { localizedPath } from "@/lib/i18n/routing";
 import { markConversationMessagesRead } from "@/lib/messages-inbox";
+import { shouldWarnExternalLinks } from "@/lib/moderation/message-guard";
 import { createMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/session";
@@ -63,6 +64,7 @@ export default async function ConversationPage({ params }: ConversationPageProps
         orderBy: { createdAt: "asc" },
         include: {
           sender: { select: { id: true, name: true, avatar: true } },
+          violationUser: { select: { id: true, name: true } },
         },
       },
       _count: { select: { messages: true } },
@@ -112,6 +114,7 @@ export default async function ConversationPage({ params }: ConversationPageProps
         conversationId={conversation.id}
         messages={conversation.messages}
         currentUserId={session.user.id}
+        warnExternalLinks={shouldWarnExternalLinks(contract?.status)}
         partner={{
           name: partner.name,
           avatar: partner.avatar,

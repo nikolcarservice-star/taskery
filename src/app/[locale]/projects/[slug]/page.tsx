@@ -49,6 +49,7 @@ import { markBidMessageNotificationsReadForProject } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 import { getProjectDetailById } from "@/lib/queries/project-detail";
 import { resolveProjectSlug } from "@/lib/queries/project-lookup";
+import { shouldWarnExternalLinks } from "@/lib/moderation/message-guard";
 
 import { absoluteUrl } from "@/lib/seo";
 
@@ -264,6 +265,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         messages={project.conversation.messages}
 
         currentUserId={session.user.id}
+
+        warnExternalLinks={shouldWarnExternalLinks(project.contract?.status)}
 
         partner={
 

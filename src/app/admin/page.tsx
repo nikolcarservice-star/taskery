@@ -7,6 +7,7 @@ import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAdminFinanceOverview } from "@/lib/queries/admin-finance";
+import { getModerationAttentionItems } from "@/lib/queries/admin-attention";
 import { getPendingAdminReports } from "@/lib/queries/admin-reports";
 import { getAdminUsers } from "@/lib/queries/admin-users";
 import { getHomeRouteForRole } from "@/lib/role-redirect";
@@ -59,6 +60,7 @@ export default async function AdminPage() {
     clientCount,
     admins,
     reports,
+    attentionItems,
     users,
     finance,
   ] = await Promise.all([
@@ -102,6 +104,7 @@ export default async function AdminPage() {
       orderBy: { createdAt: "asc" },
     }),
     getPendingAdminReports(),
+    getModerationAttentionItems(),
     canViewUsers ? getAdminUsers() : Promise.resolve([]),
     canViewFinance ? getAdminFinanceOverview() : Promise.resolve(null),
   ]);
@@ -122,6 +125,7 @@ export default async function AdminPage() {
             disputes={disputes}
             openProjects={openProjects}
             reports={reports}
+            attentionItems={attentionItems}
             stats={{
               users: userCount,
               projects: projectCount,

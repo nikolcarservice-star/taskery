@@ -666,6 +666,17 @@ export type Dictionary = {
       account: string;
     };
   };
+  externalLeave: {
+    metaTitle: string;
+    metaDescription: string;
+    title: string;
+    subtitle: string;
+    destinationLabel: string;
+    proceed: string;
+    stay: string;
+    remember: string;
+    tips: string[];
+  };
   footer: {
     tagline: string;
     platform: string;
@@ -919,6 +930,11 @@ export type Dictionary = {
       send: string;
       sending: string;
     };
+    moderation: {
+      adminLabel: string;
+      externalContactBlocked: string;
+      policyHint: string;
+    };
   };
   tables: {
     bids: {
@@ -1164,6 +1180,9 @@ export type Dictionary = {
       fieldDescription: string;
       fieldDescriptionPlaceholder: string;
       fieldImageUrl: string;
+      fieldImageFile: string;
+      fieldImageFileHint: string;
+      fieldImageUrlOptional: string;
       fieldProjectUrl: string;
       adding: string;
       addButton: string;
@@ -1339,6 +1358,7 @@ export type Dictionary = {
     DEMO_TOPUP_PRODUCTION_ONLY: string;
     USE_STRIPE_FOR_TOPUP: string;
     MESSAGE_REQUIRED: string;
+    MESSAGE_EXTERNAL_CONTACT_BLOCKED: string;
     CONVERSATION_NOT_FOUND: string;
     SELECT_CONVERSATIONS: string;
     CONVERSATIONS_NOT_FOUND: string;

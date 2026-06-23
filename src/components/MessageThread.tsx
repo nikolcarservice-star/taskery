@@ -1,23 +1,30 @@
 "use client";
 
-import { UserAvatar } from "@/components/UserAvatar";
 import { FormActionError } from "@/components/FormActionError";
+import { MessageContent } from "@/components/MessageContent";
+import { ModerationWarningMessage } from "@/components/ModerationWarningMessage";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { formatRelativeTime } from "@/lib/i18n/relative-time";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { sendMessage, type ActionState } from "@/lib/actions/messages";
 
+import type { MessageKind } from "@/generated/prisma/client";
+
 type Message = {
   id: string;
+  kind: MessageKind;
   content: string;
   createdAt: Date;
-  sender: { id: string; name: string | null; avatar?: string | null };
+  sender: { id: string; name: string | null; avatar?: string | null } | null;
+  violationUser: { id: string; name: string | null } | null;
 };
 
 type MessageThreadProps = {
   conversationId: string;
   messages: Message[];
   currentUserId: string;
+  warnExternalLinks?: boolean;
   partner: {
     name: string | null;
     avatar: string | null;
@@ -49,6 +56,7 @@ export function MessageThread({
   conversationId,
   messages,
   currentUserId,
+  warnExternalLinks = false,
   partner,
 }: MessageThreadProps) {
   const dict = useDictionary();
@@ -93,9 +101,27 @@ export function MessageThread({
         ) : (
           <div className="space-y-5">
             {messages.map((msg, index) => {
+              if (msg.kind === "EXTERNAL_CONTACT_WARNING") {
+                const offenderName =
+                  msg.violationUser?.name ?? msg.violationUser?.id ?? t.participant;
+
+                return (
+                  <ModerationWarningMessage
+                    key={msg.id}
+                    violationUserName={offenderName}
+                  />
+                );
+              }
+
+              if (!msg.sender) return null;
+
               const isMine = msg.sender.id === currentUserId;
               const prev = messages[index - 1];
-              const showAvatar = !prev || prev.sender.id !== msg.sender.id;
+              const showAvatar =
+                !prev ||
+                prev.kind !== "USER" ||
+                !prev.sender ||
+                prev.sender.id !== msg.sender.id;
               const senderName = isMine
                 ? (msg.sender.name ?? t.you)
                 : (msg.sender.name ?? partner.name ?? t.participant);
@@ -137,7 +163,11 @@ export function MessageThread({
                           : "rounded-tl-md border border-zinc-100 bg-white text-zinc-900"
                       }`}
                     >
-                      <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                      <MessageContent
+                        content={msg.content}
+                        warnExternalLinks={warnExternalLinks}
+                        inverse={isMine}
+                      />
                     </div>
                     <time
                       dateTime={new Date(msg.createdAt).toISOString()}

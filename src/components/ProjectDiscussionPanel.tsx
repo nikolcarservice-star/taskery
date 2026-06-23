@@ -5,7 +5,7 @@ import { useLocalizedPath } from "@/components/LocalizedLink";
 import { MessageThread } from "@/components/MessageThread";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import Link from "next/link";
-import type { ContractStatus, ProjectStatus } from "@/generated/prisma/client";
+import type { ContractStatus, MessageKind, ProjectStatus } from "@/generated/prisma/client";
 
 type ProjectDiscussionPanelProps = {
   conversationId: string;
@@ -20,11 +20,14 @@ type ProjectDiscussionPanelProps = {
   stripeEnabled?: boolean;
   messages: {
     id: string;
+    kind: MessageKind;
     content: string;
     createdAt: Date;
-    sender: { id: string; name: string | null; avatar?: string | null };
+    sender: { id: string; name: string | null; avatar?: string | null } | null;
+    violationUser: { id: string; name: string | null } | null;
   }[];
   currentUserId: string;
+  warnExternalLinks?: boolean;
   partner: {
     name: string | null;
     avatar: string | null;
@@ -44,6 +47,7 @@ export function ProjectDiscussionPanel({
   stripeEnabled = false,
   messages,
   currentUserId,
+  warnExternalLinks = false,
   partner,
 }: ProjectDiscussionPanelProps) {
   const dict = useDictionary();
@@ -82,6 +86,7 @@ export function ProjectDiscussionPanel({
           conversationId={conversationId}
           messages={messages}
           currentUserId={currentUserId}
+          warnExternalLinks={warnExternalLinks}
           partner={partner}
         />
       </div>
