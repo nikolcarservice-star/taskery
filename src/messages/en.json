@@ -806,6 +806,7 @@
     "proceed": "Continue to website",
     "stay": "Back to Taskery",
     "remember": "I understand the risks — don't show this warning for 30 days",
+    "redirecting": "Redirecting to the external website…",
     "tips": [
       "Check the domain carefully — scammers often change one or two letters.",
       "Never enter your Taskery password on external websites.",

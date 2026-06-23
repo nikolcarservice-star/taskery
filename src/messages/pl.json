@@ -785,6 +785,7 @@
     "proceed": "Przejdź na stronę",
     "stay": "Wróć do Taskery",
     "remember": "Rozumiem ryzyko — nie pokazuj tego ostrzeżenia przez 30 dni",
+    "redirecting": "Przekierowujemy na zewnętrzną stronę…",
     "tips": [
       "Sprawdź domenę — oszuści często zmieniają jedną lub dwie litery.",
       "Nigdy nie wpisuj hasła Taskery na zewnętrznych stronach.",

@@ -1,3 +1,4 @@
+import { ExternalLeaveAutoRedirect } from "@/components/ExternalLeaveAutoRedirect";
 import { ExternalLeaveView } from "@/components/ExternalLeaveView";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -9,7 +10,7 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { createMetadata } from "@/lib/metadata";
 import { cookies } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 type LeavePageProps = {
   params: Promise<{ locale: string }>;
@@ -40,8 +41,21 @@ export default async function LeavePage({ params, searchParams }: LeavePageProps
   }
 
   const cookieStore = await cookies();
-  if (cookieStore.get(EXTERNAL_LEAVE_COOKIE)?.value === "1") {
-    redirect(targetUrl);
+  const skipWarning = cookieStore.get(EXTERNAL_LEAVE_COOKIE)?.value === "1";
+
+  if (skipWarning) {
+    return (
+      <div className="flex min-h-full flex-1 flex-col bg-gradient-to-b from-indigo-50 via-white to-zinc-50">
+        <SiteHeader locale={locale} dict={dict} />
+        <main className="mx-auto flex w-full max-w-4xl flex-1 items-center px-6 py-12 sm:py-16">
+          <ExternalLeaveAutoRedirect
+            targetUrl={targetUrl}
+            label={dict.externalLeave.redirecting}
+          />
+        </main>
+        <SiteFooter locale={locale} dict={dict} />
+      </div>
+    );
   }
 
   return (

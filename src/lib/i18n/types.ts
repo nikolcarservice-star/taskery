@@ -675,6 +675,7 @@ export type Dictionary = {
     proceed: string;
     stay: string;
     remember: string;
+    redirecting: string;
     tips: string[];
   };
   footer: {
