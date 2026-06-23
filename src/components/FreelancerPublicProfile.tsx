@@ -1,6 +1,7 @@
 "use client";
 
 import { ProBadge } from "@/components/ProBadge";
+import { ReportUserButton } from "@/components/ReportUserButton";
 import { ReviewList } from "@/components/ReviewForm";
 import { UserAvatar } from "@/components/UserAvatar";
 import { useLocalizedPath } from "@/components/LocalizedLink";
@@ -64,6 +65,8 @@ export type FreelancerPublicProfileProps = {
   isOwnProfile: boolean;
   isViewerClient: boolean;
   isAdmin?: boolean;
+  canReportUser?: boolean;
+  alreadyReportedUser?: boolean;
 };
 
 function StatCard({
@@ -181,6 +184,8 @@ export function FreelancerPublicProfile({
   isOwnProfile,
   isViewerClient,
   isAdmin = false,
+  canReportUser = false,
+  alreadyReportedUser = false,
 }: FreelancerPublicProfileProps) {
   const dict = useDictionary();
   const locale = useDictionaryLocale();
@@ -265,7 +270,14 @@ export function FreelancerPublicProfile({
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 sm:justify-end">
+            <div className="flex flex-wrap items-center gap-3 sm:justify-end">
+              {canReportUser && (
+                <ReportUserButton
+                  userId={user.id}
+                  canReport={canReportUser}
+                  alreadyReported={alreadyReportedUser}
+                />
+              )}
               {isOwnProfile ? (
                 <Link
                   href={l("/dashboard/profile")}

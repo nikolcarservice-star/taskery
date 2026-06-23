@@ -1,6 +1,7 @@
 "use client";
 
 import { FeaturedBadge } from "@/components/FeaturedBadge";
+import { ProjectReportFlag } from "@/components/ProjectReportBar";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import type { AppLocale } from "@/lib/i18n/types";
 import { localizedPath } from "@/lib/i18n/routing";
@@ -20,6 +21,9 @@ type ProjectCardProps = {
     createdAt: Date;
     isFeatured: boolean;
     featuredUntil: Date | null;
+    reportCount?: number;
+    underpricedReportCount?: number;
+    moderationHot?: boolean;
     _count: { bids: number };
     category: { name: string } | null;
   };
@@ -49,6 +53,11 @@ export function ProjectCard({ project, locale = "ru" }: ProjectCardProps) {
               </span>
             )}
             {featured && <FeaturedBadge />}
+            <ProjectReportFlag
+              reportCount={project.reportCount ?? 0}
+              underpricedReportCount={project.underpricedReportCount ?? 0}
+              moderationHot={project.moderationHot ?? false}
+            />
           </div>
           <h2 className="mt-1 text-lg font-semibold text-zinc-900">
             <Link

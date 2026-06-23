@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { createMetadata } from "@/lib/metadata";
+import { hasUserReportedUser } from "@/lib/report-stats";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
@@ -86,6 +87,12 @@ export default async function FreelancerPage({ params }: FreelancerPageProps) {
   }
 
   const profile = user.freelancerProfile;
+  const isOwnProfile = session?.user?.id === user.id;
+  const alreadyReportedUser =
+    session?.user?.id && !isOwnProfile
+      ? await hasUserReportedUser(session.user.id, user.id)
+      : false;
+  const canReportUser = Boolean(session?.user?.id && !isOwnProfile);
 
   return (
     <AccountBrowsePage
@@ -123,11 +130,13 @@ export default async function FreelancerPage({ params }: FreelancerPageProps) {
           portfolioItems: profile.portfolioItems,
         }}
         reviews={user.reviewsReceived}
-        isOwnProfile={session?.user?.id === user.id}
+        isOwnProfile={isOwnProfile}
         isViewerClient={
           session?.user?.role === "CLIENT" || session?.user?.role === "ADMIN"
         }
         isAdmin={user.role === "ADMIN"}
+        canReportUser={canReportUser}
+        alreadyReportedUser={alreadyReportedUser}
       />
     </AccountBrowsePage>
   );

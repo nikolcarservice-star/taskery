@@ -18,6 +18,7 @@ async function loadUserIntoToken(token: {
   email?: string | null;
   role?: Role;
   interfaceLanguage?: string;
+  isBanned?: boolean;
 }) {
   const dbUser = token.id
     ? await prisma.user.findUnique({ where: { id: token.id } })
@@ -26,6 +27,15 @@ async function loadUserIntoToken(token: {
       : null;
 
   if (!dbUser) return token;
+
+  if (dbUser.bannedAt || dbUser.deletedAt) {
+    if (dbUser.role !== "ADMIN") {
+      token.isBanned = true;
+      return token;
+    }
+  } else {
+    token.isBanned = false;
+  }
 
   if (
     dbUser.subscriptionPlan === "PRO" &&
@@ -59,6 +69,10 @@ async function authorizeWithPassword(
 
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return null;
+
+  if (!options?.adminOnly && (user.bannedAt || user.deletedAt)) {
+    return null;
+  }
 
   if (options?.adminOnly) {
     if (user.role !== "ADMIN") return null;
@@ -126,6 +140,9 @@ export const { handlers, signIn, signOut, auth: getAuthSession } = NextAuth({
       });
 
       if (existing) {
+        if (existing.bannedAt || existing.deletedAt) {
+          return "/login?error=banned";
+        }
         if (!existing.avatar && user.image) {
           await prisma.user.update({
             where: { id: existing.id },

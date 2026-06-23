@@ -6,6 +6,7 @@ import {
   adminReleaseDispute,
   type ActionState,
 } from "@/lib/actions/admin";
+import { AdminReportsPanel } from "@/components/AdminReportsPanel";
 import {
   AdminStaffManager,
   type AdminStaffMember,
@@ -37,6 +38,7 @@ type DisputeProject = {
 type AdminPanelProps = {
   disputes: DisputeProject[];
   openProjects: { id: string; slug: string; title: string; client: { name: string | null } }[];
+  reports: import("@/lib/reports-shared").AdminReportItem[];
   stats: {
     users: number;
     projects: number;
@@ -120,6 +122,7 @@ function CloseProjectButton({ projectId }: { projectId: string }) {
 export function AdminPanel({
   disputes,
   openProjects,
+  reports,
   stats,
   permissions,
   admins,
@@ -159,6 +162,8 @@ export function AdminPanel({
       {canManageStaff && (
         <AdminStaffManager admins={admins} currentAdminId={currentAdminId} />
       )}
+
+      {canModerate && <AdminReportsPanel reports={reports} />}
 
       {canModerate && (
       <section className="rounded-2xl border border-red-200 bg-white p-6 shadow-sm">

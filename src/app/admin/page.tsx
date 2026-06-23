@@ -12,6 +12,8 @@ import { auth } from "@/lib/auth";
 
 import { prisma } from "@/lib/prisma";
 
+import { getPendingAdminReports } from "@/lib/queries/admin-reports";
+
 import { getHomeRouteForRole } from "@/lib/role-redirect";
 
 import { redirect } from "next/navigation";
@@ -91,6 +93,8 @@ export default async function AdminPage() {
     clientCount,
 
     admins,
+
+    reports,
 
   ] = await Promise.all([
 
@@ -172,6 +176,8 @@ export default async function AdminPage() {
 
     }),
 
+    getPendingAdminReports(),
+
   ]);
 
 
@@ -205,6 +211,8 @@ export default async function AdminPage() {
             disputes={disputes}
 
             openProjects={openProjects}
+
+            reports={reports}
 
             stats={{
 

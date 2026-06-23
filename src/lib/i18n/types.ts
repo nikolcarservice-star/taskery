@@ -1368,6 +1368,47 @@ export type Dictionary = {
     CONTACT_MESSAGE_TOO_LONG: string;
     RATE_LIMIT_EXCEEDED: string;
     NOTIFICATION_NOT_FOUND: string;
+    REPORT_REASON_REQUIRED: string;
+    REPORT_DETAILS_REQUIRED: string;
+    REPORT_ALREADY_SUBMITTED: string;
+    CANNOT_REPORT_SELF: string;
+    ACCOUNT_BANNED: string;
+  };
+  reports: {
+    reportProject: string;
+    reportUser: string;
+    reportShort: string;
+    alreadyReported: string;
+    alreadyReportedShort: string;
+    loginToReport: string;
+    dialogHint: string;
+    reasonLabel: string;
+    detailsLabel: string;
+    detailsPlaceholder: string;
+    submit: string;
+    submitting: string;
+    success: string;
+    ownerHiddenNotice: string;
+    ownerReportsNotice: string;
+    bar: {
+      underpriced: string;
+      hot: string;
+      totalReports: string;
+    };
+    flag: {
+      warning: string;
+      hot: string;
+    };
+    reasons: {
+      UNDERPRICED: string;
+      SPAM: string;
+      FRAUD: string;
+      HARASSMENT: string;
+      IRRELEVANT: string;
+      POLICY_VIOLATION: string;
+      FAKE_PROFILE: string;
+      OTHER: string;
+    };
   };
   cookies: {
     title: string;

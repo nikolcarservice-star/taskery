@@ -221,6 +221,15 @@ export default auth((request) => {
     return NextResponse.redirect(loginUrl);
   }
 
+  if (session?.user?.isBanned) {
+    const loginUrl = new URL(getLoginPath(activeLocale), request.url);
+    loginUrl.searchParams.set("error", "banned");
+    return withLocaleHeaders(
+      NextResponse.redirect(loginUrl),
+      activeLocale,
+    );
+  }
+
   if (isAuthRoute && session?.user) {
     return withLocaleHeaders(
       withLocaleCookie(

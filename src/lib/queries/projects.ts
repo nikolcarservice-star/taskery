@@ -11,7 +11,11 @@ export type ProjectSearchParams = {
 export function buildOpenProjectsWhere(
   params: ProjectSearchParams,
 ): Prisma.ProjectWhereInput {
-  const conditions: Prisma.ProjectWhereInput[] = [{ status: "OPEN" }];
+  const conditions: Prisma.ProjectWhereInput[] = [
+    { status: "OPEN" },
+    { hiddenFromCatalog: false },
+    { blockedAt: null },
+  ];
 
   const query = params.q?.trim();
   if (query) {

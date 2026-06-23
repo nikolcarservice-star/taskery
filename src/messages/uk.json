@@ -1698,7 +1698,12 @@
     "CONTACT_MESSAGE_TOO_SHORT": "Повідомлення занадто коротке",
     "CONTACT_MESSAGE_TOO_LONG": "Повідомлення занадто довге",
     "RATE_LIMIT_EXCEEDED": "Забагато запитів. Спробуйте пізніше.",
-    "NOTIFICATION_NOT_FOUND": "Сповіщення не знайдено"
+    "NOTIFICATION_NOT_FOUND": "Сповіщення не знайдено",
+    "REPORT_REASON_REQUIRED": "Оберіть причину скарги",
+    "REPORT_DETAILS_REQUIRED": "Опишіть проблему (мінімум 10 символів)",
+    "REPORT_ALREADY_SUBMITTED": "Ви вже надіслали скаргу",
+    "CANNOT_REPORT_SELF": "Не можна скаржитися на себе або власний проєкт",
+    "ACCOUNT_BANNED": "Акаунт заблоковано"
   },
   "cookies": {
     "title": "Ми використовуємо cookies",
@@ -1728,6 +1733,42 @@
     "NEW_MESSAGE": {
       "title": "Нове повідомлення",
       "body": "{name} · {project}"
+    }
+  },
+  "reports": {
+    "reportProject": "Поскаржитися на проєкт",
+    "reportUser": "Поскаржитися на користувача",
+    "reportShort": "Скарга",
+    "alreadyReported": "Ви вже надіслали скаргу",
+    "alreadyReportedShort": "Надіслано",
+    "loginToReport": "Увійти, щоб поскаржитися",
+    "dialogHint": "Скаргу розгляне модератор. Зловживання скаргами може призвести до обмежень.",
+    "reasonLabel": "Причина",
+    "detailsLabel": "Деталі",
+    "detailsPlaceholder": "Опишіть проблему (обовʼязково для «Інше»)",
+    "submit": "Надіслати скаргу",
+    "submitting": "Надсилання…",
+    "success": "Скаргу надіслано. Дякуємо!",
+    "ownerHiddenNotice": "Проєкт приховано з каталогу через скарги та очікує перевірки модератором.",
+    "ownerReportsNotice": "На проєкт надійшло скарг: {count}.",
+    "bar": {
+      "underpriced": "{count} з {threshold} скарг на занижену ціну",
+      "hot": "Проєкт на перевірці модерацією",
+      "totalReports": "Усього скарг: {count}"
+    },
+    "flag": {
+      "warning": "Є скарги на проєкт",
+      "hot": "Багато скарг — на перевірці"
+    },
+    "reasons": {
+      "UNDERPRICED": "Занижена ціна",
+      "SPAM": "Спам",
+      "FRAUD": "Шахрайство",
+      "HARASSMENT": "Образи / домагання",
+      "IRRELEVANT": "Нерелевантне завдання",
+      "POLICY_VIOLATION": "Порушення правил",
+      "FAKE_PROFILE": "Фейковий профіль",
+      "OTHER": "Інше"
     }
   }
 }

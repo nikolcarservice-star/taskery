@@ -1692,7 +1692,12 @@
     "CONTACT_MESSAGE_TOO_SHORT": "Wiadomość jest za krótka",
     "CONTACT_MESSAGE_TOO_LONG": "Wiadomość jest za długa",
     "RATE_LIMIT_EXCEEDED": "Zbyt wiele żądań. Spróbuj później.",
-    "NOTIFICATION_NOT_FOUND": "Nie znaleziono powiadomienia"
+    "NOTIFICATION_NOT_FOUND": "Nie znaleziono powiadomienia",
+    "REPORT_REASON_REQUIRED": "Wybierz powód zgłoszenia",
+    "REPORT_DETAILS_REQUIRED": "Opisz problem (minimum 10 znaków)",
+    "REPORT_ALREADY_SUBMITTED": "Zgłoszenie zostało już wysłane",
+    "CANNOT_REPORT_SELF": "Nie można zgłaszać siebie ani własnego projektu",
+    "ACCOUNT_BANNED": "Konto jest zablokowane"
   },
   "cookies": {
     "title": "Używamy plików cookie",
@@ -1722,6 +1727,42 @@
     "NEW_MESSAGE": {
       "title": "Nowa wiadomość",
       "body": "{name} · {project}"
+    }
+  },
+  "reports": {
+    "reportProject": "Zgłoś projekt",
+    "reportUser": "Zgłoś użytkownika",
+    "reportShort": "Zgłoś",
+    "alreadyReported": "Zgłoszenie zostało już wysłane",
+    "alreadyReportedShort": "Wysłano",
+    "loginToReport": "Zaloguj się, aby zgłosić",
+    "dialogHint": "Moderator rozpatrzy zgłoszenie. Nadużywanie zgłoszeń może skutkować ograniczeniami.",
+    "reasonLabel": "Powód",
+    "detailsLabel": "Szczegóły",
+    "detailsPlaceholder": "Opisz problem (wymagane dla Inne)",
+    "submit": "Wyślij zgłoszenie",
+    "submitting": "Wysyłanie…",
+    "success": "Zgłoszenie wysłane. Dziękujemy!",
+    "ownerHiddenNotice": "Projekt ukryty w katalogu z powodu zgłoszeń i oczekuje na moderację.",
+    "ownerReportsNotice": "Otrzymano zgłoszeń: {count}.",
+    "bar": {
+      "underpriced": "{count} z {threshold} zgłoszeń o zaniżonej cenie",
+      "hot": "Projekt weryfikowany przez moderację",
+      "totalReports": "Łącznie zgłoszeń: {count}"
+    },
+    "flag": {
+      "warning": "Projekt ma zgłoszenia",
+      "hot": "Wiele zgłoszeń — weryfikacja"
+    },
+    "reasons": {
+      "UNDERPRICED": "Zaniżona cena",
+      "SPAM": "Spam",
+      "FRAUD": "Oszustwo",
+      "HARASSMENT": "Nękanie",
+      "IRRELEVANT": "Nierelewantne zadanie",
+      "POLICY_VIOLATION": "Naruszenie zasad",
+      "FAKE_PROFILE": "Fałszywy profil",
+      "OTHER": "Inne"
     }
   }
 }

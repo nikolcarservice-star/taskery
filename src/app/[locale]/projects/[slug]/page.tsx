@@ -29,6 +29,8 @@ import { ProjectDetailTabs } from "@/components/project/ProjectDetailTabs";
 import { ProjectDiscussionPanel } from "@/components/ProjectDiscussionPanel";
 
 import { ProjectProgressBar } from "@/components/project/ProjectProgressBar";
+import { ProjectReportBar } from "@/components/ProjectReportBar";
+import { hasUserReportedProject } from "@/lib/report-stats";
 
 import { ProjectSidebar } from "@/components/project/ProjectSidebar";
 
@@ -167,8 +169,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
 
   const canViewProject =
-
-    canManage || isAssignedFreelancer || project.status === "OPEN";
+    canManage ||
+    isAssignedFreelancer ||
+    (project.status === "OPEN" && !project.blockedAt);
 
 
 
@@ -222,6 +225,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     session?.user && isFreelancer && !canManage
       ? await getClientOrderStats(project.clientId)
       : null;
+
+  const alreadyReported =
+    session?.user?.id && !canManage
+      ? await hasUserReportedProject(session.user.id, project.id)
+      : false;
 
 
 
@@ -477,6 +485,21 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             contractStatus={project.contract?.status}
 
           />
+
+          {project.status === "OPEN" && (
+            <ProjectReportBar
+              locale={locale}
+              projectId={project.id}
+              projectSlug={project.slug}
+              reportCount={project.reportCount}
+              underpricedReportCount={project.underpricedReportCount}
+              moderationHot={project.moderationHot}
+              hiddenFromCatalog={project.hiddenFromCatalog}
+              canReport={Boolean(session?.user && isFreelancer && !canManage)}
+              alreadyReported={alreadyReported}
+              isOwner={canManage}
+            />
+          )}
 
 
 

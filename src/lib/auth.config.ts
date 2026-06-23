@@ -24,6 +24,7 @@ export const authConfig = {
         if (!session.user.email && token.email) {
           session.user.email = token.email as string;
         }
+        session.user.isBanned = Boolean(token.isBanned);
       }
       return session;
     },

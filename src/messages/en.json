@@ -1713,7 +1713,12 @@
     "CONTACT_MESSAGE_TOO_SHORT": "Message is too short",
     "CONTACT_MESSAGE_TOO_LONG": "Message is too long",
     "RATE_LIMIT_EXCEEDED": "Too many requests. Please try again later.",
-    "NOTIFICATION_NOT_FOUND": "Notification not found"
+    "NOTIFICATION_NOT_FOUND": "Notification not found",
+    "REPORT_REASON_REQUIRED": "Select a report reason",
+    "REPORT_DETAILS_REQUIRED": "Describe the issue (at least 10 characters)",
+    "REPORT_ALREADY_SUBMITTED": "You have already submitted a report",
+    "CANNOT_REPORT_SELF": "You cannot report yourself or your own project",
+    "ACCOUNT_BANNED": "Account is banned"
   },
   "cookies": {
     "title": "We use cookies",
@@ -1743,6 +1748,42 @@
     "NEW_MESSAGE": {
       "title": "New message",
       "body": "{name} · {project}"
+    }
+  },
+  "reports": {
+    "reportProject": "Report project",
+    "reportUser": "Report user",
+    "reportShort": "Report",
+    "alreadyReported": "You have already submitted a report",
+    "alreadyReportedShort": "Submitted",
+    "loginToReport": "Sign in to report",
+    "dialogHint": "A moderator will review your report. Abuse may lead to restrictions.",
+    "reasonLabel": "Reason",
+    "detailsLabel": "Details",
+    "detailsPlaceholder": "Describe the issue (required for Other)",
+    "submit": "Submit report",
+    "submitting": "Submitting…",
+    "success": "Report submitted. Thank you!",
+    "ownerHiddenNotice": "This project is hidden from the catalog due to reports and awaits moderation.",
+    "ownerReportsNotice": "Reports received: {count}.",
+    "bar": {
+      "underpriced": "{count} of {threshold} underpriced reports",
+      "hot": "Project under moderation review",
+      "totalReports": "Total reports: {count}"
+    },
+    "flag": {
+      "warning": "Project has reports",
+      "hot": "Many reports — under review"
+    },
+    "reasons": {
+      "UNDERPRICED": "Underpriced",
+      "SPAM": "Spam",
+      "FRAUD": "Fraud",
+      "HARASSMENT": "Harassment",
+      "IRRELEVANT": "Irrelevant task",
+      "POLICY_VIOLATION": "Policy violation",
+      "FAKE_PROFILE": "Fake profile",
+      "OTHER": "Other"
     }
   }
 }
