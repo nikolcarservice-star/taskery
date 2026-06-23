@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { deleteStoredImage, isManagedImageUrl, uploadImage } from "@/lib/image-storage";
+import { mapImageUploadError } from "@/lib/image-upload-errors";
 import { prisma } from "@/lib/prisma";
 import { grantPortfolioBoostIfEligible } from "@/lib/taskboost-promotion";
 import { sanitizeOptionalHttpUrl } from "@/lib/safe-url";
@@ -109,10 +110,7 @@ export async function addPortfolioItem(
         `portfolio/${session.user.id}/${nanoid()}`,
       );
     } catch (error) {
-      return {
-        error:
-          error instanceof Error ? error.message : "Не удалось загрузить изображение",
-      };
+      return mapImageUploadError(error);
     }
   }
 

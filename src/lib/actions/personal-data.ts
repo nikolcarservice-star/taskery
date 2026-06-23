@@ -6,6 +6,7 @@ import {
   isManagedImageUrl,
   saveUserAvatar,
 } from "@/lib/avatar-upload";
+import { mapImageUploadError } from "@/lib/image-upload-errors";
 import type { LanguageLevel } from "@/lib/personal-data-shared";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -164,10 +165,7 @@ export async function updateProfilePhoto(
       data: { avatar },
     });
   } catch (error) {
-    return {
-      error:
-        error instanceof Error ? error.message : "Не удалось загрузить фото",
-    };
+    return mapImageUploadError(error);
   }
 
   revalidatePersonalPaths(session.user.id);

@@ -1710,6 +1710,7 @@
     "DUPLICATE_LANGUAGE": "Мова не може повторюватися",
     "USER_NOT_FOUND": "Користувача не знайдено",
     "FILE_REQUIRED": "Оберіть файл для завантаження",
+    "IMAGE_STORAGE_NOT_CONFIGURED": "Завантаження фото на сервері не налаштоване. Підключіть Vercel Blob у налаштуваннях проєкту.",
     "SELECT_STATUS": "Оберіть статус",
     "INVALID_RATE": "Некоректна ставка",
     "LEGAL_STATUS_REQUIRED": "Оберіть юридичний статус",

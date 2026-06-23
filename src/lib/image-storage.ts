@@ -14,6 +14,22 @@ export function usesBlobStorage(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 }
 
+export function canUseLocalImageStorage(): boolean {
+  if (usesBlobStorage()) return false;
+  if (process.env.VERCEL === "1") return false;
+  return true;
+}
+
+export class ImageStorageError extends Error {
+  readonly code: string;
+
+  constructor(code: string) {
+    super(code);
+    this.name = "ImageStorageError";
+    this.code = code;
+  }
+}
+
 export function isLocalUploadUrl(url: string | null | undefined): boolean {
   return Boolean(url?.startsWith("/uploads/"));
 }
@@ -64,6 +80,10 @@ export async function uploadImage(file: File, storagePath: string): Promise<stri
       addRandomSuffix: false,
     });
     return blob.url;
+  }
+
+  if (!canUseLocalImageStorage()) {
+    throw new ImageStorageError("IMAGE_STORAGE_NOT_CONFIGURED");
   }
 
   const publicPath = localPublicPath(storagePath, ext);

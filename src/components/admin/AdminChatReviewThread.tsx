@@ -3,7 +3,7 @@
 import { MessageContent } from "@/components/MessageContent";
 import { ModerationWarningMessage } from "@/components/ModerationWarningMessage";
 import { UserAvatar } from "@/components/UserAvatar";
-import type { AdminReviewMessage } from "@/lib/admin-review";
+import type { AdminReviewMessage } from "@/lib/admin-review-types";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { formatRelativeTime } from "@/lib/i18n/relative-time";
 

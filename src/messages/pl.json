@@ -1704,6 +1704,7 @@
     "DUPLICATE_LANGUAGE": "Język nie może się powtarzać",
     "USER_NOT_FOUND": "Nie znaleziono użytkownika",
     "FILE_REQUIRED": "Wybierz plik do przesłania",
+    "IMAGE_STORAGE_NOT_CONFIGURED": "Przesyłanie zdjęć nie jest skonfigurowane na serwerze. Dodaj magazyn Vercel Blob w ustawieniach projektu.",
     "SELECT_STATUS": "Wybierz status",
     "INVALID_RATE": "Nieprawidłowa stawka",
     "LEGAL_STATUS_REQUIRED": "Wybierz status prawny",

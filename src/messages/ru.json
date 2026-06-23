@@ -1695,6 +1695,7 @@
     "DUPLICATE_LANGUAGE": "Язык не может повторяться",
     "USER_NOT_FOUND": "Пользователь не найден",
     "FILE_REQUIRED": "Выберите файл для загрузки",
+    "IMAGE_STORAGE_NOT_CONFIGURED": "Загрузка фото на сервере не настроена. Подключите Vercel Blob в настройках проекта.",
     "SELECT_STATUS": "Выберите статус",
     "INVALID_RATE": "Некорректная ставка",
     "LEGAL_STATUS_REQUIRED": "Выберите юридический статус",

@@ -1725,6 +1725,7 @@
     "DUPLICATE_LANGUAGE": "Language cannot be duplicated",
     "USER_NOT_FOUND": "User not found",
     "FILE_REQUIRED": "Select a file to upload",
+    "IMAGE_STORAGE_NOT_CONFIGURED": "Photo uploads are not configured on the server. Add a Vercel Blob store to the project.",
     "SELECT_STATUS": "Select a status",
     "INVALID_RATE": "Invalid rate",
     "LEGAL_STATUS_REQUIRED": "Select a legal status",

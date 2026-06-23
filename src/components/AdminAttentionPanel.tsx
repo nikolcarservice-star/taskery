@@ -1,7 +1,7 @@
 import {
   adminBidReviewPath,
   adminConversationReviewPath,
-} from "@/lib/admin-review";
+} from "@/lib/admin-review-paths";
 import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
 import Link from "next/link";
 

@@ -1,40 +1,14 @@
 import { hasAdminPermission } from "@/lib/admin-permissions";
-import type { MessageKind } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
-export const ADMIN_REVIEW_ROOT = "/admin/review";
+export {
+  ADMIN_REVIEW_ROOT,
+  adminBidReviewPath,
+  adminConversationReviewPath,
+  resolveAdminReviewBackHref,
+} from "@/lib/admin-review-paths";
 
-export function adminConversationReviewPath(
-  conversationId: string,
-  backHref?: string,
-): string {
-  const path = `${ADMIN_REVIEW_ROOT}/conversation/${conversationId}`;
-  if (!backHref) return path;
-  return `${path}?back=${encodeURIComponent(backHref)}`;
-}
-
-export function adminBidReviewPath(bidId: string, backHref?: string): string {
-  const path = `${ADMIN_REVIEW_ROOT}/bid/${bidId}`;
-  if (!backHref) return path;
-  return `${path}?back=${encodeURIComponent(backHref)}`;
-}
-
-export function resolveAdminReviewBackHref(back?: string): string {
-  if (back && back.startsWith("/admin")) {
-    return back;
-  }
-  return "/admin";
-}
-
-export type AdminReviewMessage = {
-  id: string;
-  kind: MessageKind;
-  content: string;
-  createdAt: Date;
-  blockedSnippet?: string | null;
-  sender: { id: string; name: string | null; avatar?: string | null } | null;
-  violationUser: { id: string; name: string | null } | null;
-};
+export type { AdminReviewMessage } from "@/lib/admin-review-types";
 
 export function canAccessAdminReview(
   permissions: Parameters<typeof hasAdminPermission>[0],
