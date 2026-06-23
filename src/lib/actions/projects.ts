@@ -1,0 +1,218 @@
+"use server";
+
+import { prisma } from "@/lib/prisma";
+import { notifyFreelancersAboutNewProject } from "@/lib/notifications";
+import { generateUniqueProjectSlug } from "@/lib/slug";
+import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/auth";
+import { sendBidNotificationEmail } from "@/lib/email";
+import { absoluteUrl } from "@/lib/seo";
+import { isSupportedCurrency, defaultCurrency } from "@/lib/i18n/currencies";
+
+export type CreateProjectState = {
+  error?: string;
+  success?: boolean;
+  projectId?: string;
+  projectSlug?: string;
+};
+
+export async function createProject(
+  _prevState: CreateProjectState,
+  formData: FormData,
+): Promise<CreateProjectState> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return { error: "AUTH_REQUIRED" };
+  }
+
+  if (session.user.role !== "CLIENT" && session.user.role !== "ADMIN") {
+    return { error: "CLIENTS_ONLY_PUBLISH" };
+  }
+
+  const title = (formData.get("title") as string | null)?.trim();
+  const description = (formData.get("description") as string | null)?.trim();
+  const categoryId = (formData.get("categoryId") as string | null)?.trim();
+  const budgetNegotiable = formData.get("budgetNegotiable") === "on";
+  const budgetRaw = (formData.get("budget") as string | null)?.trim();
+  const currencyRaw = (formData.get("currency") as string | null)?.trim() || defaultCurrency;
+  const deadlineRaw = (formData.get("deadline") as string | null)?.trim();
+
+  if (!isSupportedCurrency(currencyRaw)) {
+    return { error: "INVALID_CURRENCY" };
+  }
+
+  const currency = currencyRaw;
+
+  if (!title || title.length < 5) {
+    return { error: "TITLE_TOO_SHORT" };
+  }
+
+  if (!description || description.length < 20) {
+    return { error: "DESCRIPTION_TOO_SHORT" };
+  }
+
+  if (!categoryId) {
+    return { error: "CATEGORY_REQUIRED" };
+  }
+
+  const category = await prisma.category.findUnique({
+    where: { id: categoryId },
+  });
+
+  if (!category) {
+    return { error: "CATEGORY_NOT_FOUND" };
+  }
+
+  let budget: number | null = null;
+
+  if (!budgetNegotiable) {
+    if (!budgetRaw) {
+      return { error: "BUDGET_OR_NEGOTIABLE_REQUIRED" };
+    }
+
+    const parsed = Number(budgetRaw);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      return { error: "BUDGET_MUST_BE_POSITIVE" };
+    }
+
+    budget = parsed;
+  }
+
+  let deadline: Date | null = null;
+  if (deadlineRaw) {
+    deadline = new Date(deadlineRaw);
+    if (Number.isNaN(deadline.getTime())) {
+      return { error: "INVALID_DEADLINE" };
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (deadline < today) {
+      return { error: "DEADLINE_IN_PAST" };
+    }
+  }
+
+  const slug = await generateUniqueProjectSlug(title, async (s) => {
+    const found = await prisma.project.findUnique({ where: { slug: s } });
+    return Boolean(found);
+  });
+
+  const project = await prisma.project.create({
+    data: {
+      slug,
+      clientId: session.user.id,
+      title,
+      description,
+      categoryId,
+      budget,
+      currency,
+      deadline,
+    },
+  });
+
+  await notifyFreelancersAboutNewProject(project.id);
+
+  revalidatePath("/projects/my");
+  revalidatePath("/client/projects");
+  revalidatePath("/client");
+  revalidatePath("/projects");
+  revalidatePath("/notifications");
+  return {
+    success: true,
+    projectId: project.id,
+    projectSlug: project.slug,
+  };
+}
+
+export type UpdateProjectState = { error?: string; success?: boolean };
+
+export async function updateProject(
+  _prevState: UpdateProjectState,
+  formData: FormData,
+): Promise<UpdateProjectState> {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "AUTH_REQUIRED" };
+
+  const projectId = (formData.get("projectId") as string | null)?.trim();
+  const title = (formData.get("title") as string | null)?.trim();
+  const description = (formData.get("description") as string | null)?.trim();
+  const categoryId = (formData.get("categoryId") as string | null)?.trim();
+  const deadlineRaw = (formData.get("deadline") as string | null)?.trim();
+
+  if (!projectId || !title || !description) {
+    return { error: "REQUIRED_FIELDS_MISSING" };
+  }
+
+  const project = await prisma.project.findUnique({ where: { id: projectId } });
+  if (!project) return { error: "PROJECT_NOT_FOUND" };
+  if (project.clientId !== session.user.id && session.user.role !== "ADMIN") {
+    return { error: "ACCESS_DENIED" };
+  }
+  if (project.status !== "OPEN") {
+    return { error: "EDIT_OPEN_PROJECT_ONLY" };
+  }
+
+  let deadline: Date | null = project.deadline;
+  if (deadlineRaw) {
+    deadline = new Date(deadlineRaw);
+  }
+
+  await prisma.project.update({
+    where: { id: projectId },
+    data: { title, description, categoryId: categoryId || null, deadline },
+  });
+
+  revalidatePath(`/projects/${project.slug}`);
+  revalidatePath("/projects/my");
+  revalidatePath("/client/projects");
+  revalidatePath("/client");
+  return { success: true };
+}
+
+export async function closeProject(
+  _prevState: UpdateProjectState,
+  formData: FormData,
+): Promise<UpdateProjectState> {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "AUTH_REQUIRED" };
+
+  const projectId = (formData.get("projectId") as string | null)?.trim();
+  if (!projectId) return { error: "PROJECT_NOT_FOUND" };
+
+  const project = await prisma.project.findUnique({ where: { id: projectId } });
+  if (!project) return { error: "PROJECT_NOT_FOUND" };
+  if (project.clientId !== session.user.id && session.user.role !== "ADMIN") {
+    return { error: "ACCESS_DENIED" };
+  }
+  if (project.status !== "OPEN") {
+    return { error: "CLOSE_OPEN_PROJECT_ONLY" };
+  }
+
+  const contract = await prisma.contract.findUnique({
+    where: { projectId },
+    select: { id: true },
+  });
+  if (contract) {
+    return { error: "CANNOT_CLOSE_WITH_FREELANCER" };
+  }
+
+  await prisma.$transaction([
+    prisma.project.update({
+      where: { id: projectId },
+      data: { status: "CLOSED" },
+    }),
+    prisma.bid.updateMany({
+      where: { projectId, status: "PENDING" },
+      data: { status: "REJECTED" },
+    }),
+  ]);
+
+  revalidatePath(`/projects/${project.slug}`);
+  revalidatePath("/projects/my");
+  revalidatePath("/client/projects");
+  revalidatePath("/client");
+  revalidatePath("/projects");
+  revalidatePath("/dashboard/bids");
+  revalidatePath("/notifications");
+  return { success: true };
+}

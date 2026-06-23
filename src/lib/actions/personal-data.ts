@@ -1,0 +1,194 @@
+"use server";
+
+import { auth } from "@/lib/auth";
+import {
+  deleteLocalAvatar,
+  isLocalAvatarUrl,
+  saveUserAvatar,
+} from "@/lib/avatar-upload";
+import type { LanguageLevel } from "@/lib/personal-data-shared";
+import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
+
+export type ActionState = { error?: string; success?: boolean };
+
+const LEVELS = new Set<LanguageLevel>([
+  "NATIVE",
+  "ADVANCED",
+  "INTERMEDIATE",
+  "BASIC",
+]);
+
+function revalidatePersonalPaths(userId: string) {
+  revalidatePath("/dashboard/personal");
+  revalidatePath("/client/personal");
+  revalidatePath("/profile/edit");
+  revalidatePath(`/freelancers/${userId}`);
+}
+
+export async function updatePersonalData(
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "AUTH_REQUIRED" };
+
+  const firstName = (formData.get("firstName") as string | null)?.trim();
+  const lastName = (formData.get("lastName") as string | null)?.trim();
+  const dateOfBirthRaw = (formData.get("dateOfBirth") as string | null)?.trim();
+  const country = (formData.get("country") as string | null)?.trim() || null;
+  const city = (formData.get("city") as string | null)?.trim() || null;
+  const wantsFreelanceProjects = formData.get("wantsFreelanceProjects") === "on";
+  const wantsRemoteWork = formData.get("wantsRemoteWork") === "on";
+
+  if (!firstName || !lastName) {
+    return { error: "NAME_REQUIRED" };
+  }
+
+  let dateOfBirth: Date | null = null;
+  if (dateOfBirthRaw) {
+    const parsed = new Date(dateOfBirthRaw);
+    if (Number.isNaN(parsed.getTime())) {
+      return { error: "INVALID_BIRTH_DATE" };
+    }
+    dateOfBirth = parsed;
+  }
+
+  const languageCodes = formData.getAll("languageCodes") as string[];
+  const languageLevels = formData.getAll("languageLevels") as string[];
+
+  const languages: { language: string; level: LanguageLevel }[] = [];
+  for (let i = 0; i < languageCodes.length; i += 1) {
+    const language = languageCodes[i]?.trim();
+    const level = languageLevels[i]?.trim() as LanguageLevel;
+    if (!language) continue;
+    if (!LEVELS.has(level)) {
+      return { error: "LANGUAGE_LEVEL_REQUIRED" };
+    }
+    if (languages.some((item) => item.language === language)) {
+      return { error: "DUPLICATE_LANGUAGE" };
+    }
+    languages.push({ language, level });
+  }
+
+  const displayName = `${firstName} ${lastName}`.trim();
+
+  await prisma.$transaction(async (tx) => {
+    await tx.user.update({
+      where: { id: session.user.id },
+      data: {
+        firstName,
+        lastName,
+        name: displayName,
+        dateOfBirth,
+        country,
+        city,
+      },
+    });
+
+    if (
+      session.user.role === "FREELANCER" ||
+      session.user.role === "ADMIN"
+    ) {
+      await tx.freelancerProfile.upsert({
+        where: { userId: session.user.id },
+        create: {
+          userId: session.user.id,
+          wantsFreelanceProjects,
+          wantsRemoteWork,
+        },
+        update: { wantsFreelanceProjects, wantsRemoteWork },
+      });
+    }
+
+    await tx.userLanguage.deleteMany({ where: { userId: session.user.id } });
+
+    if (languages.length > 0) {
+      await tx.userLanguage.createMany({
+        data: languages.map((item) => ({
+          userId: session.user.id,
+          language: item.language,
+          level: item.level,
+        })),
+      });
+    }
+  });
+
+  revalidatePersonalPaths(session.user.id);
+  return { success: true };
+}
+
+export async function updateProfilePhoto(
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "AUTH_REQUIRED" };
+
+  const file = formData.get("avatar");
+  const removeAvatar = formData.get("removeAvatar") === "true";
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { avatar: true },
+  });
+
+  if (!user) {
+    return { error: "USER_NOT_FOUND" };
+  }
+
+  if (removeAvatar) {
+    await deleteLocalAvatar(user.avatar);
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { avatar: null },
+    });
+    revalidatePersonalPaths(session.user.id);
+    revalidatePath("/profile");
+    return { success: true };
+  }
+
+  if (!(file instanceof File) || file.size === 0) {
+    return { error: "FILE_REQUIRED" };
+  }
+
+  try {
+    if (isLocalAvatarUrl(user.avatar)) {
+      await deleteLocalAvatar(user.avatar);
+    }
+
+    const avatar = await saveUserAvatar(session.user.id, file);
+
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { avatar },
+    });
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "Не удалось загрузить фото",
+    };
+  }
+
+  revalidatePersonalPaths(session.user.id);
+  revalidatePath("/profile");
+  return { success: true };
+}
+
+export async function updateContactData(
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "AUTH_REQUIRED" };
+
+  const phone = (formData.get("phone") as string | null)?.trim() || null;
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { phone },
+  });
+
+  revalidatePersonalPaths(session.user.id);
+  return { success: true };
+}

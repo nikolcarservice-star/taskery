@@ -1,0 +1,1737 @@
+{
+  "meta": {
+    "home": {
+      "title": "Taskery — freelance marketplace for clients and freelancers",
+      "description": "Publish projects and find freelancers in Ukraine, Poland and Europe. Escrow deals, ratings, chat and TaskBoost. Payments in UAH, PLN and EUR. 10% commission.",
+      "keywords": [
+        "freelance",
+        "freelance marketplace",
+        "remote work",
+        "find a freelancer",
+        "find a contractor",
+        "freelance jobs",
+        "escrow deal",
+        "freelance Poland",
+        "freelance Ukraine",
+        "freelance Europe"
+      ]
+    },
+    "about": {
+      "title": "About Taskery",
+      "description": "Taskery is a modern freelance marketplace with escrow deals, ratings and tools for clients and freelancers in Ukraine, Poland and Europe.",
+      "keywords": [
+        "about Taskery",
+        "freelance platform",
+        "secure deals"
+      ]
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "description": "Answers about Taskery: escrow, commission, PRO subscription, balance top-up and deal security.",
+      "keywords": [
+        "freelance FAQ",
+        "how escrow works",
+        "Taskery commission"
+      ]
+    },
+    "contact": {
+      "title": "Contact and support",
+      "description": "Contact the Taskery team for support, partnerships and cooperation."
+    },
+    "pricing": {
+      "title": "Pricing and PRO subscription",
+      "description": "Taskery pricing: free for clients, TaskBoost for freelancers, featured projects and profiles. 10% commission.",
+      "keywords": [
+        "freelance pricing",
+        "PRO subscription",
+        "marketplace commission"
+      ]
+    },
+    "projects": {
+      "title": "Find work — open freelance projects",
+      "description": "Browse freelance projects on Taskery. Filter by category, budget and keywords.",
+      "keywords": [
+        "freelance jobs",
+        "remote work",
+        "freelance projects"
+      ]
+    },
+    "freelancers": {
+      "title": "Freelancer directory",
+      "description": "Taskery freelancer catalog with ratings, skills and portfolio.",
+      "keywords": [
+        "find freelancer",
+        "contractor directory",
+        "freelancer ratings"
+      ]
+    },
+    "login": {
+      "title": "Sign in to Taskery",
+      "description": "Sign in to your Taskery account as a client or freelancer."
+    },
+    "register": {
+      "title": "Register on Taskery",
+      "description": "Create a free client or freelancer account on Taskery."
+    }
+  },
+  "market": {
+    "regionLabel": "Ukraine, Poland and Europe",
+    "audienceLabel": "clients and freelancers"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Freelance marketplace for remote work",
+      "titleLine1": "Find a freelancer",
+      "titleLine2": "or a project in minutes",
+      "description": "Taskery connects clients and freelancers with escrow deals, ratings, chat and PRO tools. Pay in ₴, zł and €. Safer than working off-platform.",
+      "ctaPrimary": "Start for free",
+      "ctaProjects": "Browse projects",
+      "ctaFreelancers": "Freelancer catalog",
+      "highlights": {
+        "commission": "commission",
+        "escrow": "escrow",
+        "access": "access"
+      },
+      "features": [
+        {
+          "title": "Escrow deals",
+          "text": "Funds are reserved until the work is accepted."
+        },
+        {
+          "title": "TaskBoost",
+          "text": "Search priority and more proposals."
+        },
+        {
+          "title": "Reviews and ratings",
+          "text": "Transparent reputation after every deal."
+        }
+      ],
+      "visual": {
+        "dealActive": "Deal active",
+        "escrowAmount": "12,000 ₴ in escrow",
+        "newBid": "New proposal",
+        "freelancerFound": "Freelancer found",
+        "reviewsCount": "127 reviews"
+      }
+    },
+    "clients": {
+      "eyebrow": "For clients",
+      "title": "Post a project with a result guarantee",
+      "benefits": [
+        "With escrow you pay only after accepting the work — funds stay safe until the end.",
+        "Platform support helps resolve disputes between both sides.",
+        "Budget, deadlines and chat are kept in one place — no messenger chaos."
+      ],
+      "cta": "Publish a project"
+    },
+    "howItWorks": {
+      "eyebrow": "How it works",
+      "title": "From idea to payment — four simple steps",
+      "description": "Taskery guides clients and freelancers through a clear process: from posting a task to a secure payout.",
+      "steps": [
+        {
+          "number": "01",
+          "title": "Publish a project",
+          "text": "Describe the task, set a budget and deadline. The project appears in the freelancer catalog."
+        },
+        {
+          "number": "02",
+          "title": "Choose a freelancer",
+          "text": "Compare proposals, portfolios and ratings. Discuss details in chat before work starts."
+        },
+        {
+          "number": "03",
+          "title": "Open an escrow deal",
+          "text": "Funds are reserved on the platform. The freelancer starts work with payment confidence."
+        },
+        {
+          "number": "04",
+          "title": "Accept the result",
+          "text": "Review the work and confirm completion — funds are released to the freelancer automatically."
+        }
+      ]
+    },
+    "safety": {
+      "eyebrow": "Security",
+      "title": "A safe service for freelancers and clients",
+      "description": "Taskery builds deals around escrow: funds under platform control, transparent rules and support for both sides at every stage.",
+      "clientsTitle": "For clients",
+      "clientsPoints": [
+        "Payment goes to the freelancer only after work is accepted.",
+        "In a dispute, funds stay in escrow until the platform decides.",
+        "All chat history and deal terms are stored in the system."
+      ],
+      "freelancersTitle": "For freelancers",
+      "freelancersPoints": [
+        "Funds are reserved before start — you are protected from non-payment.",
+        "Clear project stages and a fixed budget in the contract.",
+        "Taskery arbitration helps resolve disputes fairly."
+      ],
+      "visual": {
+        "escrowFunds": "Funds in escrow",
+        "client": "Client",
+        "freelancer": "Freelancer"
+      }
+    },
+    "verified": {
+      "eyebrow": "Freelancer catalog",
+      "title": "Choose verified contractors",
+      "description": "Compare freelancers by reputation, not price alone. Taskery shows real reviews, portfolios and experience — so you find a reliable specialist the first time.",
+      "benefits": [
+        "Ratings and reviews come from real completed deals on the platform.",
+        "Profiles show skills, portfolios and project history — not just promises.",
+        "TaskBoost highlights trusted PRO freelancers."
+      ],
+      "cta": "Browse catalog",
+      "visual": {
+        "reviewsCountA": "84 reviews",
+        "reviewsCountB": "31 reviews"
+      }
+    },
+    "freelancers": {
+      "eyebrow": "For freelancers",
+      "title": "Why freelancers choose Taskery",
+      "description": "The platform is built for freelancers: transparent deals, payment protection and tools to grow remote income.",
+      "reasons": [
+        {
+          "title": "Payment guarantee",
+          "text": "Escrow reserves the budget before start — you work knowing funds are already on the platform."
+        },
+        {
+          "title": "Project flow",
+          "text": "The project catalog with budget and deadline is updated 24/7 — apply to matching tasks."
+        },
+        {
+          "title": "Reputation growth",
+          "text": "Reviews and ratings after each deal help you get more invitations from clients."
+        },
+        {
+          "title": "TaskBoost",
+          "text": "Profile promotion, search priority and a PRO badge — for those who want more projects."
+        }
+      ],
+      "ctaProjects": "Find a project",
+      "ctaBoost": "Learn about TaskBoost",
+      "visual": {
+        "newProject": "New project",
+        "ratingGrowing": "rating growing"
+      }
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Frequently asked questions",
+      "descriptionBeforeLink": "A quick overview of deals, commission and security on Taskery. Didn't find an answer —",
+      "contactLink": "contact us",
+      "descriptionAfterLink": ".",
+      "allLink": "All questions and answers"
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "description": "Free registration for clients and freelancers. Your first project takes 5 minutes.",
+      "register": "Create an account",
+      "pricing": "View pricing"
+    }
+  },
+  "common": {
+    "back": "Back",
+    "writeUs": "Contact us",
+    "notFoundAnswer": "Didn't find an answer?",
+    "found": "Projects found",
+    "foundFiltered": "with filters applied",
+    "createAccount": "Create account",
+    "contactUs": "Contact us"
+  },
+  "about": {
+    "h1": "About Taskery",
+    "intro": "Taskery is a next-generation freelance marketplace connecting clients and freelancers with transparent terms, escrow deals and reviews.",
+    "clientsTitle": "For clients",
+    "clientsText": "Publish projects, receive bids from freelancers, choose a contractor and control quality through escrow. Funds are released only after you accept the work.",
+    "freelancersTitle": "For freelancers",
+    "freelancersText": "Build a profile with portfolio and skills, apply to projects and get paid to your balance. PRO boosts visibility in the directory.",
+    "securityTitle": "Security",
+    "securityText": "Escrow protects both sides. In disputes, an administrator can arbitrate. Project chat is saved in your account."
+  },
+  "faqPage": {
+    "h1": "FAQ",
+    "introBeforeLink": "Didn't find an answer?",
+    "introLink": "Contact us",
+    "introAfterLink": "."
+  },
+  "contact": {
+    "h1": "Contact",
+    "intro": "Write to us — we reply within 1–2 business days.",
+    "supportTitle": "Support",
+    "supportEmailLabel": "Email",
+    "proSupport": "PRO users receive priority support."
+  },
+  "pricing": {
+    "h1": "Pricing",
+    "intro": "Clients use Taskery for free. TaskBoost gives freelancers more visibility and promotion tools.",
+    "commissionTitle": "Platform commission",
+    "commissionText": "A 10% commission is deducted when a deal completes: the client funds escrow in full, the freelancer receives the payout minus commission."
+  },
+  "projects": {
+    "h1": "Find work",
+    "intro": "Open projects from clients. Use filters to find suitable tasks.",
+    "emptyTitle": "No projects yet",
+    "emptyText": "Try changing filters or check back later."
+  },
+  "freelancers": {
+    "h1": "Freelancer directory",
+    "intro": "Find a freelancer by skills, rating and portfolio.",
+    "emptyTitle": "No freelancers found",
+    "emptyText": "Try adjusting your search filters."
+  },
+  "auth": {
+    "login": {
+      "h1": "Sign in",
+      "noAccount": "No account?",
+      "registerLink": "Register",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "loading": "Signing in…",
+      "google": "Sign in with Google",
+      "orDivider": "or email",
+      "forgotPassword": "Forgot password?",
+      "errors": {
+        "invalid": "Invalid email or password",
+        "admin": "Use the separate admin login."
+      }
+    },
+    "register": {
+      "h1": "Register",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Sign in",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "passwordHint": "At least 8 characters",
+      "roleLegend": "I am",
+      "role": {
+        "client": "Client",
+        "freelancer": "Freelancer"
+      },
+      "submit": "Create account",
+      "loading": "Creating account…",
+      "google": "Sign up with Google",
+      "orDivider": "or email",
+      "errors": {
+        "oauthRoleRequired": "Select a role on this page before Google registration.",
+        "invalidRole": "Select a valid role before Google registration.",
+        "oauth": "Authorization error",
+        "emailRegistered": "This email is already registered",
+        "createFailed": "Could not create account",
+        "autoLoginFailed": "Account created, but automatic sign-in failed. Please sign in manually."
+      },
+      "agreementPrefix": "By registering, you agree to the ",
+      "terms": "Terms of Service",
+      "agreementMiddle": " and ",
+      "privacy": "Privacy Policy",
+      "agreementSuffix": "."
+    },
+    "demo": {
+      "title": "Demo accounts",
+      "clientRole": "Client",
+      "freelancerRole": "Freelancer"
+    }
+  },
+  "cabinet": {
+    "soon": "Soon",
+    "adminCabinet": "Main cabinet",
+    "adminPanel": "Admin panel",
+    "messages": "Messages",
+    "support": "Support team",
+    "whatsNew": "What's new?",
+    "more": "More",
+    "profileTab": "Profile",
+    "mobileMenuTitle": "Menu",
+    "bottomNavAria": "Main navigation",
+    "menuCloseAria": "Close menu",
+    "client": {
+      "overview": "Overview",
+      "projects": "My projects",
+      "work": "In progress",
+      "finances": "Finances",
+      "reviews": "Reviews",
+      "personal": "Personal info",
+      "settings": "Settings",
+      "messages": "Messages"
+    },
+    "freelancer": {
+      "overview": "Dashboard",
+      "work": "In progress",
+      "bids": "My bids",
+      "finances": "My finances",
+      "portfolio": "My portfolio",
+      "profile": "Freelancer profile",
+      "reviews": "Reviews",
+      "personal": "Personal info",
+      "settings": "Settings",
+      "messages": "Messages",
+      "competitions": "My contests",
+      "boost": "TaskBoost",
+      "freelancerProfile": "Freelancer profile"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Notifications, interface language and security preferences.",
+    "tabs": {
+      "service": "Service settings",
+      "security": "Security settings"
+    },
+    "emailBanner": "If Taskery emails don't arrive, add our address to trusted senders or check your spam folder.",
+    "sections": {
+      "email": "Email notifications",
+      "telegram": "Telegram notifications",
+      "telegramHint": "Telegram bot connection will be available soon.",
+      "push": "Push and sound notifications",
+      "localization": "Localization and auto-translate",
+      "visual": "Visual preferences"
+    },
+    "email": {
+      "projectDigest": "Daily project digest",
+      "newMessages": "New private messages",
+      "serviceInfo": "Taskery service messages",
+      "promotions": "Special platform offers",
+      "news": "Service news (no more than once a quarter)",
+      "blogDigest": "Blog digest (no more than once a week)",
+      "telegramMessages": "New private messages",
+      "pushBrowser": "Browser push notifications",
+      "pushSoon": "Soon",
+      "soundMessages": "New private messages (sound)",
+      "soundSoon": "Soon"
+    },
+    "localization": {
+      "preferredLanguage": "Preferred language",
+      "autoTranslate": "Automatically translate content to your preferred language",
+      "saved": "Saved",
+      "saveError": "Could not save settings",
+      "autoTranslateSoon": "Coming soon"
+    },
+    "localeOptions": {
+      "ru": "Русский",
+      "uk": "Українська",
+      "pl": "Polski",
+      "en": "English"
+    },
+    "theme": {
+      "light": "Standard",
+      "dark": "Dark",
+      "darkSoon": "soon"
+    },
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Settings saved",
+    "security": {
+      "password": "Password",
+      "passwordHint": "Update your password regularly to keep your account secure.",
+      "changePassword": "Change password",
+      "twoFactor": "Two-factor authentication",
+      "twoFactorSoon": "2FA coming soon",
+      "twoFactorHint": "For now, use a strong password and review active sessions.",
+      "sessions": "Active sessions",
+      "sessionsHint": "You are signed in on this device. Session management is coming later.",
+      "personalData": "Personal data",
+      "personalDataLink": "Go to personal data →",
+      "account": "Account"
+    }
+  },
+  "footer": {
+    "tagline": "Freelance marketplace with escrow deals, payments in ₴, zł and € and PRO promotion.",
+    "platform": "Platform",
+    "company": "Company",
+    "legal": "Legal",
+    "links": {
+      "projects": "Projects",
+      "freelancers": "Freelancers",
+      "pricing": "Pricing",
+      "about": "About",
+      "faq": "FAQ",
+      "contact": "Contact",
+      "terms": "Terms",
+      "privacy": "Privacy"
+    }
+  },
+  "header": {
+    "findFreelancer": "Find a freelancer",
+    "findFreelancerShort": "Find",
+    "login": "Log in",
+    "register": "Sign up",
+    "tagline": "freelance without risk",
+    "homeAria": "Taskery — home",
+    "myTasks": "My tasks",
+    "myProjectsInProgress": "In progress",
+    "noActiveProjectsSr": "no active projects",
+    "competitions": "Contests",
+    "findProject": "Find a project",
+    "freelancers": "Freelancers",
+    "newProject": "+ New project",
+    "messages": "Messages",
+    "messagesUnread": "Messages, unread: {count}",
+    "notifications": "Notifications",
+    "notificationsUnread": "Notifications, unread: {count}",
+    "languageAria": "Language: {language}",
+    "languagePickerAria": "Choose language",
+    "menuTitle": "Menu",
+    "menuNavAria": "Site navigation",
+    "menuOpenAria": "Open menu",
+    "menuCloseAria": "Close menu"
+  },
+  "profileMenu": {
+    "ariaLabel": "Profile menu",
+    "myCabinet": "My dashboard",
+    "portfolio": "Portfolio",
+    "freelancerProfile": "Freelancer profile",
+    "projects": "My projects",
+    "finances": "My finances",
+    "whatsNew": "What's new?",
+    "personal": "Personal info",
+    "settings": "Settings",
+    "adminCabinet": "Main cabinet",
+    "adminPanel": "Admin panel",
+    "logout": "Sign out",
+    "roles": {
+      "freelancer": "freelancer",
+      "client": "client",
+      "admin": "chief administrator"
+    },
+    "defaultNames": {
+      "freelancer": "Freelancer",
+      "client": "Client",
+      "admin": "Administrator"
+    }
+  },
+  "faq": [
+    {
+      "question": "What is Taskery?",
+      "answer": "Taskery is a freelance marketplace for clients and freelancers in Ukraine, Poland and Europe. Clients publish projects, freelancers apply, and the platform provides secure deals through escrow and a review system."
+    },
+    {
+      "question": "Which currencies are supported?",
+      "answer": "The platform supports hryvnia (UAH), Polish zloty (PLN) and euro (EUR). The currency is set when creating a project and used in escrow deals."
+    },
+    {
+      "question": "How does escrow work?",
+      "answer": "When you choose a freelancer, the deal amount is reserved on the client's balance. After work is accepted, funds are transferred to the freelancer minus the platform commission. In a dispute, an admin makes a decision."
+    },
+    {
+      "question": "What is the platform commission?",
+      "answer": "The standard commission is 10% of the deal amount. It is deducted when the deal is completed from the total: the client pays the full price, the freelancer receives the amount minus commission."
+    },
+    {
+      "question": "What does the PRO subscription include?",
+      "answer": "TaskBoost for freelancers: PRO badge, catalog priority, highlighted profile and unlimited proposals. Clients have no subscription — publishing projects and deals is free."
+    },
+    {
+      "question": "How do I top up my balance?",
+      "answer": "Clients top up via Stripe (card). Funds are used to pay freelancers in the project's currency."
+    },
+    {
+      "question": "Can I work with a freelancer off-platform?",
+      "answer": "We recommend completing deals through Taskery — you are protected by escrow, chat history and arbitration. Off-platform work removes these guarantees."
+    }
+  ],
+  "popovers": {
+    "unreadShort": "{count} new",
+    "messages": {
+      "title": "Messages",
+      "emptyTitle": "No conversations",
+      "emptyBody": "A chat opens after a client selects you or when you message about a bid.",
+      "participant": "Participant",
+      "viewAll": "All conversations"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "emptyTitle": "No notifications",
+      "emptyClient": "New bids on your projects and deal updates will appear here.",
+      "emptyFreelancer": "New projects in your category and selection updates will appear here.",
+      "viewAll": "All notifications"
+    },
+    "tasks": {
+      "title": "My tasks",
+      "heading": "Tasks in progress",
+      "client": "Client",
+      "viewAll": "All tasks",
+      "emptyTitle": "You have no active tasks in progress",
+      "emptyBodyPrefix": "Go to ",
+      "emptySearchWork": "job search",
+      "emptyBodyMiddle": " in your category or showcase your skills in ",
+      "emptyContests": "contests"
+    }
+  },
+  "backNav": {
+    "cabinet": "Dashboard",
+    "back": "Back",
+    "myProjects": "My projects",
+    "messages": "Messages",
+    "personalData": "Personal info",
+    "profile": "My profile",
+    "toProject": "Back to project",
+    "jobSearch": "Find work",
+    "freelancerCatalog": "Freelancer directory"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{count} min ago",
+    "hoursAgo": "{count} h ago",
+    "daysAgo": "{count} d ago"
+  },
+  "labels": {
+    "participant": "Participant",
+    "client": "Client",
+    "freelancer": "Freelancer",
+    "contractStatus": {
+      "AWAITING_FUNDING": "Awaiting funding",
+      "ESCROWED": "Funds in escrow",
+      "RELEASED": "Paid to freelancer",
+      "REFUNDED": "Refunded to client"
+    },
+    "notificationType": {
+      "PROJECT_MATCH": "New project",
+      "BID_ACCEPTED": "You were selected",
+      "BID_MESSAGE": "Bid message",
+      "NEW_MESSAGE": "New message",
+      "NEW_BID": "New bid"
+    },
+    "projectStatus": {
+      "OPEN": "Open",
+      "IN_PROGRESS": "In progress",
+      "CLOSED": "Closed",
+      "UNDER_DISPUTE": "Dispute"
+    },
+    "bidStatus": {
+      "PENDING": "Pending",
+      "ACCEPTED": "Accepted",
+      "REJECTED": "Rejected"
+    }
+  },
+  "pages": {
+    "messages": {
+      "title": "Messages",
+      "intro": "All project conversations in one place."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "introClient": "Bids, deals and messages from freelancers.",
+      "introFreelancer": "New projects, selections and messages from clients."
+    },
+    "freelancer": {
+      "overview": {
+        "title": "Dashboard",
+        "intro": "Welcome to your Taskery workspace. Pick a section in the sidebar or start by finding projects.",
+        "findProject": {
+          "title": "Find a project",
+          "desc": "Browse open jobs and submit bids."
+        },
+        "myTasks": {
+          "title": "My tasks",
+          "desc": "Projects you are currently working on."
+        },
+        "myBids": {
+          "title": "My bids",
+          "desc": "History of submitted proposals."
+        },
+        "messages": {
+          "title": "Messages",
+          "desc": "Chat with clients about projects."
+        },
+        "finances": {
+          "title": "My finances",
+          "desc": "Balance, payouts and earnings."
+        },
+        "portfolio": {
+          "title": "My portfolio",
+          "desc": "Work visible to clients."
+        }
+      },
+      "work": {
+        "title": "My tasks",
+        "intro": "Projects you are currently working on.",
+        "emptyTitle": "No active tasks",
+        "emptyBody": "Apply to projects or wait to be selected by a client.",
+        "clientLabel": "Client"
+      },
+      "bids": {
+        "title": "My bids",
+        "intro": "Your bid history on projects."
+      },
+      "finances": {
+        "title": "My finances",
+        "intro": "Balance, payouts and transaction history."
+      },
+      "portfolio": {
+        "title": "My portfolio",
+        "intro": "Showcase work for clients."
+      },
+      "profile": {
+        "title": "Freelancer profile",
+        "intro": "Specialization, skills and public bio."
+      },
+      "personal": {
+        "title": "Personal info",
+        "intro": "Contacts, languages and account settings."
+      },
+      "reviews": {
+        "title": "Reviews",
+        "intro": "Ratings and feedback from clients."
+      }
+    },
+    "client": {
+      "overview": {
+        "title": "Client dashboard",
+        "intro": "Manage projects, choose freelancers and chat in one place.",
+        "newProject": {
+          "title": "Create project",
+          "desc": "Publish a job and receive freelancer bids."
+        },
+        "myProjects": {
+          "title": "My projects",
+          "desc": "All published jobs and bids."
+        },
+        "inWork": {
+          "title": "In progress",
+          "desc": "Projects with a selected freelancer."
+        },
+        "messages": {
+          "title": "Messages",
+          "desc": "Chat with freelancers about projects."
+        },
+        "finances": {
+          "title": "My finances",
+          "desc": "Payments, escrow and deal history."
+        },
+        "freelancers": {
+          "title": "Freelancers",
+          "desc": "Directory by skills and rating."
+        }
+      },
+      "work": {
+        "title": "In progress",
+        "intro": "Projects with active freelancers.",
+        "emptyTitle": "No projects in progress",
+        "freelancerLabel": "Freelancer",
+        "emptyBody": "When you select a freelancer, the project will appear here.",
+        "goProjects": "My projects"
+      },
+      "projects": {
+        "title": "My projects",
+        "intro": "All your published jobs.",
+        "newProject": "+ New project",
+        "newPage": {
+          "title": "New project",
+          "intro": "Publish a job — freelancers can respond with proposals.",
+          "noCategories": "No categories found. Run npm run db:seed to populate reference data."
+        },
+        "editPage": {
+          "title": "Edit project"
+        }
+      },
+      "finances": {
+        "title": "My finances",
+        "intro": "Balance, top-ups and payment history."
+      },
+      "personal": {
+        "title": "Personal info",
+        "intro": "Contacts and account settings."
+      },
+      "reviews": {
+        "title": "Reviews",
+        "intro": "Ratings you left for freelancers."
+      }
+    }
+  },
+  "inbox": {
+    "emptyTitle": "No conversations yet",
+    "emptyBody": "Chat opens when a client selects you for a project.",
+    "deleteSelected": "Delete ({count})",
+    "searchPlaceholder": "Search messages",
+    "filterProjects": "Filter by project",
+    "attachments": "Attachments",
+    "favorites": "Favorites",
+    "sender": "Sender",
+    "subject": "Subject",
+    "messageCount": "Messages",
+    "sent": "Sent",
+    "selectAll": "Select all",
+    "noResults": "No results for \"{query}\"",
+    "conversation": "Conversation",
+    "unreadShort": "{count} new",
+    "selectConversation": "Select conversation with {name}",
+    "chatWith": "Chat with",
+    "participantFallback": "participant",
+    "allConversations": "All conversations",
+    "bookmarks": "Bookmarks",
+    "projectLink": "Project",
+    "deleteConversation": "Delete conversation",
+    "delete": "Delete",
+    "deleting": "Deleting…",
+    "deleteConfirmOne": "Remove this conversation from your list? Your partner will still see the message history.",
+    "deleteConfirmMany": "Remove {count} conversations from your list? Your partners will still see the message history.",
+    "conversationPageTitle": "Conversation",
+    "conversationPageDescription": "Project chat",
+    "thread": {
+      "emptyTitle": "Start the conversation",
+      "emptyBody": "Send the first message — your partner will get a notification.",
+      "you": "You",
+      "participant": "Participant",
+      "placeholder": "Type your message…",
+      "attachFiles": "Attach files",
+      "send": "Send",
+      "sending": "Sending…"
+    },
+    "bidThread": {
+      "toggleWithCount": "Conversation ({count})",
+      "toggleWrite": "Send a message",
+      "emptyBody": "Ask a question about your bid before the client selects a freelancer.",
+      "placeholder": "Your message…",
+      "send": "Send",
+      "sending": "…"
+    }
+  },
+  "notificationsPage": {
+    "emptyTitle": "No notifications yet",
+    "emptyClient": "When freelancers bid on your project, we will show a notification here.",
+    "emptyFreelancer": "When a matching project appears, we will show it here.",
+    "goProjects": "Go to my projects",
+    "goProfile": "Set up skills in profile",
+    "unreadCount": "Unread: {count}",
+    "allRead": "All notifications read",
+    "markAllRead": "Mark all as read"
+  },
+  "tables": {
+    "bids": {
+      "emptyTitle": "No bids yet",
+      "emptyBody": "Apply to projects — your proposals will appear here.",
+      "findProject": "Find a project",
+      "filterActive": "Show active bids only",
+      "filterAll": "Show all bids",
+      "countOne": "bid",
+      "countFew": "bids",
+      "countMany": "bids",
+      "noActive": "No active bids.",
+      "showAll": "Show all",
+      "colProject": "Project",
+      "colBudget": "Budget",
+      "colAdded": "Added",
+      "colOffer": "Your offer",
+      "budgetLabel": "Budget:",
+      "budgetUnset": "not set",
+      "dayOne": "{count} day",
+      "dayFew": "{count} days",
+      "dayMany": "{count} days"
+    },
+    "projects": {
+      "emptyTitle": "No projects yet",
+      "emptyBody": "Publish your first job to receive freelancer bids.",
+      "createProject": "Create project",
+      "colProject": "Project",
+      "colCategory": "Category",
+      "colBudget": "Budget",
+      "colStatus": "Status",
+      "colBids": "Bids",
+      "colFreelancer": "Freelancer",
+      "colCreated": "Created",
+      "colActions": "Actions",
+      "view": "Open",
+      "edit": "Edit",
+      "noFreelancer": "—"
+    }
+  },
+  "cabinetForms": {
+    "common": {
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved",
+      "cancel": "Cancel",
+      "notSelected": "Not selected",
+      "optional": "Optional",
+      "user": "User",
+      "soon": "Coming soon",
+      "addTranslation": "+ add translation",
+      "bold": "Bold",
+      "italic": "Italic",
+      "list": "List",
+      "link": "Link"
+    },
+    "personalData": {
+      "tabs": {
+        "data": "My details",
+        "photo": "Photo",
+        "contacts": "Contact info",
+        "payment": "Payment details"
+      },
+      "cooperationTitle": "Preferred work format",
+      "cooperationDescription": "Choose which types of work interest you.",
+      "wantsFreelanceProjects": "Freelance projects",
+      "wantsRemoteWork": "Permanent remote work",
+      "accountParamsTitle": "Account settings",
+      "login": "Login",
+      "profileType": "Profile type",
+      "clientRoleHintBefore": "Want to work as a client?",
+      "clientRoleHintLink": "Contact support",
+      "clientRoleHintAfter": ".",
+      "languagesTitle": "Language proficiency",
+      "removeLanguage": "Remove language",
+      "addLanguage": "+ add language",
+      "personalInfoTitle": "Personal information",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "dateOfBirth": "Date of birth",
+      "country": "Country",
+      "city": "City",
+      "cityPlaceholder": "Kyiv, Warsaw…",
+      "photoTitle": "Profile photo",
+      "photoDescriptionClient": "Upload a photo from your computer — freelancers will see it.",
+      "photoDescriptionFreelancer": "Upload a photo from your computer — clients will see it.",
+      "photoLabel": "Photo",
+      "chooseFile": "Choose file",
+      "removePhoto": "Remove photo",
+      "fileHint": "JPG, PNG or WebP, up to 5 MB.",
+      "contactsTitle": "Contact info",
+      "contactsDescription": "Email is used for login and notifications.",
+      "email": "Email",
+      "phone": "Phone",
+      "paymentTitle": "Payment details",
+      "paymentDescriptionClient": "Ways to top up balance and pay for projects.",
+      "paymentDescriptionFreelancer": "Details for withdrawing funds from your Taskery balance.",
+      "paymentUnderDevelopment": "Section under development",
+      "paymentSoonClient": "Soon you will be able to add a card for top-ups here. For now use My finances.",
+      "paymentSoonFreelancer": "Soon you will be able to add a card or IBAN for withdrawals. For now use the Withdrawals tab in finances.",
+      "goFinancesClient": "Go to My finances →",
+      "goFinancesFreelancer": "Go to withdrawals →"
+    },
+    "freelancerProfile": {
+      "tabs": {
+        "about": "About me",
+        "specialization": "Specialization",
+        "legal": "Legal status",
+        "extra": "Additional"
+      },
+      "publicProfile": "Public profile",
+      "statusTitle": "My status",
+      "statusDescription": "Clients will see your availability in the directory.",
+      "bioTitle": "Detailed about me",
+      "bioDescription": "Tell about your stack, experience and approach.",
+      "bioLanguage": "English",
+      "bioPlaceholder": "Hi! I specialize in…",
+      "bioHint": "A detailed bio attracts more clients. Describe technologies, typical tasks and your strengths.",
+      "specializationTitle": "Specialization",
+      "specializationDescription": "Specify your focus, rate and key skills.",
+      "profileTitle": "Profile headline",
+      "profileTitlePlaceholder": "Full-stack developer, UI/UX designer…",
+      "hourlyRate": "Rate, ₴/hour",
+      "skills": "Skills",
+      "skillsEmpty": "No skills added to the system yet.",
+      "legalTitle": "Legal status",
+      "legalDescription": "Used for contracts and payouts. Not shown publicly.",
+      "taxId": "Tax ID / VAT number",
+      "taxIdPlaceholder": "Optional",
+      "extraTitle": "Additional",
+      "extraDescription": "Links and experience that complement your public profile.",
+      "website": "Website or portfolio",
+      "experienceYears": "Years of experience"
+    },
+    "finances": {
+      "freelancer": {
+        "tabs": {
+          "balance": "Balance",
+          "withdrawals": "Withdrawals",
+          "statistics": "Statistics"
+        },
+        "securityBannerBefore": "We recommend enabling",
+        "securityBannerLink": "two-factor protection",
+        "securityBannerAfter": " — it makes payout access more secure.",
+        "availableToWithdraw": "Available to withdraw",
+        "availableHint": "Funds on your Taskery account",
+        "escrow": "In escrow",
+        "escrowHintActive": "{count} active projects",
+        "escrowHintEmpty": "Appears after a client selects you",
+        "totalEarned": "Total earned",
+        "totalEarnedHint": "Sum of all completed payouts",
+        "escrowInfo1": "Project funds are held until the client accepts the work. After the project closes, payment is credited to your balance automatically.",
+        "escrowInfoBeforeLink": "More about fees and withdrawals — in the",
+        "escrowInfoLink": "knowledge base",
+        "escrowInfoAfterLink": ".",
+        "requestWithdrawal": "Request withdrawal",
+        "withdrawalSoon": "Card and IBAN withdrawals coming soon. Minimum amount — 500 ₴.",
+        "colDate": "Date",
+        "colCredit": "Credit",
+        "colDescription": "Description",
+        "colAmount": "Amount",
+        "emptyLedger": "No transactions yet. Payouts appear after projects are completed.",
+        "awaitingCompletion": "Awaiting project completion",
+        "yearTotal": "Total for {year}",
+        "activeMonths": "Active months with income",
+        "monthlyIncome": "Income by month",
+        "projectsLegend": "Projects",
+        "colPeriod": "Period",
+        "colProjects": "Projects",
+        "yearTotalRow": "Total for {year}"
+      },
+      "client": {
+        "balance": "Balance",
+        "balanceHint": "Funds for paying projects",
+        "escrow": "In escrow",
+        "escrowHintActive": "{count} projects in progress",
+        "escrowHintEmpty": "Appears after you select a freelancer",
+        "totalSpent": "Total spent",
+        "totalSpentHint": "Sum of completed payments",
+        "topUpTitle": "Top up balance",
+        "topUpDescription": "Funds are needed to reserve payment when you select a freelancer.",
+        "historyTitle": "Transaction history",
+        "emptyHistory": "No transactions yet.",
+        "yearlyExpenses": "Yearly expenses",
+        "projectOne": "project",
+        "projectMany": "projects"
+      },
+      "ledger": {
+        "balanceTopUp": "Balance top-up",
+        "projectPayment": "Payment for project «{project}»",
+        "projectEscrow": "Escrow for project «{project}»"
+      }
+    },
+    "reviews": {
+      "tabs": {
+        "pending": "Awaiting rating",
+        "received": "Received",
+        "given": "My reviews"
+      },
+      "stats": {
+        "rating": "Rating",
+        "received": "Received",
+        "pending": "Awaiting rating"
+      },
+      "emptyPending": "No completed projects awaiting your rating.",
+      "ratePartner": "Rate the {target}",
+      "completedAt": "Completed {date}",
+      "emptyReceived": "No reviews received yet",
+      "emptyGiven": "You have not left any reviews yet",
+      "givenReviewPrefix": "You → {name}",
+      "form": {
+        "ratingAria": "Rating",
+        "rateTarget": "Rate the {target}",
+        "comment": "Comment",
+        "commentPlaceholder": "Tell how the project work went",
+        "submitting": "Submitting…",
+        "submit": "Leave review",
+        "successThanks": "Thank you! Review published."
+      },
+      "list": {
+        "emptyDefault": "No reviews yet",
+        "projectPrefix": "Project:",
+        "starsOf5": "{rating} of 5"
+      }
+    },
+    "portfolio": {
+      "deleteWork": "Delete work",
+      "openProject": "Open project",
+      "addTitle": "Add work",
+      "addDescription": "Show clients your best projects — add a screenshot, description and link.",
+      "fieldTitle": "Title",
+      "fieldTitlePlaceholder": "Landing page for a SaaS startup",
+      "fieldDescription": "Description",
+      "fieldDescriptionPlaceholder": "Briefly describe the task and your contribution",
+      "fieldImageUrl": "Image URL",
+      "fieldProjectUrl": "Project link",
+      "adding": "Adding…",
+      "addButton": "Add to portfolio",
+      "addedSuccess": "Work added to portfolio",
+      "countWorks": "{count} works in portfolio",
+      "emptyCount": "Portfolio is empty — add your first work",
+      "viewAsClient": "How clients see it →",
+      "emptyTitle": "No works yet",
+      "emptyDescription": "Add case studies — it builds client trust."
+    },
+    "projectForm": {
+      "title": "Project title *",
+      "titlePlaceholder": "e.g. Landing page for a SaaS product",
+      "category": "Category *",
+      "selectCategory": "Select category",
+      "description": "Description (Markdown) *",
+      "editor": "Editor",
+      "preview": "Preview",
+      "previewEmpty": "Start typing a description…",
+      "descriptionPlaceholder": "Describe the task, requirements, expected outcome…\n\n**Markdown** supported: lists, headings, links.",
+      "descriptionHint": "Minimum 20 characters. Markdown formatting is supported.",
+      "budget": "Budget",
+      "currency": "Currency",
+      "currencyHint": "Deal currency is set when creating the project and does not depend on interface language.",
+      "budgetNegotiable": "Negotiable (no fixed budget)",
+      "deadline": "Deadline",
+      "optional": "Optional",
+      "publishing": "Publishing…",
+      "publish": "Publish project"
+    },
+    "projectEdit": {
+      "featuredUntil": "Featured until {date}",
+      "boostTitle": "Boost in feed",
+      "boostDescription": "Your project will appear first in search for 7 days.",
+      "boostButton": "Boost project — 149 ₴",
+      "title": "Title",
+      "category": "Category",
+      "description": "Description (Markdown)",
+      "editor": "Editor",
+      "preview": "Preview",
+      "deadline": "Deadline",
+      "saving": "Saving…",
+      "saved": "Changes saved",
+      "closeTitle": "Close project",
+      "closeDescription": "The project will disappear from the feed. Bids remain in history."
+    },
+    "closeProject": {
+      "confirm": "Close project? It will disappear from the feed and no new bids will be accepted.",
+      "defaultLabel": "Close without freelancer",
+      "closing": "Closing…",
+      "closed": "Project closed"
+    },
+    "balanceTopUp": {
+      "amountLabel": "Top-up amount ({currency})",
+      "topUp": "Top up {amount}",
+      "stripeHint": "Add STRIPE_SECRET_KEY to .env for real payments"
+    },
+    "options": {
+      "roles": {
+        "FREELANCER": "Freelancer",
+        "CLIENT": "Client",
+        "ADMIN": "Administrator"
+      },
+      "languageLevels": {
+        "NATIVE": "Native / fluent",
+        "ADVANCED": "Advanced",
+        "INTERMEDIATE": "Intermediate",
+        "BASIC": "Basic"
+      },
+      "languages": {
+        "ru": "Russian",
+        "uk": "Ukrainian",
+        "en": "English",
+        "pl": "Polish",
+        "de": "German",
+        "fr": "French",
+        "es": "Spanish"
+      },
+      "countries": {
+        "UA": "Ukraine",
+        "PL": "Poland",
+        "DE": "Germany",
+        "US": "United States",
+        "GB": "United Kingdom",
+        "OTHER": "Other"
+      },
+      "workAvailability": {
+        "AVAILABLE": {
+          "label": "Available for work",
+          "hint": "Ready to take new projects"
+        },
+        "SLIGHTLY_BUSY": {
+          "label": "Slightly busy",
+          "hint": "Time for smaller tasks"
+        },
+        "VERY_BUSY": {
+          "label": "Very busy",
+          "hint": "New projects by agreement only"
+        },
+        "NOT_WORKING": {
+          "label": "Temporarily not working",
+          "hint": "Not accepting orders"
+        },
+        "ON_VACATION": {
+          "label": "On vacation",
+          "hint": "Back later — replies may be delayed"
+        }
+      },
+      "legalStatus": {
+        "INDIVIDUAL": "Individual",
+        "SELF_EMPLOYED": "Self-employed",
+        "COMPANY": "Company"
+      },
+      "reviewTarget": {
+        "freelancer": "freelancer",
+        "client": "client",
+        "other": "deal participant"
+      },
+      "reviewerRoles": {
+        "CLIENT": "Client",
+        "FREELANCER": "Freelancer",
+        "ADMIN": "Administrator"
+      },
+      "ledgerDirection": {
+        "credit": "Top-up",
+        "debit": "Payment",
+        "hold": "Escrow hold"
+      }
+    },
+    "escrowNotice": {
+      "fundedFreelancerTitle": "The client reserved {amount} in escrow.",
+      "fundedFreelancerBody": "You can start working. After the client accepts the work, funds will be credited to your balance.",
+      "awaitingClientTitle": "Project funds are not in escrow yet.",
+      "awaitingFreelancerTitle": "The client has not funded the project yet.",
+      "awaitingClientBody": "You can deposit {amount} now or later — messaging is already available.",
+      "awaitingFreelancerBody": "Starting work is not recommended until the client reserves funds in escrow."
+    },
+    "fundContract": {
+      "success": "Funds are in escrow. You can start working on the project.",
+      "title": "Fund escrow",
+      "description": "Hold {amount} in escrow to protect the deal. You can fund now or later — work can continue either way.",
+      "yourBalance": "Your balance:",
+      "toFund": "To fund:",
+      "submit": "Fund {amount} in escrow",
+      "processing": "Processing…",
+      "insufficient": "Insufficient balance. Top up your balance or pay escrow directly via Stripe.",
+      "payStripe": "Pay {amount} via Stripe",
+      "goFinances": "Go to My finances →"
+    }
+  },
+  "projectDetail": {
+    "notFound": {
+      "title": "Project not found",
+      "description": "This project was not found on Taskery"
+    },
+    "common": {
+      "freelancerFallback": "Freelancer",
+      "clientFallback": "Client",
+      "newFreelancer": "New freelancer",
+      "newClient": "New",
+      "daysShort": "days",
+      "openInMessages": "Open in messages",
+      "description": "Description",
+      "budget": "Budget",
+      "published": "Published",
+      "views": "Views",
+      "bids": "Bids",
+      "category": "Category",
+      "deadlineIn": "Deadline in",
+      "deadlineExpired": "Deadline passed",
+      "dueDate": "Due date",
+      "management": "Management",
+      "editProject": "Edit project",
+      "myProjects": "My projects",
+      "closeProject": "Close project",
+      "discussionLocked": "Discussion is available to project participants after freelancer selection.",
+      "onlyFreelancerCanBid": "Only users with the Freelancer role can submit bids.",
+      "bidListHiddenTitle": "Other bids are hidden",
+      "bidListHiddenBody": "Only the client can see the full list of bids.",
+      "breadcrumbs": {
+        "home": "Home",
+        "projects": "Projects"
+      }
+    },
+    "contractPanel": {
+      "title": "Secure deal",
+      "freelancer": "Freelancer",
+      "dealAmount": "Deal amount",
+      "escrowStatus": "Escrow status",
+      "projectStatus": "Project status",
+      "platformFee": "Platform fee",
+      "freelancerPayout": "Freelancer payout",
+      "clientBalance": "Your balance",
+      "dealCreatedAt": "Deal created",
+      "releaseSuccess": "Work accepted. Funds transferred to freelancer.",
+      "releaseSubmit": "Accept work",
+      "releasePending": "Processing…",
+      "releaseHint": "Escrow funds will be transferred to the freelancer balance",
+      "disputeSuccess": "Dispute opened. Admin will review the situation.",
+      "disputeSubmit": "Open dispute",
+      "disputePending": "Opening…",
+      "escrowActionsHint": "Accept work when everything is delivered. If there are problems, open a dispute for arbitration.",
+      "disputeOpenedNotice": "Dispute opened. Funds ({amount}) remain in escrow until an admin decision.",
+      "releasedNotice": "Project completed. Payment was transferred to the freelancer. Leave your review below.",
+      "refundedNotice": "Dispute resolved in the client's favor. Funds were refunded.",
+      "freelancerPanelTitle": "You are the freelancer",
+      "freelancerPanelClientPrefix": "Client",
+      "awaitingFundingNotice": "The client has not funded escrow yet. It is safer to wait until funds are reserved.",
+      "escrowedNotice": "Client funded escrow. You can start working.",
+      "escrowedHint": "Funds will be credited after client acceptance.",
+      "paidNotice": "Payment received. Funds were credited to your balance. Leave a review for the client below.",
+      "disputeWaitNotice": "A dispute is open for this project. Wait for admin decision."
+    },
+    "bidForm": {
+      "successTitle": "Bid submitted!",
+      "successText": "The client received your proposal. You can track the status on the project page.",
+      "costLabel": "Your price ({currency}) *",
+      "timeframeLabel": "Timeline (days) *",
+      "coverLetterLabel": "Cover letter *",
+      "coverLetterPlaceholder": "Explain why you are a good fit and share relevant experience…",
+      "coverLetterHint": "Minimum 20 characters",
+      "submit": "Submit bid",
+      "submitting": "Submitting…",
+      "loginPromptTitle": "Want to bid?",
+      "loginPromptTextPrefix": "Sign in as a freelancer or ",
+      "registerLink": "register",
+      "loginPromptTextSuffix": " to send a proposal.",
+      "loginCta": "Sign in"
+    },
+    "bidList": {
+      "emptyTitle": "No bids yet",
+      "emptyBody": "When freelancers bid, their proposals will appear here.",
+      "yourBid": "Your bid",
+      "yourCost": "Your price",
+      "yourTimeframe": "Timeline",
+      "selectedSuccess": "You were selected as the freelancer. You can start working!",
+      "rejectedText": "The client selected another freelancer."
+    },
+    "bidCta": {
+      "button": "Place bid"
+    },
+    "tabs": {
+      "bids": "Bids",
+      "discussion": "Discussion"
+    },
+    "progress": {
+      "steps": [
+        "Published",
+        "Bidding",
+        "Selection",
+        "Escrow",
+        "Work",
+        "Reviews"
+      ]
+    },
+    "discussion": {
+      "summaryPrefix": "Project chat for “{title}” with ",
+      "summaryFallback": "participant"
+    },
+    "clientStats": {
+      "title": "Order statistics",
+      "completed": "Completed",
+      "uncompleted": "Not completed",
+      "noHistory": "This client has not completed projects on Taskery yet.",
+      "reviewsCount": "Client reviews: {count}",
+      "warningsTitle": "Please note"
+    },
+    "acceptBid": {
+      "success": "Freelancer selected. Fund escrow on the project page now or later from messages.",
+      "pending": "Processing…",
+      "submitPrefix": "Select freelancer",
+      "hint": "{name} · escrow can be funded now or later"
+    },
+    "reviews": {
+      "title": "Deal reviews",
+      "intro": "After project completion, both client and freelancer can review each other.",
+      "allReviews": "All reviews",
+      "clientToFreelancer": "Client review of freelancer",
+      "freelancerToClient": "Freelancer review of client",
+      "empty": "No reviews for this deal yet",
+      "myReviewDone": "You already left a review",
+      "myReviewTitlePrefix": "Your review as ",
+      "waitingPartnerPrefix": "Waiting for review from ",
+      "waitingPartnerFallback": "the other party"
+    },
+    "featuredBadge": "★ Featured"
+  },
+  "catalog": {
+    "projectCard": {
+      "bidsOne": "bid",
+      "bidsFew": "bids",
+      "bidsMany": "bids"
+    },
+    "freelancerCard": {
+      "freelancerFallback": "Freelancer",
+      "projectsCount": "projects",
+      "rateSuffix": "₴/h",
+      "hourSuffix": "h"
+    },
+    "projectFilters": {
+      "title": "Filters",
+      "search": "Keywords",
+      "searchPlaceholder": "React, design, landing…",
+      "category": "Category",
+      "allCategories": "All categories",
+      "minBudget": "Budget from",
+      "maxBudget": "Budget to",
+      "apply": "Apply",
+      "reset": "Reset"
+    },
+    "freelancerFilters": {
+      "title": "Filters",
+      "search": "Search",
+      "searchPlaceholder": "Name, specialization…",
+      "skill": "Skill",
+      "allSkills": "All skills",
+      "sort": "Sort",
+      "sortRating": "By rating",
+      "sortRateAsc": "Rate ↑",
+      "sortRateDesc": "Rate ↓",
+      "sortName": "By name",
+      "apply": "Apply"
+    }
+  },
+  "pricingUi": {
+    "cards": {
+      "freeName": "Free",
+      "freePeriod": "forever",
+      "freeFeatures": [
+        "Project publishing and bidding",
+        "Escrow deals",
+        "Reviews and rating",
+        "10% fee from completed deal amount"
+      ],
+      "freeAvailable": "Available to everyone after registration",
+      "activeBoost": "TaskBoost is already active",
+      "connectPrefix": "Activate",
+      "roleRestricted": "Available for another role",
+      "loginToConnect": "Sign in to activate"
+    },
+    "premiumFeatures": {
+      "title": "One-time services",
+      "intro": "Promotion without subscription — pay once and get more visibility.",
+      "projectTopForDays": "Project featured in feed for {days} days",
+      "profileFeaturedForDays": "Profile featured for {days} days"
+    }
+  },
+  "publicForms": {
+    "contact": {
+      "success": "Thanks! We received your message and will reply to your email.",
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Send",
+      "submitting": "Sending…"
+    },
+    "password": {
+      "forgotSuccess": "If an account with this email exists, we sent a reset link. Check your inbox.",
+      "forgotSubmit": "Send reset link",
+      "forgotSubmitting": "Sending…",
+      "backToLogin": "← Back to sign in",
+      "resetSuccess": "Password updated successfully. You can sign in now.",
+      "resetCta": "Sign in",
+      "newPassword": "New password",
+      "minHint": "At least 8 characters",
+      "resetSubmit": "Save password",
+      "resetSubmitting": "Saving…",
+      "pageForgot": {
+        "title": "Password reset",
+        "description": "Enter your email and we will send a link to create a new password."
+      },
+      "pageReset": {
+        "title": "New password",
+        "invalidToken": "Invalid reset link.",
+        "requestNew": "Request a new one"
+      }
+    }
+  },
+  "boost": {
+    "title": "TaskBoost — premium for freelancers",
+    "brandName": "TaskBoost",
+    "tagline": "Premium for Taskery freelancers",
+    "shortDescription": "More visibility in the catalog, search priority, and tools that help you win projects more often.",
+    "heroTitle": "{name} — stand out and win more projects",
+    "activated": "✓ TaskBoost is already active on your account",
+    "connect": "Activate {name}",
+    "paymentSoon": "Subscription payments will be available soon",
+    "publishProject": "Post a project",
+    "registerFreelancer": "Register as freelancer",
+    "allPricing": "All Taskery pricing",
+    "metrics": [
+      {
+        "value": "×2",
+        "label": "more profile views"
+      },
+      {
+        "value": "↑",
+        "label": "higher in search results"
+      },
+      {
+        "value": "24/7",
+        "label": "priority support"
+      }
+    ],
+    "featuresTitle": "What is included in TaskBoost",
+    "featuresIntro": "Promotion tools that help clients discover you more often without complex setup.",
+    "features": [
+      {
+        "title": "Catalog priority",
+        "description": "Your profile ranks higher in search results — clients see you before competitors."
+      },
+      {
+        "title": "TaskBoost badge",
+        "description": "A premium freelancer mark on your profile and cards — more trust at first glance."
+      },
+      {
+        "title": "Highlighted profile",
+        "description": "30 days of accent profile styling — more visible in feeds and recommendations."
+      },
+      {
+        "title": "Unlimited proposals",
+        "description": "Apply to projects without limits and never miss a good match."
+      },
+      {
+        "title": "More invitations",
+        "description": "Clients find you more often through filters and active freelancer picks."
+      },
+      {
+        "title": "Priority support",
+        "description": "Get faster answers from the Taskery team about deals and your account."
+      }
+    ],
+    "comparisonTitle": "Free vs TaskBoost",
+    "comparisonHeaders": {
+      "feature": "Feature",
+      "free": "Free",
+      "boost": "TaskBoost"
+    },
+    "comparison": [
+      {
+        "label": "Profile and proposals",
+        "free": true,
+        "boost": true
+      },
+      {
+        "label": "Escrow deals",
+        "free": true,
+        "boost": true
+      },
+      {
+        "label": "Search priority",
+        "free": false,
+        "boost": true
+      },
+      {
+        "label": "TaskBoost badge",
+        "free": false,
+        "boost": true
+      },
+      {
+        "label": "Highlighted profile for 30 days",
+        "free": false,
+        "boost": true
+      },
+      {
+        "label": "Unlimited proposals",
+        "free": false,
+        "boost": true
+      },
+      {
+        "label": "Priority support",
+        "free": false,
+        "boost": true
+      }
+    ],
+    "faqTitle": "Frequently asked questions",
+    "faq": [
+      {
+        "question": "How is TaskBoost different from the free plan?",
+        "answer": "TaskBoost adds profile promotion, a premium badge, and catalog priority. Basic deals and escrow are available to everyone."
+      },
+      {
+        "question": "Can I cancel the subscription?",
+        "answer": "Yes. The subscription renews monthly; you can turn off auto-renewal anytime in Stripe billing settings."
+      },
+      {
+        "question": "Is TaskBoost for clients?",
+        "answer": "TaskBoost is for freelancers only. Clients use the platform for free — a 10% commission is taken from the deal amount when it completes."
+      }
+    ],
+    "planFeatures": [
+      "TaskBoost badge in the catalog",
+      "Priority in freelancer search",
+      "Highlighted profile for 30 days",
+      "Unlimited proposals"
+    ],
+    "sidebarRole": "Freelancer",
+    "pricePerMonth": "{price} ₴ / month",
+    "pricePerMonthShort": "₴/mo",
+    "sidebarActive": "Subscription active",
+    "availableForFreelancers": "Available for freelancer accounts",
+    "loginPrefix": "",
+    "login": "Sign in",
+    "loginMiddle": " or ",
+    "register": "register",
+    "loginSuffix": " as freelancer to activate"
+  },
+  "billing": {
+    "success": {
+      "title": "Payment successful",
+      "description": "Your payment was processed successfully",
+      "heading": "Payment successful",
+      "body": "The payment was processed. Updates will appear in your dashboard within a minute.",
+      "toCabinet": "Go to dashboard",
+      "finances": "Finances"
+    },
+    "demoTopUp": {
+      "success": "Balance topped up by 50,000 ₴ (demo)",
+      "submit": "Top up balance (demo +50,000 ₴)",
+      "loading": "Topping up…",
+      "hint": "For testing escrow deals in the MVP"
+    },
+    "stripe": {
+      "checkoutError": "Could not start checkout",
+      "networkError": "Network error. Please try again later.",
+      "loading": "Redirecting to payment…"
+    }
+  },
+  "legal": {
+    "terms": {
+      "title": "Terms of Service",
+      "updatedAt": "Last updated: June 17, 2026",
+      "sections": [
+        {
+          "heading": "1. General terms",
+          "body": "By using Taskery, you agree to these terms. If you disagree, do not use the platform."
+        },
+        {
+          "heading": "2. Account and security",
+          "body": "You are responsible for account credentials and activity under your account."
+        },
+        {
+          "heading": "3. Deals and payments",
+          "body": "Taskery provides escrow tools and Stripe processing. Fees are shown in the UI before deal confirmation."
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "updatedAt": "Last updated: June 17, 2026",
+      "sections": [
+        {
+          "heading": "1. Data we collect",
+          "body": "We process profile, transaction, messaging, and technical data needed to operate the platform."
+        },
+        {
+          "heading": "2. Why we use data",
+          "body": "Data is used to provide the service, secure accounts, process payments, and comply with legal obligations."
+        },
+        {
+          "heading": "3. Your rights",
+          "body": "You may request access, correction, or deletion of your personal data under applicable law."
+        }
+      ]
+    }
+  },
+  "freelancerProfile": {
+    "fallbackName": "Freelancer",
+    "portfolioViewWork": "View work",
+    "ratingNew": "New freelancer",
+    "editProfile": "Edit profile",
+    "proposeProject": "Offer project",
+    "hireFreelancer": "Hire freelancer",
+    "stats": {
+      "rating": "Rating",
+      "projects": "Projects",
+      "rate": "Rate",
+      "experience": "Experience",
+      "negotiable": "Negotiable",
+      "notSpecified": "Not specified",
+      "experienceYear": "year",
+      "experienceFew": "years",
+      "experienceMany": "years"
+    },
+    "cooperation": {
+      "title": "Cooperation",
+      "freelanceProjects": "Available for freelance projects",
+      "remoteWork": "Open to remote positions",
+      "notSpecified": "Not specified"
+    },
+    "languages": "Languages",
+    "website": "Website",
+    "about": {
+      "title": "About",
+      "empty": "Freelancer has not added a description yet."
+    },
+    "skills": "Skills",
+    "portfolio": "Portfolio",
+    "reviews": "Reviews"
+  },
+  "actionErrors": {
+    "AUTH_REQUIRED": "Please sign in to your account",
+    "CLIENTS_ONLY_PUBLISH": "Only clients can publish projects",
+    "FREELANCERS_ONLY": "Available to freelancers only",
+    "INVALID_CURRENCY": "Choose a currency: UAH, PLN, or EUR",
+    "TITLE_TOO_SHORT": "Title must be at least 5 characters",
+    "DESCRIPTION_TOO_SHORT": "Description must be at least 20 characters",
+    "CATEGORY_REQUIRED": "Select a category",
+    "CATEGORY_NOT_FOUND": "Selected category was not found",
+    "BUDGET_OR_NEGOTIABLE_REQUIRED": "Set a budget or mark as negotiable",
+    "BUDGET_MUST_BE_POSITIVE": "Budget must be a positive number",
+    "INVALID_DEADLINE": "Invalid deadline date",
+    "DEADLINE_IN_PAST": "Deadline cannot be in the past",
+    "REQUIRED_FIELDS_MISSING": "Fill in all required fields",
+    "PROJECT_NOT_FOUND": "Project not found",
+    "ACCESS_DENIED": "Access denied",
+    "EDIT_OPEN_PROJECT_ONLY": "Only open projects can be edited",
+    "CLOSE_OPEN_PROJECT_ONLY": "Only an open project without a freelancer can be closed",
+    "CANNOT_CLOSE_WITH_FREELANCER": "Cannot close a project with a selected freelancer",
+    "CANNOT_BID_CLOSED_PROJECT": "You can no longer bid on this project",
+    "CANNOT_BID_OWN_PROJECT": "You cannot bid on your own project",
+    "INVALID_BID_AMOUNT": "Enter a valid amount",
+    "INVALID_BID_DAYS": "Duration must be a whole number of days greater than 0",
+    "COVER_LETTER_TOO_SHORT": "Cover letter must be at least 20 characters",
+    "ALREADY_BID": "You have already bid on this project",
+    "BID_NOT_FOUND": "Bid not found",
+    "CLIENTS_ONLY": "Available to clients only",
+    "PROJECT_ACCESS_DENIED": "You do not have access to this project",
+    "ACCEPT_FREELANCER_OPEN_ONLY": "A freelancer can only be selected for an open project",
+    "FREELANCER_ALREADY_SELECTED": "Freelancer already selected",
+    "BID_ALREADY_PROCESSED": "This bid has already been processed",
+    "INVALID_BID_AMOUNT_CONTRACT": "Invalid bid amount",
+    "ACCEPT_FREELANCER_FAILED": "Could not select freelancer",
+    "CONTRACT_NOT_FOUND": "Contract not found",
+    "PROJECT_NOT_IN_PROGRESS": "Project is not in progress",
+    "ESCROW_ALREADY_FUNDED": "Funds for this project are already deposited",
+    "FUNDS_ALREADY_PROCESSED": "Funds have already been processed",
+    "DEMO_TOPUP_PRODUCTION_ONLY": "Demo top-up is not available in production",
+    "USE_STRIPE_FOR_TOPUP": "Use Stripe to top up your balance",
+    "MESSAGE_REQUIRED": "Enter a message",
+    "CONVERSATION_NOT_FOUND": "Conversation not found",
+    "SELECT_CONVERSATIONS": "Select conversations to delete",
+    "CONVERSATIONS_NOT_FOUND": "Conversations not found",
+    "BID_CHAT_BEFORE_SELECTION": "Chat is available only until a freelancer is selected",
+    "PROJECT_NOT_ACCEPTING_BIDS": "Project no longer accepts bids",
+    "CLIENT_HAS_NOT_STARTED_CHAT": "The client has not started the conversation yet",
+    "EMAIL_REQUIRED": "Enter your email",
+    "INVALID_RESET_LINK": "Link is invalid or expired",
+    "NAME_REQUIRED": "Enter first and last name",
+    "INVALID_BIRTH_DATE": "Invalid date of birth",
+    "LANGUAGE_LEVEL_REQUIRED": "Select a level for each language",
+    "DUPLICATE_LANGUAGE": "Language cannot be duplicated",
+    "USER_NOT_FOUND": "User not found",
+    "FILE_REQUIRED": "Select a file to upload",
+    "SELECT_STATUS": "Select a status",
+    "INVALID_RATE": "Invalid rate",
+    "LEGAL_STATUS_REQUIRED": "Select a legal status",
+    "EXPERIENCE_RANGE": "Enter experience from 0 to 60 years",
+    "PORTFOLIO_TITLE_REQUIRED": "Enter a portfolio item title",
+    "ITEM_NOT_FOUND": "Item not found",
+    "RATING_RANGE": "Rating must be from 1 to 5",
+    "REVIEW_AFTER_COMPLETION_ONLY": "You can leave a review only after the project is completed",
+    "REVIEW_ALREADY_SUBMITTED": "You have already left a review",
+    "THEME_REQUIRED": "Select a theme",
+    "CONTACT_ALL_FIELDS": "Fill in all fields",
+    "CONTACT_MESSAGE_TOO_SHORT": "Message is too short",
+    "CONTACT_MESSAGE_TOO_LONG": "Message is too long",
+    "RATE_LIMIT_EXCEEDED": "Too many requests. Please try again later.",
+    "NOTIFICATION_NOT_FOUND": "Notification not found"
+  },
+  "cookies": {
+    "title": "We use cookies",
+    "bodyBeforeLink": "Taskery uses cookies to keep you signed in, remember your preferences, and analyze site traffic. By clicking \"Accept all\", you consent to our use of cookies as described in our ",
+    "privacyLink": "Privacy Policy",
+    "bodyAfterLink": ". Essential cookies are required for the site to function.",
+    "essentialOnly": "Essential only",
+    "acceptAll": "Accept all"
+  },
+  "notificationTemplates": {
+    "PROJECT_MATCH": {
+      "title": "New project in your category",
+      "body": "{name} · {project}"
+    },
+    "BID_ACCEPTED": {
+      "title": "You were selected as freelancer",
+      "body": "{name} · {project}"
+    },
+    "NEW_BID": {
+      "title": "New bid on project",
+      "body": "{name} · {project}"
+    },
+    "BID_MESSAGE": {
+      "title": "New message on bid",
+      "body": "{name} · {project}"
+    },
+    "NEW_MESSAGE": {
+      "title": "New message",
+      "body": "{name} · {project}"
+    }
+  }
+}
