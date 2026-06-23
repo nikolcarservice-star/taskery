@@ -6,6 +6,7 @@ import { isAdminEmail } from "@/lib/actions/auth-hints";
 import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
 import { localizedPath } from "@/lib/i18n/routing";
 import { GoogleAuthButton } from "@/components/GoogleAuthButton";
+import { scrollFieldIntoView } from "@/lib/mobile-form-scroll";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -78,7 +79,8 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
+            onFocus={scrollFieldIntoView}
           />
         </div>
         <div>
@@ -94,7 +96,8 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
+            onFocus={scrollFieldIntoView}
           />
           <p className="mt-1 text-right">
             <a

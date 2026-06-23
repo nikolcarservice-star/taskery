@@ -8,6 +8,7 @@ import {
 } from "@/lib/actions/password";
 import { useLocalizedPath } from "@/components/LocalizedLink";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
+import { scrollFieldIntoView } from "@/lib/mobile-form-scroll";
 import Link from "next/link";
 import { useActionState } from "react";
 
@@ -40,7 +41,8 @@ export function ForgotPasswordForm() {
           name="email"
           type="email"
           required
-          className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+          className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
+          onFocus={scrollFieldIntoView}
         />
       </div>
       <FormActionError error={state.error} className="text-sm text-red-600" />
@@ -100,7 +102,8 @@ export function ResetPasswordForm({ token }: { token: string }) {
           type="password"
           required
           minLength={8}
-          className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+          className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
+          onFocus={scrollFieldIntoView}
         />
         <p className="mt-1 text-xs text-zinc-500">{dict.publicForms.password.minHint}</p>
       </div>

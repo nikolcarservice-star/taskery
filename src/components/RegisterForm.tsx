@@ -1,6 +1,7 @@
 "use client";
 
 import { GoogleAuthButton } from "@/components/GoogleAuthButton";
+import { scrollFieldIntoView } from "@/lib/mobile-form-scroll";
 import { buildAuthContinueUrl } from "@/lib/auth-continue";
 import { getHomeRouteForRole } from "@/lib/role-redirect";
 import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
@@ -99,7 +100,8 @@ function RegisterFormInner({ googleEnabled }: { googleEnabled: boolean }) {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
+            onFocus={scrollFieldIntoView}
           />
         </div>
         <div>
@@ -112,7 +114,8 @@ function RegisterFormInner({ googleEnabled }: { googleEnabled: boolean }) {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
+            onFocus={scrollFieldIntoView}
           />
         </div>
         <div>
@@ -129,7 +132,8 @@ function RegisterFormInner({ googleEnabled }: { googleEnabled: boolean }) {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
+            onFocus={scrollFieldIntoView}
           />
           <p className="mt-1 text-xs text-zinc-500">{dict.auth.register.passwordHint}</p>
         </div>

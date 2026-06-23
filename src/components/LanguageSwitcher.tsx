@@ -12,6 +12,7 @@ type LanguageSwitcherProps = {
   className?: string;
   languageAria?: string;
   languagePickerAria?: string;
+  placement?: "bottom" | "top";
 };
 
 function ChevronDownIcon({ open }: { open: boolean }) {
@@ -42,6 +43,7 @@ export function LanguageSwitcher({
   className = "",
   languageAria = "Language: {language}",
   languagePickerAria = "Choose language",
+  placement = "bottom",
 }: LanguageSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -113,7 +115,9 @@ export function LanguageSwitcher({
         <ul
           role="listbox"
           aria-label={languagePickerAria}
-          className="absolute right-0 top-full z-50 mt-2 min-w-[10.5rem] overflow-hidden rounded-lg border border-zinc-200/90 bg-white py-1 shadow-md"
+          className={`absolute right-0 z-50 min-w-[10.5rem] overflow-hidden rounded-lg border border-zinc-200/90 bg-white py-1 shadow-md ${
+            placement === "top" ? "bottom-full mb-2" : "top-full mt-2"
+          }`}
         >
           {otherLocales.map((code) => (
             <li key={code} role="presentation">

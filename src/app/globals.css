@@ -75,3 +75,20 @@ body {
     padding-right: env(safe-area-inset-right, 0px);
   }
 }
+
+@media (max-width: 1023px) {
+  .auth-page-shell {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .auth-page-main {
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scroll-padding-top: 1rem;
+    scroll-padding-bottom: max(8rem, env(safe-area-inset-bottom, 0px));
+  }
+}

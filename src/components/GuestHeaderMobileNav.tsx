@@ -5,6 +5,7 @@ import type { AppLocale, Dictionary } from "@/lib/i18n/types";
 import { localizedPath } from "@/lib/i18n/routing";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 type GuestHeaderMobileNavProps = {
   locale: AppLocale;
@@ -54,6 +55,11 @@ function ArrowRightIcon() {
 export function GuestHeaderMobileNav({ locale, dict }: GuestHeaderMobileNavProps) {
   const { header } = dict;
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -75,6 +81,104 @@ export function GuestHeaderMobileNav({ locale, dict }: GuestHeaderMobileNavProps
 
   const close = () => setOpen(false);
 
+  const overlay = (
+    <div
+      className={`fixed inset-0 z-[200] md:hidden ${open ? "visible" : "invisible"}`}
+      aria-hidden={!open}
+    >
+      <button
+        type="button"
+        aria-label={header.menuCloseAria}
+        tabIndex={open ? 0 : -1}
+        onClick={close}
+        className={`absolute inset-0 bg-zinc-900/50 transition-opacity duration-300 ${
+          open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+
+      <nav
+        id="guest-mobile-nav"
+        aria-label={header.menuNavAria}
+        aria-hidden={!open}
+        inert={open ? undefined : true}
+        className={`absolute inset-y-0 right-0 flex h-full w-[min(100vw,320px)] max-w-full flex-col bg-white shadow-2xl transition-transform duration-300 ease-out ${
+          open ? "translate-x-0" : "pointer-events-none translate-x-full"
+        }`}
+        style={{
+          paddingTop: "env(safe-area-inset-top, 0px)",
+          paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        }}
+      >
+        <div className="flex shrink-0 items-center justify-between border-b border-zinc-100 px-5 py-4">
+          <p className="text-sm font-semibold text-zinc-900">{header.menuTitle}</p>
+          <button
+            type="button"
+            onClick={close}
+            aria-label={header.menuCloseAria}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+          >
+            <CloseIcon />
+          </button>
+        </div>
+
+        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 py-5">
+          <Link
+            href={localizedPath(locale, "/register")}
+            onClick={close}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25"
+          >
+            {header.register}
+            <ArrowRightIcon />
+          </Link>
+
+          <Link
+            href={localizedPath(locale, "/login")}
+            onClick={close}
+            className="inline-flex w-full items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-3.5 text-sm font-medium text-zinc-700"
+          >
+            {header.login}
+          </Link>
+
+          <div className="my-2 h-px bg-zinc-100" />
+
+          <Link
+            href={localizedPath(locale, "/freelancers")}
+            onClick={close}
+            className="rounded-2xl px-4 py-3.5 text-[15px] font-medium text-zinc-800 transition-colors hover:bg-indigo-50/70 hover:text-indigo-700"
+          >
+            {header.findFreelancer}
+          </Link>
+
+          <Link
+            href={localizedPath(locale, "/projects")}
+            onClick={close}
+            className="rounded-2xl px-4 py-3.5 text-[15px] font-medium text-zinc-800 transition-colors hover:bg-indigo-50/70 hover:text-indigo-700"
+          >
+            {header.findProject}
+          </Link>
+
+          <Link
+            href={localizedPath(locale, "/pricing")}
+            onClick={close}
+            className="rounded-2xl px-4 py-3.5 text-[15px] font-medium text-zinc-800 transition-colors hover:bg-indigo-50/70 hover:text-indigo-700"
+          >
+            {dict.footer.links.pricing}
+          </Link>
+        </div>
+
+        <div className="shrink-0 border-t border-zinc-100 px-4 py-4">
+          <LanguageSwitcher
+            locale={locale}
+            placement="top"
+            className="w-full [&>button]:flex [&>button]:w-full [&>button]:justify-between"
+            languageAria={header.languageAria}
+            languagePickerAria={header.languagePickerAria}
+          />
+        </div>
+      </nav>
+    </div>
+  );
+
   return (
     <>
       <Link
@@ -95,93 +199,7 @@ export function GuestHeaderMobileNav({ locale, dict }: GuestHeaderMobileNavProps
         <MenuIcon />
       </button>
 
-      <div
-        className={`fixed inset-0 z-[60] md:hidden ${open ? "pointer-events-auto" : "pointer-events-none"}`}
-        aria-hidden={!open}
-      >
-        <button
-          type="button"
-          aria-label={header.menuCloseAria}
-          onClick={close}
-          className={`absolute inset-0 bg-zinc-900/40 backdrop-blur-[2px] transition-opacity duration-300 ${
-            open ? "opacity-100" : "opacity-0"
-          }`}
-        />
-
-        <nav
-          id="guest-mobile-nav"
-          aria-label={header.menuNavAria}
-          className={`absolute inset-y-0 right-0 flex w-[min(100vw,320px)] flex-col border-l border-zinc-200/80 bg-white shadow-2xl transition-transform duration-300 ease-out ${
-            open ? "translate-x-0" : "translate-x-full"
-          }`}
-        >
-          <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-4">
-            <p className="text-sm font-semibold text-zinc-900">{header.menuTitle}</p>
-            <button
-              type="button"
-              onClick={close}
-              aria-label={header.menuCloseAria}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
-            >
-              <CloseIcon />
-            </button>
-          </div>
-
-          <div className="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-5">
-            <Link
-              href={localizedPath(locale, "/register")}
-              onClick={close}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25"
-            >
-              {header.register}
-              <ArrowRightIcon />
-            </Link>
-
-            <Link
-              href={localizedPath(locale, "/login")}
-              onClick={close}
-              className="inline-flex w-full items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-50 px-5 py-3.5 text-sm font-medium text-zinc-700"
-            >
-              {header.login}
-            </Link>
-
-            <div className="my-2 h-px bg-zinc-100" />
-
-            <Link
-              href={localizedPath(locale, "/freelancers")}
-              onClick={close}
-              className="rounded-2xl px-4 py-3.5 text-[15px] font-medium text-zinc-800 transition-colors hover:bg-indigo-50/70 hover:text-indigo-700"
-            >
-              {header.findFreelancer}
-            </Link>
-
-            <Link
-              href={localizedPath(locale, "/projects")}
-              onClick={close}
-              className="rounded-2xl px-4 py-3.5 text-[15px] font-medium text-zinc-800 transition-colors hover:bg-indigo-50/70 hover:text-indigo-700"
-            >
-              {header.findProject}
-            </Link>
-
-            <Link
-              href={localizedPath(locale, "/pricing")}
-              onClick={close}
-              className="rounded-2xl px-4 py-3.5 text-[15px] font-medium text-zinc-800 transition-colors hover:bg-indigo-50/70 hover:text-indigo-700"
-            >
-              {dict.footer.links.pricing}
-            </Link>
-          </div>
-
-          <div className="border-t border-zinc-100 px-4 py-4">
-            <LanguageSwitcher
-              locale={locale}
-              className="w-full [&>button]:flex [&>button]:w-full [&>button]:justify-between"
-              languageAria={header.languageAria}
-              languagePickerAria={header.languagePickerAria}
-            />
-          </div>
-        </nav>
-      </div>
+      {mounted && open ? createPortal(overlay, document.body) : null}
     </>
   );
 }
