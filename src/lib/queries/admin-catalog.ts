@@ -7,6 +7,7 @@ export type AdminCategoryItem = {
   description: string | null;
   skillCount: number;
   projectCount: number;
+  minBudgets: { currency: string; minAmount: string }[];
 };
 
 export type AdminSkillItem = {
@@ -24,6 +25,7 @@ export async function getAdminCatalogOverview() {
       orderBy: { name: "asc" },
       include: {
         _count: { select: { skills: true, projects: true } },
+        minBudgets: { orderBy: { currency: "asc" } },
       },
     }),
     prisma.skill.findMany({
@@ -43,6 +45,10 @@ export async function getAdminCatalogOverview() {
       description: category.description,
       skillCount: category._count.skills,
       projectCount: category._count.projects,
+      minBudgets: category.minBudgets.map((row) => ({
+        currency: row.currency,
+        minAmount: row.minAmount.toString(),
+      })),
     })),
     skills: skills.map((skill) => ({
       id: skill.id,

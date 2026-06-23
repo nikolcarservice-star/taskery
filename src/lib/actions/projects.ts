@@ -7,7 +7,8 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { sendBidNotificationEmail } from "@/lib/email";
 import { absoluteUrl } from "@/lib/seo";
-import { isSupportedCurrency, defaultCurrency } from "@/lib/i18n/currencies";
+import { validateCategoryMinBudget } from "@/lib/category-min-budget";
+import { formatMoney, isSupportedCurrency, defaultCurrency } from "@/lib/i18n/currencies";
 
 export type CreateProjectState = {
   error?: string;
@@ -77,6 +78,17 @@ export async function createProject(
     }
 
     budget = parsed;
+
+    const minCheck = await validateCategoryMinBudget(
+      categoryId,
+      currency,
+      budget,
+    );
+    if (!minCheck.ok) {
+      return {
+        error: `Минимальный бюджет для этой категории — ${formatMoney(minCheck.minAmount, minCheck.currency)}`,
+      };
+    }
   }
 
   let deadline: Date | null = null;

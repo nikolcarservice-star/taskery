@@ -2,6 +2,7 @@
 
 import {
   adminSaveCategory,
+  adminSaveCategoryMinBudget,
   adminSaveSkill,
   type CatalogActionState,
 } from "@/lib/actions/admin-catalog";
@@ -9,6 +10,7 @@ import type {
   AdminCategoryItem,
   AdminSkillItem,
 } from "@/lib/queries/admin-catalog";
+import { SUPPORTED_CURRENCIES } from "@/lib/i18n/currencies";
 import { useActionState } from "react";
 
 const initialState: CatalogActionState = {};
@@ -50,6 +52,57 @@ function CategoryForm({ category }: { category?: AdminCategoryItem }) {
       {state.error && <p className="text-xs text-red-600">{state.error}</p>}
       {state.success && <p className="text-xs text-green-700">Сохранено</p>}
     </form>
+  );
+}
+
+function CategoryMinBudgetForm({ category }: { category: AdminCategoryItem }) {
+  const [state, formAction, pending] = useActionState(
+    adminSaveCategoryMinBudget,
+    initialState,
+  );
+
+  const budgetByCurrency = Object.fromEntries(
+    category.minBudgets.map((row) => [row.currency, row.minAmount]),
+  );
+
+  return (
+    <div className="space-y-3 rounded-xl border border-amber-200 bg-amber-50/40 p-4">
+      <p className="text-xs font-semibold text-amber-900">
+        Минимальный бюджет проекта
+      </p>
+      <p className="text-xs text-amber-800/80">
+        Пустое поле — ограничение не действует для этой валюты.
+      </p>
+      {SUPPORTED_CURRENCIES.map((currency) => (
+        <form key={currency} action={formAction} className="flex flex-wrap items-end gap-2">
+          <input type="hidden" name="categoryId" value={category.id} />
+          <input type="hidden" name="currency" value={currency} />
+          <div>
+            <label className="block text-xs font-medium text-zinc-600">
+              {currency}
+            </label>
+            <input
+              name="minAmount"
+              type="number"
+              min={0}
+              step="0.01"
+              defaultValue={budgetByCurrency[currency] ?? ""}
+              placeholder="—"
+              className="mt-1 w-32 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={pending}
+            className="rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 disabled:opacity-50"
+          >
+            {pending ? "…" : "Сохранить"}
+          </button>
+        </form>
+      ))}
+      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
+      {state.success && <p className="text-xs text-green-700">Сохранено</p>}
+    </div>
   );
 }
 
@@ -140,8 +193,9 @@ export function AdminCatalogPanel({
                     {category.skillCount} навыков · {category.projectCount} проектов
                   </span>
                 </summary>
-                <div className="border-t border-zinc-100 p-4">
+                <div className="border-t border-zinc-100 p-4 space-y-4">
                   <CategoryForm category={category} />
+                  <CategoryMinBudgetForm category={category} />
                 </div>
               </details>
             ))}

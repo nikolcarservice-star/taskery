@@ -7,6 +7,7 @@ import {
   adminSplitDispute,
   type ActionState,
 } from "@/lib/actions/admin";
+import { adminBlockProject } from "@/lib/actions/admin-moderation";
 import { AdminAttentionPanel } from "@/components/AdminAttentionPanel";
 import { AdminReportsPanel } from "@/components/AdminReportsPanel";
 import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
@@ -139,6 +140,34 @@ function DisputeActions({ projectId }: { projectId: string }) {
   );
 }
 
+function BlockProjectButton({ projectId }: { projectId: string }) {
+  const [state, formAction, pending] = useActionState(
+    adminBlockProject,
+    initialState,
+  );
+
+  return (
+    <form action={formAction} className="flex min-w-[200px] flex-col gap-2">
+      <input type="hidden" name="projectId" value={projectId} />
+      <input
+        name="adminNote"
+        required
+        placeholder="Причина блокировки"
+        className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs"
+      />
+      <button
+        type="submit"
+        disabled={pending}
+        className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-800 active:bg-red-100 disabled:opacity-50"
+      >
+        {pending ? "…" : "Заблокировать"}
+      </button>
+      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
+      {state.success && <p className="text-xs text-green-700">Заблокирован</p>}
+    </form>
+  );
+}
+
 function CloseProjectButton({ projectId }: { projectId: string }) {
   const [state, formAction, pending] = useActionState(
     adminCloseProject,
@@ -251,7 +280,10 @@ export function AdminModerationStack({
                     {project.client.name ?? "Заказчик"}
                   </p>
                 </div>
-                <CloseProjectButton projectId={project.id} />
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+                  <CloseProjectButton projectId={project.id} />
+                  <BlockProjectButton projectId={project.id} />
+                </div>
               </li>
             ))}
           </ul>

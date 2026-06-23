@@ -5,6 +5,10 @@ import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
+import {
+  isSupportedCurrency,
+  SUPPORTED_CURRENCIES,
+} from "@/lib/i18n/currencies";
 import { revalidatePath } from "next/cache";
 
 export type CatalogActionState = {
@@ -174,5 +178,56 @@ export async function adminSaveSkill(
   revalidatePath("/admin");
   revalidatePath("/admin/mobile/catalog");
   revalidatePath("/freelancers");
+  return { success: true };
+}
+
+export async function adminSaveCategoryMinBudget(
+  _prevState: CatalogActionState,
+  formData: FormData,
+): Promise<CatalogActionState> {
+  const authResult = await requireCatalogAdmin();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const categoryId = (formData.get("categoryId") as string | null)?.trim();
+  const currency = (formData.get("currency") as string | null)?.trim();
+  const minAmountRaw = (formData.get("minAmount") as string | null)?.trim();
+
+  if (!categoryId) return { error: "Категория не найдена" };
+  if (!currency || !isSupportedCurrency(currency)) {
+    return { error: "Выберите валюту" };
+  }
+
+  const category = await prisma.category.findUnique({
+    where: { id: categoryId },
+    select: { id: true },
+  });
+  if (!category) return { error: "Категория не найдена" };
+
+  if (!minAmountRaw) {
+    await prisma.categoryMinBudget.deleteMany({
+      where: { categoryId, currency },
+    });
+  } else {
+    const minAmount = Number(minAmountRaw.replace(",", "."));
+    if (!Number.isFinite(minAmount) || minAmount <= 0) {
+      return { error: "Укажите положительную сумму" };
+    }
+
+    await prisma.categoryMinBudget.upsert({
+      where: { categoryId_currency: { categoryId, currency } },
+      create: { categoryId, currency, minAmount },
+      update: { minAmount },
+    });
+  }
+
+  await logAdminAction(authResult.admin.id, "CATALOG_CATEGORY_SAVE", {
+    targetType: "category",
+    targetId: categoryId,
+    details: { currency, minAmount: minAmountRaw || null, minBudget: true },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/mobile/catalog");
+  revalidatePath("/projects");
   return { success: true };
 }
