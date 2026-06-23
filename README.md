@@ -115,7 +115,7 @@ prisma/           — schema and seed
 - [ ] Set `AUTH_SECRET`, `DATABASE_URL`, `NEXT_PUBLIC_SITE_URL`
 - [ ] Configure Stripe + webhook
 - [ ] Configure Resend for transactional email
-- [ ] Use object storage for avatars (local `public/uploads` is dev-only)
+- [ ] Add Vercel Blob store for avatar & portfolio uploads (`BLOB_READ_WRITE_TOKEN`)
 - [ ] Run `npm run build` before deploy
 
 ## Deploy to Vercel
@@ -153,8 +153,19 @@ In **Project → Settings → Environment Variables**, add at minimum:
 | `DATABASE_URL` | Production, Preview | Pooled connection string |
 | `AUTH_SECRET` | Production, Preview | `openssl rand -base64 32` |
 | `NEXT_PUBLIC_SITE_URL` | Production | `https://your-domain.vercel.app` or custom domain |
+| `BLOB_READ_WRITE_TOKEN` | Production, Preview | Auto-set when you create a Blob store (see below) |
 
 Copy optional vars from [`.env.example`](.env.example) (Stripe, Google OAuth, Resend).
+
+### 3.1 File uploads (Vercel Blob)
+
+Avatars and portfolio images use [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) in production.
+
+1. Vercel → your project → **Storage** → **Create Database / Store** → **Blob**
+2. Connect the store to the project — Vercel adds `BLOB_READ_WRITE_TOKEN` automatically
+3. **Redeploy** after creating the store
+
+Without Blob, uploads still work locally (`public/uploads/`). On Vercel without the token, avatar file upload fails; portfolio can still use image URLs.
 
 > **Do not** set `TUNNEL_HOST` on Vercel — it is for local dev tunnels only.
 
@@ -186,7 +197,7 @@ https://your-domain.com/api/auth/callback/google
 - [ ] Login / register works
 - [ ] Admin panel at `/admin`
 - [ ] Stripe checkout (if configured)
-- [ ] Avatar upload requires external storage — local filesystem is not persistent on Vercel
+- [ ] Avatar & portfolio file upload (requires Blob store on Vercel)
 
 ### CLI deploy (alternative)
 
