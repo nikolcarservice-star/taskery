@@ -1,6 +1,6 @@
 import { Role } from "@/generated/prisma/client";
 import { authConfig } from "@/lib/auth.config";
-import { getRegistrationBoostFields } from "@/lib/taskboost-promotion";
+import { getRegistrationBoostFields } from "@/lib/taskboost-promotion.shared";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";

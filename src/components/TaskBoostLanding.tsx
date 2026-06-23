@@ -3,12 +3,6 @@
 import { StripeCheckoutButton } from "@/components/StripeCheckoutButton";
 import { useLocalizedPath } from "@/components/LocalizedLink";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
-import { PRICING } from "@/lib/stripe-config";
-import {
-  TASKBOOST_PORTFOLIO_BONUS_DAYS,
-  TASKBOOST_REGISTRATION_DAYS,
-  taskBoostPurchaseEnabled,
-} from "@/lib/taskboost-promotion";
 import type { Role } from "@/generated/prisma/client";
 import Link from "next/link";
 
@@ -25,6 +19,10 @@ type TaskBoostLandingProps = {
   isPro: boolean;
   userRole?: Role;
   stripeEnabled: boolean;
+  taskBoostPurchaseEnabled: boolean;
+  taskBoostRegistrationDays: number;
+  taskBoostPortfolioDays: number;
+  proFreelancerPriceUah: number;
   compact?: boolean;
 };
 
@@ -66,17 +64,21 @@ export function TaskBoostLanding({
   isPro,
   userRole,
   stripeEnabled,
+  taskBoostPurchaseEnabled,
+  taskBoostRegistrationDays,
+  taskBoostPortfolioDays,
+  proFreelancerPriceUah,
   compact = false,
 }: TaskBoostLandingProps) {
   const dict = useDictionary();
   const boost = dict.boost;
   const l = useLocalizedPath();
   const isFreelancer = userRole === "FREELANCER" || userRole === "ADMIN";
-  const priceUah = PRICING.proFreelancer.priceUah;
+  const priceUah = proFreelancerPriceUah;
   const showPurchase = stripeEnabled && taskBoostPurchaseEnabled;
   const freePromoOffer = boost.freePromoOffer
-    .replace("{registrationDays}", String(TASKBOOST_REGISTRATION_DAYS))
-    .replace("{portfolioDays}", String(TASKBOOST_PORTFOLIO_BONUS_DAYS));
+    .replace("{registrationDays}", String(taskBoostRegistrationDays))
+    .replace("{portfolioDays}", String(taskBoostPortfolioDays));
 
   return (
     <div className={compact ? "space-y-10" : "space-y-16"}>

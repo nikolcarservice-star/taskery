@@ -15,7 +15,7 @@ import {
   validateTopUpAmount,
 } from "@/lib/stripe-checkout";
 import { stripe, stripeEnabled, PRICING } from "@/lib/stripe-config";
-import { taskBoostPurchaseEnabled } from "@/lib/taskboost-promotion";
+import { taskBoostPurchaseEnabled } from "@/lib/taskboost-promotion.constants";
 
 type CheckoutBody = {
   type: string;

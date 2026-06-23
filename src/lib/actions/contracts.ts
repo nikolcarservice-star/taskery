@@ -20,7 +20,8 @@ import {
 
 } from "@/lib/escrow-ops";
 
-import { getCommissionRate, stripeEnabled } from "@/lib/stripe-config";
+import { getCommissionRate } from "@/lib/commission";
+import { stripeEnabled } from "@/lib/stripe-config";
 
 import { revalidatePath } from "next/cache";
 

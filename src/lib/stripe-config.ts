@@ -1,13 +1,6 @@
+import "server-only";
+
 import Stripe from "stripe";
-
-export const stripeEnabled = Boolean(process.env.STRIPE_SECRET_KEY);
-
-export const stripe = stripeEnabled
-  ? new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: "2026-05-27.dahlia",
-      typescript: true,
-    })
-  : null;
 
 export const PRICING = {
   proFreelancer: {
@@ -37,8 +30,11 @@ export const PRICING = {
   maxTopUpUah: 100000,
 } as const;
 
-export const PLATFORM_COMMISSION_RATE = 0.1;
+export const stripeEnabled = Boolean(process.env.STRIPE_SECRET_KEY);
 
-export function getCommissionRate(): number {
-  return PLATFORM_COMMISSION_RATE;
-}
+export const stripe = stripeEnabled
+  ? new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: "2026-05-27.dahlia",
+      typescript: true,
+    })
+  : null;

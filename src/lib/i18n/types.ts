@@ -408,6 +408,8 @@ export type Dictionary = {
       freeFeatures: string[];
       freeAvailable: string;
       activeBoost: string;
+      freeBoostPrice: string;
+      freeBoostOffer: string;
       connectPrefix: string;
       roleRestricted: string;
       loginToConnect: string;
@@ -459,6 +461,9 @@ export type Dictionary = {
     activated: string;
     connect: string;
     paymentSoon: string;
+    freePromoOffer: string;
+    fillPortfolioCta: string;
+    subscriptionLater: string;
     publishProject: string;
     registerFreelancer: string;
     allPricing: string;

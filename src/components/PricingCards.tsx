@@ -2,29 +2,32 @@
 
 import { StripeCheckoutButton } from "@/components/StripeCheckoutButton";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
-import { PRICING } from "@/lib/stripe-config";
-import {
-  TASKBOOST_PORTFOLIO_BONUS_DAYS,
-  TASKBOOST_REGISTRATION_DAYS,
-  taskBoostPurchaseEnabled,
-} from "@/lib/taskboost-promotion";
-import { Role } from "@/generated/prisma/client";
+import type { PricingDisplay } from "@/lib/pricing-display";
+import type { Role } from "@/generated/prisma/client";
 
 type PricingCardsProps = {
   userRole?: Role;
   isPro?: boolean;
   stripeEnabled: boolean;
+  taskBoostPurchaseEnabled: boolean;
+  taskBoostRegistrationDays: number;
+  taskBoostPortfolioDays: number;
+  pricing: PricingDisplay;
 };
 
 export function PricingCards({
   userRole,
   isPro = false,
   stripeEnabled,
+  taskBoostPurchaseEnabled,
+  taskBoostRegistrationDays,
+  taskBoostPortfolioDays,
+  pricing,
 }: PricingCardsProps) {
   const dict = useDictionary();
   const freeBoostOffer = dict.pricingUi.cards.freeBoostOffer
-    .replace("{registrationDays}", String(TASKBOOST_REGISTRATION_DAYS))
-    .replace("{portfolioDays}", String(TASKBOOST_PORTFOLIO_BONUS_DAYS));
+    .replace("{registrationDays}", String(taskBoostRegistrationDays))
+    .replace("{portfolioDays}", String(taskBoostPortfolioDays));
   const cards = [
     {
       key: "free",
@@ -36,17 +39,14 @@ export function PricingCards({
     },
     {
       key: "pro_freelancer",
-      name: PRICING.proFreelancer.name,
+      name: pricing.proFreelancer.name,
       price: taskBoostPurchaseEnabled
-        ? `${PRICING.proFreelancer.priceUah} ₴`
+        ? `${pricing.proFreelancer.priceUah} ₴`
         : dict.pricingUi.cards.freeBoostPrice,
       period: taskBoostPurchaseEnabled ? "/ month" : "",
       features: taskBoostPurchaseEnabled
-        ? PRICING.proFreelancer.features
-        : [
-            freeBoostOffer,
-            ...PRICING.proFreelancer.features,
-          ],
+        ? pricing.proFreelancer.features
+        : [freeBoostOffer, ...pricing.proFreelancer.features],
       cta: "pro_freelancer" as const,
       forRole: "FREELANCER" as const,
     },
@@ -120,7 +120,13 @@ export function PricingCards({
   );
 }
 
-export function PremiumFeaturesSection({ stripeEnabled }: { stripeEnabled: boolean }) {
+export function PremiumFeaturesSection({
+  stripeEnabled,
+  pricing,
+}: {
+  stripeEnabled: boolean;
+  pricing: PricingDisplay;
+}) {
   const dict = useDictionary();
   if (!stripeEnabled) return null;
 
@@ -133,24 +139,30 @@ export function PremiumFeaturesSection({ stripeEnabled }: { stripeEnabled: boole
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-zinc-200 bg-white p-6">
           <h3 className="font-semibold text-zinc-900">
-            {PRICING.featureProject.name}
+            {pricing.featureProject.name}
           </h3>
           <p className="mt-1 text-2xl font-bold">
-            {PRICING.featureProject.priceUah} ₴
+            {pricing.featureProject.priceUah} ₴
           </p>
           <p className="mt-2 text-sm text-zinc-600">
-            {dict.pricingUi.premiumFeatures.projectTopForDays.replace("{days}", String(PRICING.featureProject.days))}
+            {dict.pricingUi.premiumFeatures.projectTopForDays.replace(
+              "{days}",
+              String(pricing.featureProject.days),
+            )}
           </p>
         </div>
         <div className="rounded-2xl border border-zinc-200 bg-white p-6">
           <h3 className="font-semibold text-zinc-900">
-            {PRICING.featureProfile.name}
+            {pricing.featureProfile.name}
           </h3>
           <p className="mt-1 text-2xl font-bold">
-            {PRICING.featureProfile.priceUah} ₴
+            {pricing.featureProfile.priceUah} ₴
           </p>
           <p className="mt-2 text-sm text-zinc-600">
-            {dict.pricingUi.premiumFeatures.profileFeaturedForDays.replace("{days}", String(PRICING.featureProfile.days))}
+            {dict.pricingUi.premiumFeatures.profileFeaturedForDays.replace(
+              "{days}",
+              String(pricing.featureProfile.days),
+            )}
           </p>
         </div>
       </div>

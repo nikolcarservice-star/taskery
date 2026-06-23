@@ -7,10 +7,15 @@ import { auth } from "@/lib/auth";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { createMetadata } from "@/lib/metadata";
+import { toPricingDisplay } from "@/lib/pricing-display";
 import { prisma } from "@/lib/prisma";
 import { isProUser } from "@/lib/slug";
-import { taskBoostPurchaseEnabled } from "@/lib/taskboost-promotion";
-import { stripeEnabled } from "@/lib/stripe-config";
+import {
+  TASKBOOST_PORTFOLIO_BONUS_DAYS,
+  TASKBOOST_REGISTRATION_DAYS,
+  taskBoostPurchaseEnabled,
+} from "@/lib/taskboost-promotion.constants";
+import { PRICING, stripeEnabled } from "@/lib/stripe-config";
 
 type PricingPageProps = {
   params: Promise<{ locale: string }>;
@@ -45,6 +50,8 @@ export default async function PricingPage({ params }: PricingPageProps) {
       : false;
   }
 
+  const pricing = toPricingDisplay(PRICING);
+
   return (
     <div className="flex min-h-full flex-1 flex-col bg-zinc-50">
       <JsonLd data={faqJsonLd(dict.faq.slice(0, 3))} />
@@ -62,10 +69,14 @@ export default async function PricingPage({ params }: PricingPageProps) {
             userRole={session?.user?.role}
             isPro={isPro}
             stripeEnabled={stripeEnabled && taskBoostPurchaseEnabled}
+            taskBoostPurchaseEnabled={taskBoostPurchaseEnabled}
+            taskBoostRegistrationDays={TASKBOOST_REGISTRATION_DAYS}
+            taskBoostPortfolioDays={TASKBOOST_PORTFOLIO_BONUS_DAYS}
+            pricing={pricing}
           />
         </div>
 
-        <PremiumFeaturesSection stripeEnabled={stripeEnabled} />
+        <PremiumFeaturesSection stripeEnabled={stripeEnabled} pricing={pricing} />
 
         <section className="mt-16 rounded-2xl border border-zinc-200 bg-white p-8">
           <h2 className="text-xl font-semibold text-zinc-900">

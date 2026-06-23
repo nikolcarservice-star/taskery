@@ -6,8 +6,12 @@ import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { createMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { isProUser } from "@/lib/slug";
-import { taskBoostPurchaseEnabled } from "@/lib/taskboost-promotion";
-import { stripeEnabled } from "@/lib/stripe-config";
+import {
+  TASKBOOST_PORTFOLIO_BONUS_DAYS,
+  TASKBOOST_REGISTRATION_DAYS,
+  taskBoostPurchaseEnabled,
+} from "@/lib/taskboost-promotion.constants";
+import { PRICING, stripeEnabled } from "@/lib/stripe-config";
 
 type BoostPageProps = {
   params: Promise<{ locale: string }>;
@@ -46,6 +50,10 @@ export default async function LocalizedBoostPage({ params }: BoostPageProps) {
         isPro={isPro}
         userRole={session?.user?.role}
         stripeEnabled={stripeEnabled && taskBoostPurchaseEnabled}
+        taskBoostPurchaseEnabled={taskBoostPurchaseEnabled}
+        taskBoostRegistrationDays={TASKBOOST_REGISTRATION_DAYS}
+        taskBoostPortfolioDays={TASKBOOST_PORTFOLIO_BONUS_DAYS}
+        proFreelancerPriceUah={PRICING.proFreelancer.priceUah}
         compact={Boolean(session?.user)}
       />
     </AccountBrowsePage>

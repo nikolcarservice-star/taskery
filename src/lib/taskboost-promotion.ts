@@ -1,27 +1,11 @@
+import "server-only";
+
 import { SubscriptionPlan } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { addBoostDays } from "@/lib/taskboost-promotion.shared";
+import { TASKBOOST_PORTFOLIO_BONUS_DAYS } from "@/lib/taskboost-promotion.constants";
 
-export const TASKBOOST_REGISTRATION_DAYS = 20;
-export const TASKBOOST_PORTFOLIO_BONUS_DAYS = 10;
-
-/** Paid TaskBoost checkout — disabled until subscription billing launches. */
-export const taskBoostPurchaseEnabled = false;
-
-export function addBoostDays(from: Date, days: number): Date {
-  const result = new Date(from);
-  result.setDate(result.getDate() + days);
-  return result;
-}
-
-export function getRegistrationBoostFields(): {
-  subscriptionPlan: SubscriptionPlan;
-  featuredUntil: Date;
-} {
-  return {
-    subscriptionPlan: SubscriptionPlan.PRO,
-    featuredUntil: addBoostDays(new Date(), TASKBOOST_REGISTRATION_DAYS),
-  };
-}
+export { taskBoostPurchaseEnabled } from "@/lib/taskboost-promotion.constants";
 
 export async function extendTaskBoostDays(
   userId: string,

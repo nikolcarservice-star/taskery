@@ -9,7 +9,7 @@ import {
   getClientIp,
   rateLimitResponse,
 } from "@/lib/rate-limit";
-import { getRegistrationBoostFields } from "@/lib/taskboost-promotion";
+import { getRegistrationBoostFields } from "@/lib/taskboost-promotion.shared";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
