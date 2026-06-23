@@ -297,7 +297,8 @@
       "errors": {
         "invalid": "Invalid email or password",
         "admin": "Use the separate admin login.",
-        "session": "Could not keep you signed in. Check your email and password, or try again later."
+        "session": "Could not keep you signed in. Check your email and password, or try again later.",
+        "config": "Sign-in is temporarily unavailable (server configuration). Try again later."
       }
     },
     "register": {

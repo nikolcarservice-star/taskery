@@ -1,10 +1,11 @@
 import type { Role } from "@/generated/prisma/client";
+import { getAuthSecret } from "@/lib/auth-secret";
 import type { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
   pages: { signIn: "/login" },
   session: { strategy: "jwt" },
-  secret: process.env.AUTH_SECRET,
+  secret: getAuthSecret(),
   providers: [],
   callbacks: {
     jwt({ token, user }) {

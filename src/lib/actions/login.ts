@@ -2,12 +2,14 @@
 
 import { isAdminEmail } from "@/lib/actions/auth-hints";
 import { authContinuePath } from "@/lib/auth-continue-path";
+import { isAuthConfigured } from "@/lib/auth-secret";
 import { signIn } from "@/lib/auth";
 import { safeRedirectPath } from "@/lib/safe-redirect";
 import { AuthError } from "next-auth";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export type LoginActionState = {
-  error?: "invalid" | "admin";
+  error?: "invalid" | "admin" | "config";
 };
 
 export async function loginWithCredentials(
@@ -21,6 +23,10 @@ export async function loginWithCredentials(
     "/",
   );
 
+  if (!isAuthConfigured()) {
+    return { error: "config" };
+  }
+
   try {
     await signIn("credentials", {
       email,
@@ -28,7 +34,11 @@ export async function loginWithCredentials(
       redirectTo: authContinuePath(callbackUrl),
     });
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     if (error instanceof AuthError) {
+      if (error.type === "Configuration") {
+        return { error: "config" };
+      }
       if (await isAdminEmail(email)) {
         return { error: "admin" };
       }
@@ -41,7 +51,7 @@ export async function loginWithCredentials(
 }
 
 export type AdminLoginActionState = {
-  error?: "invalid";
+  error?: "invalid" | "config";
 };
 
 export async function loginWithAdminCredentials(
@@ -55,6 +65,10 @@ export async function loginWithAdminCredentials(
     "/cabinet",
   );
 
+  if (!isAuthConfigured()) {
+    return { error: "config" };
+  }
+
   try {
     await signIn("admin", {
       email,
@@ -62,7 +76,11 @@ export async function loginWithAdminCredentials(
       redirectTo: authContinuePath(callbackUrl),
     });
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     if (error instanceof AuthError) {
+      if (error.type === "Configuration") {
+        return { error: "config" };
+      }
       return { error: "invalid" };
     }
     throw error;

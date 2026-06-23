@@ -23,13 +23,15 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
   );
 
   const errorMessage =
-    state.error === "admin"
-      ? dict.auth.login.errors.admin
-      : state.error === "invalid"
-        ? dict.auth.login.errors.invalid
-        : sessionError
-          ? dict.auth.login.errors.session
-          : null;
+    state.error === "config"
+      ? dict.auth.login.errors.config
+      : state.error === "admin"
+        ? dict.auth.login.errors.admin
+        : state.error === "invalid"
+          ? dict.auth.login.errors.invalid
+          : sessionError
+            ? dict.auth.login.errors.session
+            : null;
 
   return (
     <>
