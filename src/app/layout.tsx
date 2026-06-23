@@ -4,14 +4,17 @@ import { JsonLd, organizationJsonLd, websiteJsonLd } from "@/components/JsonLd";
 import { Providers } from "@/components/Providers";
 import { auth } from "@/lib/auth";
 import { getAccountMobileChromeProps } from "@/lib/account-mobile-chrome";
+import { isAccountMobileAppPath } from "@/lib/account-routes";
 import { createMetadata } from "@/lib/metadata";
 import { defaultLocale, getLocaleConfig, isAppLocale } from "@/lib/i18n/config";
 import { DictionaryProvider } from "@/lib/i18n/dictionary-context";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { getLocale } from "@/lib/i18n/server";
+import { stripLocalePrefix } from "@/lib/i18n/routing";
 import { siteConfig } from "@/lib/seo";
 import type { Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -61,9 +64,15 @@ export default async function RootLayout({
   const dict = await getDictionary(locale);
   const htmlLang = isAppLocale(locale) ? getLocaleConfig(locale).htmlLang : "ru";
   const session = await auth();
-  const mobileChrome = session?.user
-    ? await getAccountMobileChromeProps(session)
-    : null;
+  const headerStore = await headers();
+  const pathname = headerStore.get("x-pathname") ?? "";
+  const accountMobilePath =
+    Boolean(session?.user) &&
+    isAccountMobileAppPath(stripLocalePrefix(pathname));
+  const mobileChrome =
+    accountMobilePath && session
+      ? await getAccountMobileChromeProps(session)
+      : null;
 
   return (
     <html
@@ -73,7 +82,10 @@ export default async function RootLayout({
       <head>
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body
+        className="min-h-full flex flex-col"
+        {...(accountMobilePath ? { "data-account-mobile-app": "true" } : {})}
+      >
         <Providers>
           <DictionaryProvider locale={locale} dict={dict}>
             {children}

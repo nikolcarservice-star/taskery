@@ -7,6 +7,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
 const googleEnabled =
   Boolean(process.env.GOOGLE_CLIENT_ID) &&
@@ -74,7 +75,7 @@ async function authorizeWithPassword(
   };
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth: getAuthSession } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -159,14 +160,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       cookieStore.delete("oauth_register_role");
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.role = user.role as Role | undefined;
       }
 
-      if (token.id || token.email) {
+      const shouldSyncFromDb =
+        Boolean(user) ||
+        trigger === "update" ||
+        !token.role ||
+        !token.interfaceLanguage;
+
+      if (shouldSyncFromDb && (token.id || token.email)) {
         return loadUserIntoToken(token);
       }
 
@@ -174,5 +181,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
 });
+
+/** Dedupe session reads within a single RSC render pass. */
+export const auth = cache(getAuthSession);
 
 export { googleEnabled };

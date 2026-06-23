@@ -55,6 +55,11 @@ function withLocaleCookie(response: NextResponse, locale: AppLocale) {
   return response;
 }
 
+function withPathnameHeader(response: NextResponse, pathname: string) {
+  response.headers.set("x-pathname", pathname);
+  return response;
+}
+
 function withLocaleHeaders(response: NextResponse, locale: AppLocale) {
   response.headers.set("x-taskery-locale", locale);
   return response;
@@ -126,7 +131,7 @@ export default auth((request) => {
   }
 
   if (locale && !isAppLocale(locale)) {
-    return NextResponse.next();
+    return withPathnameHeader(NextResponse.next(), pathname);
   }
 
   const isAdminRoot = pathnameWithoutLocale === "/admin";
@@ -165,9 +170,12 @@ export default auth((request) => {
 
   if (isAdminRoot) {
     if (session?.user?.role === "ADMIN" || !session?.user) {
-      return withLocaleHeaders(
-        withAdminWorkModeCookie(NextResponse.next(), pathnameWithoutLocale, session?.user?.role),
-        activeLocale,
+      return withPathnameHeader(
+        withLocaleHeaders(
+          withAdminWorkModeCookie(NextResponse.next(), pathnameWithoutLocale, session?.user?.role),
+          activeLocale,
+        ),
+        pathname,
       );
     }
 
@@ -181,9 +189,12 @@ export default auth((request) => {
 
   if (isAdminCabinet) {
     if (session?.user?.role === "ADMIN") {
-      return withLocaleHeaders(
-        withAdminWorkModeCookie(NextResponse.next(), pathnameWithoutLocale, session.user.role),
-        activeLocale,
+      return withPathnameHeader(
+        withLocaleHeaders(
+          withAdminWorkModeCookie(NextResponse.next(), pathnameWithoutLocale, session.user.role),
+          activeLocale,
+        ),
+        pathname,
       );
     }
 
@@ -262,7 +273,7 @@ export default auth((request) => {
     withLocaleCookie(response, locale);
   }
 
-  return withLocaleHeaders(response, activeLocale);
+  return withPathnameHeader(withLocaleHeaders(response, activeLocale), pathname);
 });
 
 export const config = {

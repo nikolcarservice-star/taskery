@@ -13,6 +13,8 @@ const PRISMA_CLIENT_VERSION = "2026-06-21-admin-permissions";
 function createPrismaClient() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+    // Serverless: one connection per function instance (Neon pooler handles concurrency).
+    max: process.env.NODE_ENV === "production" ? 1 : 10,
   });
 
   return new PrismaClient({
