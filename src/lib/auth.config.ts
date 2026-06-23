@@ -4,6 +4,7 @@ import type { NextAuthConfig } from "next-auth";
 export const authConfig = {
   pages: { signIn: "/login" },
   session: { strategy: "jwt" },
+  secret: process.env.AUTH_SECRET,
   providers: [],
   callbacks: {
     jwt({ token, user }) {

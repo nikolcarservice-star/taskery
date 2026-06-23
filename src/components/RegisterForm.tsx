@@ -1,6 +1,7 @@
 "use client";
 
 import { GoogleAuthButton } from "@/components/GoogleAuthButton";
+import { buildAuthContinueUrl } from "@/lib/auth-continue";
 import { getHomeRouteForRole } from "@/lib/role-redirect";
 import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
 import { useLocalizedPath } from "@/components/LocalizedLink";
@@ -64,7 +65,7 @@ function RegisterFormInner({ googleEnabled }: { googleEnabled: boolean }) {
       return;
     }
 
-    window.location.assign(getHomeRouteForRole(role, locale));
+    window.location.assign(buildAuthContinueUrl(getHomeRouteForRole(role, locale)));
   }
 
   return (

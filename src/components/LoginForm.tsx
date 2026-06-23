@@ -1,5 +1,6 @@
 "use client";
 
+import { buildAuthContinueUrl } from "@/lib/auth-continue";
 import { safeRedirectPath } from "@/lib/safe-redirect";
 import { isAdminEmail } from "@/lib/actions/auth-hints";
 import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
@@ -43,7 +44,7 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
       return;
     }
 
-    window.location.assign(callbackUrl);
+    window.location.assign(buildAuthContinueUrl(callbackUrl));
   }
 
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { buildAuthContinueUrl } from "@/lib/auth-continue";
 import { safeRedirectPath } from "@/lib/safe-redirect";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -31,7 +32,7 @@ function AdminLoginFormInner() {
       return;
     }
 
-    window.location.assign(callbackUrl);
+    window.location.assign(buildAuthContinueUrl(callbackUrl));
   }
 
   return (

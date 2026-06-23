@@ -21,7 +21,7 @@ export function GoogleAuthButton({
       return;
     }
 
-    await signIn("google", { callbackUrl: "/" });
+    await signIn("google", { callbackUrl: "/auth/continue" });
   }
 
   return (
