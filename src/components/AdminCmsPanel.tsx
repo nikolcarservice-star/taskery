@@ -1,16 +1,14 @@
 "use client";
 
 import { adminSaveCmsPage, type CmsActionState } from "@/lib/actions/admin-cms";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { CmsPageItem } from "@/lib/queries/admin-cms";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useActionState } from "react";
 
 const initialState: CmsActionState = {};
 
-const CMS_SLUGS = [
-  { slug: "terms", label: "Условия использования" },
-  { slug: "privacy", label: "Политика конфиденциальности" },
-  { slug: "about-extra", label: "О платформе (доп.)" },
-];
+const CMS_SLUGS = ["terms", "privacy", "about-extra"] as const;
 
 const LOCALES = [
   { value: "ru", label: "RU" },
@@ -21,14 +19,15 @@ const LOCALES = [
 
 export function AdminCmsPanel({
   pages,
+  locale,
   compact = false,
 }: {
   pages: CmsPageItem[];
+  locale: AppLocale;
   compact?: boolean;
 }) {
+  const c = getAdminCopy(locale).panels.cms;
   const [state, formAction, pending] = useActionState(adminSaveCmsPage, initialState);
-
-  const pageMap = new Map(pages.map((page) => [`${page.slug}:${page.locale}`, page]));
 
   return (
     <section
@@ -38,29 +37,27 @@ export function AdminCmsPanel({
           : "rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
       }
     >
-      <h2 className="text-lg font-semibold text-zinc-900">CMS — статические страницы</h2>
-      <p className="mt-1 text-sm text-zinc-500">
-        Страницы доступны по адресу /[locale]/pages/[slug]
-      </p>
+      <h2 className="text-lg font-semibold text-zinc-900">{c.title}</h2>
+      <p className="mt-1 text-sm text-zinc-500">{c.urlHint}</p>
 
       <form action={formAction} className="mt-4 space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-zinc-700">Страница</label>
+            <label className="block text-sm font-medium text-zinc-700">{c.pageLabel}</label>
             <select
               name="slug"
               required
               className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
             >
-              {CMS_SLUGS.map((item) => (
-                <option key={item.slug} value={item.slug}>
-                  {item.label}
+              {CMS_SLUGS.map((slug) => (
+                <option key={slug} value={slug}>
+                  {c.slugs[slug] ?? slug}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-zinc-700">Язык</label>
+            <label className="block text-sm font-medium text-zinc-700">{c.languageLabel}</label>
             <select
               name="locale"
               required
@@ -75,7 +72,7 @@ export function AdminCmsPanel({
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-zinc-700">Заголовок</label>
+          <label className="block text-sm font-medium text-zinc-700">{c.titleLabel}</label>
           <input
             name="title"
             required
@@ -83,7 +80,7 @@ export function AdminCmsPanel({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-zinc-700">Текст (HTML/Markdown)</label>
+          <label className="block text-sm font-medium text-zinc-700">{c.bodyLabel}</label>
           <textarea
             name="body"
             required
@@ -96,10 +93,10 @@ export function AdminCmsPanel({
           disabled={pending}
           className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {pending ? "Сохранение…" : "Сохранить страницу"}
+          {pending ? c.saving : c.save}
         </button>
         {state.error && <p className="text-sm text-red-600">{state.error}</p>}
-        {state.success && <p className="text-sm text-emerald-700">Сохранено</p>}
+        {state.success && <p className="text-sm text-emerald-700">{c.saved}</p>}
       </form>
 
       {pages.length > 0 && (

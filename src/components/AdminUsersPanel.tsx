@@ -7,20 +7,24 @@ import {
   adminUsersUnban,
   type UserActionState,
 } from "@/lib/actions/admin-users";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { AdminUserItem } from "@/lib/queries/admin-users";
 import { formatUah } from "@/lib/freelancer-finances-shared";
 import type { Role } from "@/generated/prisma/client";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useActionState, useMemo, useState } from "react";
-
-const ROLE_LABELS: Record<Role, string> = {
-  CLIENT: "Заказчик",
-  FREELANCER: "Фрилансер",
-  ADMIN: "Админ",
-};
 
 const initialState: UserActionState = {};
 
-function UserActions({ user }: { user: AdminUserItem }) {
+function UserActions({
+  user,
+  locale,
+}: {
+  user: AdminUserItem;
+  locale: AppLocale;
+}) {
+  const u = getAdminCopy(locale).panels.users;
+  const c = getAdminCopy(locale).panels.common;
   const [banState, banAction, banPending] = useActionState(
     adminUsersBan,
     initialState,
@@ -38,7 +42,7 @@ function UserActions({ user }: { user: AdminUserItem }) {
   const success = banState.success || unbanState.success || deleteState.success;
 
   if (user.deletedAt) {
-    return <span className="text-xs text-zinc-400">Аккаунт удалён</span>;
+    return <span className="text-xs text-zinc-400">{u.accountDeleted}</span>;
   }
 
   return (
@@ -51,7 +55,7 @@ function UserActions({ user }: { user: AdminUserItem }) {
             disabled={unbanPending}
             className="rounded-full border border-emerald-300 px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-50 disabled:opacity-50"
           >
-            Разблокировать
+            {u.unban}
           </button>
         </form>
       ) : (
@@ -59,7 +63,7 @@ function UserActions({ user }: { user: AdminUserItem }) {
           <input type="hidden" name="userId" value={user.id} />
           <input
             name="reason"
-            placeholder="Причина"
+            placeholder={c.reason}
             className="w-28 rounded-lg border border-zinc-300 px-2 py-1 text-xs sm:w-36"
           />
           <button
@@ -67,7 +71,7 @@ function UserActions({ user }: { user: AdminUserItem }) {
             disabled={banPending}
             className="rounded-full bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
           >
-            Заблокировать
+            {u.ban}
           </button>
         </form>
       )}
@@ -76,7 +80,7 @@ function UserActions({ user }: { user: AdminUserItem }) {
         <input type="hidden" name="userId" value={user.id} />
         <input
           name="reason"
-          placeholder="Причина удаления"
+          placeholder={u.deleteReason}
           className="w-28 rounded-lg border border-zinc-300 px-2 py-1 text-xs sm:w-36"
         />
         <button
@@ -84,22 +88,30 @@ function UserActions({ user }: { user: AdminUserItem }) {
           disabled={deletePending}
           className="rounded-full bg-zinc-800 px-3 py-1 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
         >
-          Удалить
+          {u.delete}
         </button>
       </form>
 
       {error && <p className="text-xs text-red-600">{error}</p>}
-      {success && <p className="text-xs text-green-700">Готово</p>}
-      <AdminUserSanctions user={user} />
+      {success && <p className="text-xs text-green-700">{c.done}</p>}
+      <AdminUserSanctions user={user} locale={locale} />
     </div>
   );
 }
 
-function UserStatusBadge({ user }: { user: AdminUserItem }) {
+function UserStatusBadge({
+  user,
+  locale,
+}: {
+  user: AdminUserItem;
+  locale: AppLocale;
+}) {
+  const u = getAdminCopy(locale).panels.users;
+
   if (user.deletedAt) {
     return (
       <span className="rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-600">
-        Удалён
+        {u.badgeDeleted}
       </span>
     );
   }
@@ -108,19 +120,20 @@ function UserStatusBadge({ user }: { user: AdminUserItem }) {
       user.bannedUntil && new Date(user.bannedUntil) > new Date();
     return (
       <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-        {isTemp ? "Временный бан" : "Заблокирован"}
+        {isTemp ? u.badgeTempBan : u.badgeBanned}
       </span>
     );
   }
   return (
     <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
-      Активен
+      {u.badgeActive}
     </span>
   );
 }
 
 type AdminUsersPanelProps = {
   users: AdminUserItem[];
+  locale: AppLocale;
   mobile?: boolean;
   initialQuery?: string;
   initialRole?: Role | "ALL";
@@ -129,11 +142,13 @@ type AdminUsersPanelProps = {
 
 export function AdminUsersPanel({
   users,
+  locale,
   mobile = false,
   initialQuery = "",
   initialRole = "ALL",
   initialStatus = "all",
 }: AdminUsersPanelProps) {
+  const u = getAdminCopy(locale).panels.users;
   const [query, setQuery] = useState(initialQuery);
   const [roleFilter, setRoleFilter] = useState<Role | "ALL">(initialRole);
   const [statusFilter, setStatusFilter] = useState<
@@ -167,7 +182,7 @@ export function AdminUsersPanel({
         name="q"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Email, имя или ID"
+        placeholder={u.searchPlaceholder}
         className={`rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm ${mobile ? "w-full" : ""}`}
       />
       <select
@@ -176,9 +191,9 @@ export function AdminUsersPanel({
         onChange={(e) => setRoleFilter(e.target.value as Role | "ALL")}
         className={`rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm ${mobile ? "w-full" : ""}`}
       >
-        <option value="ALL">Все роли</option>
-        <option value="CLIENT">Заказчики</option>
-        <option value="FREELANCER">Фрилансеры</option>
+        <option value="ALL">{u.roleAll}</option>
+        <option value="CLIENT">{u.roleClients}</option>
+        <option value="FREELANCER">{u.roleFreelancers}</option>
       </select>
       <select
         name="status"
@@ -190,10 +205,10 @@ export function AdminUsersPanel({
         }
         className={`rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm ${mobile ? "w-full" : ""}`}
       >
-        <option value="all">Все статусы</option>
-        <option value="active">Активные</option>
-        <option value="banned">Заблокированные</option>
-        <option value="deleted">Удалённые</option>
+        <option value="all">{u.statusAll}</option>
+        <option value="active">{u.statusActive}</option>
+        <option value="banned">{u.statusBanned}</option>
+        <option value="deleted">{u.statusDeleted}</option>
       </select>
     </>
   );
@@ -210,16 +225,14 @@ export function AdminUsersPanel({
         {!mobile && (
           <div>
             <h2 className="text-lg font-semibold text-zinc-900">
-              Пользователи ({filtered.length})
+              {u.title} ({filtered.length})
             </h2>
-            <p className="mt-1 text-sm text-zinc-600">
-              Поиск, блокировка и удаление аккаунтов клиентов и фрилансеров.
-            </p>
+            <p className="mt-1 text-sm text-zinc-600">{u.description}</p>
             <a
               href="/api/admin/export/users"
               className="mt-3 inline-flex rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
             >
-              Экспорт CSV
+              {u.exportCsv}
             </a>
           </div>
         )}
@@ -231,7 +244,7 @@ export function AdminUsersPanel({
                 type="submit"
                 className="rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white"
               >
-                Найти
+                {u.search}
               </button>
             </form>
           ) : (
@@ -242,7 +255,7 @@ export function AdminUsersPanel({
 
       {filtered.length === 0 ? (
         <p className={`text-sm text-zinc-600 ${mobile ? "" : "mt-6"}`}>
-          Пользователи не найдены
+          {u.notFound}
         </p>
       ) : mobile ? (
         <ul className="space-y-3">
@@ -254,15 +267,15 @@ export function AdminUsersPanel({
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="font-semibold text-zinc-900">
-                    {user.name ?? "Без имени"}
+                    {user.name ?? u.noName}
                   </p>
                   <p className="text-xs text-zinc-500">{user.email}</p>
                 </div>
-                <UserStatusBadge user={user} />
+                <UserStatusBadge user={user} locale={locale} />
               </div>
               <div className="mt-3 flex flex-wrap gap-2 text-xs">
                 <span className="rounded-full bg-zinc-100 px-2 py-0.5 font-medium text-zinc-700">
-                  {ROLE_LABELS[user.role]}
+                  {u.roles[user.role] ?? user.role}
                 </span>
                 <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-zinc-600">
                   {formatUah(Number(user.balance))}
@@ -274,15 +287,15 @@ export function AdminUsersPanel({
                 )}
               </div>
               <p className="mt-2 text-xs text-zinc-500">
-                Проектов: {user._count.projectsAsClient} · Сделок:{" "}
-                {user._count.contractsAsFreelancer} · Рейтинг:{" "}
+                {u.projects}: {user._count.projectsAsClient} · {u.contracts}:{" "}
+                {user._count.contractsAsFreelancer} · {u.rating}:{" "}
                 {user.rating > 0 ? user.rating.toFixed(1) : "—"}
               </p>
               {user.banReason && (
                 <p className="mt-2 text-xs text-red-600">{user.banReason}</p>
               )}
               <div className="mt-3 border-t border-zinc-100 pt-3">
-                <UserActions user={user} />
+                <UserActions user={user} locale={locale} />
               </div>
             </li>
           ))}
@@ -292,12 +305,12 @@ export function AdminUsersPanel({
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead>
               <tr className="border-b border-zinc-100 text-xs text-zinc-500">
-                <th className="pb-3 pr-4 font-medium">Пользователь</th>
-                <th className="pb-3 pr-4 font-medium">Роль</th>
-                <th className="pb-3 pr-4 font-medium">Баланс</th>
-                <th className="pb-3 pr-4 font-medium">Активность</th>
-                <th className="pb-3 pr-4 font-medium">Статус</th>
-                <th className="pb-3 font-medium text-right">Действия</th>
+                <th className="pb-3 pr-4 font-medium">{u.colUser}</th>
+                <th className="pb-3 pr-4 font-medium">{u.colRole}</th>
+                <th className="pb-3 pr-4 font-medium">{u.colBalance}</th>
+                <th className="pb-3 pr-4 font-medium">{u.colActivity}</th>
+                <th className="pb-3 pr-4 font-medium">{u.colStatus}</th>
+                <th className="pb-3 font-medium text-right">{u.colActions}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
@@ -305,16 +318,17 @@ export function AdminUsersPanel({
                 <tr key={user.id}>
                   <td className="py-3 pr-4">
                     <p className="font-medium text-zinc-900">
-                      {user.name ?? "Без имени"}
+                      {user.name ?? u.noName}
                     </p>
                     <p className="text-xs text-zinc-500">{user.email}</p>
                     <p className="mt-0.5 text-xs text-zinc-400">
-                      с {new Date(user.createdAt).toLocaleDateString("ru-RU")}
+                      {u.memberSince}{" "}
+                      {new Date(user.createdAt).toLocaleDateString(locale)}
                     </p>
                   </td>
                   <td className="py-3 pr-4">
                     <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700">
-                      {ROLE_LABELS[user.role]}
+                      {u.roles[user.role] ?? user.role}
                     </span>
                     {user.subscriptionPlan === "PRO" && (
                       <span className="ml-1 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
@@ -326,12 +340,18 @@ export function AdminUsersPanel({
                     {formatUah(Number(user.balance))}
                   </td>
                   <td className="py-3 pr-4 text-xs text-zinc-600">
-                    <p>Проектов: {user._count.projectsAsClient}</p>
-                    <p>Сделок: {user._count.contractsAsFreelancer}</p>
-                    <p>Рейтинг: {user.rating > 0 ? user.rating.toFixed(1) : "—"}</p>
+                    <p>
+                      {u.projects}: {user._count.projectsAsClient}
+                    </p>
+                    <p>
+                      {u.contracts}: {user._count.contractsAsFreelancer}
+                    </p>
+                    <p>
+                      {u.rating}: {user.rating > 0 ? user.rating.toFixed(1) : "—"}
+                    </p>
                   </td>
                   <td className="py-3 pr-4">
-                    <UserStatusBadge user={user} />
+                    <UserStatusBadge user={user} locale={locale} />
                     {user.banReason && (
                       <p className="mt-1 max-w-[160px] text-xs text-red-600">
                         {user.banReason}
@@ -339,7 +359,7 @@ export function AdminUsersPanel({
                     )}
                   </td>
                   <td className="py-3 text-right">
-                    <UserActions user={user} />
+                    <UserActions user={user} locale={locale} />
                   </td>
                 </tr>
               ))}

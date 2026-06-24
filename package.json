@@ -14,6 +14,7 @@
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "tunnel": "cloudflared tunnel --url http://localhost:3000",
+    "prod:check": "node scripts/prod-check.mjs",
     "postinstall": "prisma generate"
   },
   "prisma": {

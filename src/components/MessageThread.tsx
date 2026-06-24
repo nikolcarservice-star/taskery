@@ -347,18 +347,7 @@ export function MessageThread({
               className="w-full resize-none border-0 bg-transparent px-4 py-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400"
             />
 
-            <div className="flex items-center justify-between gap-3 border-t border-zinc-100 px-4 py-3">
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-indigo-600"
-                title={common.soon}
-              >
-                <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
-                </svg>
-                {t.attachFiles}
-              </button>
-
+            <div className="flex items-center justify-end gap-3 border-t border-zinc-100 px-4 py-3">
               <button
                 type="submit"
                 disabled={pending || !draft.trim()}

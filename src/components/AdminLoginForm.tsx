@@ -4,12 +4,15 @@ import {
   loginWithAdminCredentials,
   type AdminLoginActionState,
 } from "@/lib/actions/login";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useActionState } from "react";
 
 const initialState: AdminLoginActionState = {};
 
-function AdminLoginFormInner() {
+function AdminLoginFormInner({ locale }: { locale: AppLocale }) {
+  const l = getAdminCopy(locale).panels.login;
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/admin/mobile";
   const [state, formAction, pending] = useActionState(
@@ -22,7 +25,7 @@ function AdminLoginFormInner() {
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
       <div>
         <label htmlFor="admin-email" className="block text-sm font-medium text-zinc-700">
-          Email администратора
+          {l.emailLabel}
         </label>
         <input
           id="admin-email"
@@ -38,7 +41,7 @@ function AdminLoginFormInner() {
           htmlFor="admin-password"
           className="block text-sm font-medium text-zinc-700"
         >
-          Пароль
+          {l.passwordLabel}
         </label>
         <input
           id="admin-password"
@@ -51,7 +54,7 @@ function AdminLoginFormInner() {
       </div>
       <div>
         <label htmlFor="admin-totp" className="block text-sm font-medium text-zinc-700">
-          Код 2FA (если включён)
+          {l.totpLabel}
         </label>
         <input
           id="admin-totp"
@@ -65,7 +68,7 @@ function AdminLoginFormInner() {
       </div>
       {state.error && (
         <p className="text-sm text-red-600" role="alert">
-          Неверный email, пароль или недостаточно прав
+          {l.errorInvalid}
         </p>
       )}
       <button
@@ -73,16 +76,16 @@ function AdminLoginFormInner() {
         disabled={pending}
         className="w-full rounded-full bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
       >
-        {pending ? "Входим…" : "Войти"}
+        {pending ? l.signingIn : l.submit}
       </button>
     </form>
   );
 }
 
-export function AdminLoginForm() {
+export function AdminLoginForm({ locale }: { locale: AppLocale }) {
   return (
     <Suspense>
-      <AdminLoginFormInner />
+      <AdminLoginFormInner locale={locale} />
     </Suspense>
   );
 }

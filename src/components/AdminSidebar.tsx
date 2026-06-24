@@ -1,7 +1,9 @@
 "use client";
 
 import { AdminModeLink } from "@/components/AdminModeLink";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { AdminWorkMode } from "@/lib/admin-work-mode";
+import type { AppLocale } from "@/lib/i18n/types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -58,38 +60,43 @@ function NavRow({ item, pathname }: { item: NavItem; pathname: string }) {
   );
 }
 
-export function AdminSidebar() {
+type AdminSidebarProps = {
+  locale: AppLocale;
+};
+
+export function AdminSidebar({ locale }: AdminSidebarProps) {
   const pathname = usePathname();
+  const chrome = getAdminCopy(locale).panels.chrome;
 
   const items: NavItem[] = [
     {
-      label: "Мой кабинет",
+      label: chrome.myCabinet,
       href: "/cabinet",
       icon: "🏠",
       match: (path) => path === "/cabinet",
     },
     {
-      label: "Как заказчик",
+      label: chrome.workAsClient,
       href: "/client",
       icon: "📋",
       mode: "client",
       match: (path) => path.startsWith("/client"),
     },
     {
-      label: "Как фрилансер",
+      label: chrome.workAsFreelancer,
       href: "/dashboard",
       icon: "💻",
       mode: "freelancer",
       match: (path) => path.startsWith("/dashboard"),
     },
     {
-      label: "Переписки",
+      label: chrome.messages,
       href: "/messages",
       icon: "✉️",
       match: (path) => path.startsWith("/messages"),
     },
     {
-      label: "Админ-панель",
+      label: chrome.adminPanel,
       href: "/admin/mobile",
       icon: "🛡️",
       match: (path) => path === "/admin" || path.startsWith("/admin/"),
@@ -101,7 +108,7 @@ export function AdminSidebar() {
     <aside className="hidden w-60 shrink-0 lg:block">
       <nav className="sticky top-[calc(68px+1.5rem)] overflow-hidden rounded-lg border border-zinc-200 bg-white">
         {items.map((item) => (
-          <NavRow key={item.label} item={item} pathname={pathname} />
+          <NavRow key={item.href} item={item} pathname={pathname} />
         ))}
       </nav>
     </aside>

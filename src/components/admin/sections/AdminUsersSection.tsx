@@ -61,9 +61,9 @@ export function AdminUsersSection({
         onChange={setSection}
       />
       {activeSection === "verification" ? (
-        <AdminVerificationPanel items={verificationItems} />
+        <AdminVerificationPanel items={verificationItems} locale={locale} />
       ) : (
-        <AdminUsersPanel users={users} />
+        <AdminUsersPanel users={users} locale={locale} />
       )}
     </div>
   );

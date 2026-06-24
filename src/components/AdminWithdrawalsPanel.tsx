@@ -5,14 +5,23 @@ import {
   adminRejectWithdrawal,
   type FinanceOpsState,
 } from "@/lib/actions/admin-finance-ops";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { AdminWithdrawalItem } from "@/lib/queries/admin-withdrawals";
 import { formatUah } from "@/lib/freelancer-finances-shared";
+import type { AppLocale } from "@/lib/i18n/types";
 import { maskPayoutDestination } from "@/lib/withdrawals-shared";
 import { useActionState } from "react";
 
 const initialState: FinanceOpsState = {};
 
-function ApproveButton({ paymentId }: { paymentId: string }) {
+function ApproveButton({
+  paymentId,
+  locale,
+}: {
+  paymentId: string;
+  locale: AppLocale;
+}) {
+  const w = getAdminCopy(locale).panels.withdrawals;
   const [state, formAction, pending] = useActionState(
     adminApproveWithdrawal,
     initialState,
@@ -26,17 +35,24 @@ function ApproveButton({ paymentId }: { paymentId: string }) {
         disabled={pending}
         className="rounded-full bg-emerald-600 px-4 py-1.5 text-xs font-medium text-white disabled:opacity-50"
       >
-        {pending ? "…" : "Одобрить"}
+        {pending ? "…" : w.approve}
       </button>
       {state.error && <p className="mt-1 text-xs text-red-600">{state.error}</p>}
       {state.success && (
-        <p className="mt-1 text-xs text-green-700">Вывод одобрен</p>
+        <p className="mt-1 text-xs text-green-700">{w.approved}</p>
       )}
     </form>
   );
 }
 
-function RejectForm({ paymentId }: { paymentId: string }) {
+function RejectForm({
+  paymentId,
+  locale,
+}: {
+  paymentId: string;
+  locale: AppLocale;
+}) {
+  const w = getAdminCopy(locale).panels.withdrawals;
   const [state, formAction, pending] = useActionState(
     adminRejectWithdrawal,
     initialState,
@@ -48,7 +64,7 @@ function RejectForm({ paymentId }: { paymentId: string }) {
       <textarea
         name="reason"
         rows={2}
-        placeholder="Причина отклонения (видна пользователю)"
+        placeholder={w.rejectReason}
         className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-xs"
       />
       <button
@@ -56,7 +72,7 @@ function RejectForm({ paymentId }: { paymentId: string }) {
         disabled={pending}
         className="rounded-full border border-red-300 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
       >
-        {pending ? "…" : "Отклонить и вернуть на баланс"}
+        {pending ? "…" : w.rejectAndRefund}
       </button>
       {state.error && <p className="text-xs text-red-600">{state.error}</p>}
     </form>
@@ -65,13 +81,16 @@ function RejectForm({ paymentId }: { paymentId: string }) {
 
 type AdminWithdrawalsPanelProps = {
   withdrawals: AdminWithdrawalItem[];
+  locale: AppLocale;
   compact?: boolean;
 };
 
 export function AdminWithdrawalsPanel({
   withdrawals,
+  locale,
   compact = false,
 }: AdminWithdrawalsPanelProps) {
+  const w = getAdminCopy(locale).panels.withdrawals;
   const totalPending = withdrawals.reduce(
     (sum, item) => sum + Number(item.amount),
     0,
@@ -85,27 +104,23 @@ export function AdminWithdrawalsPanel({
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold text-zinc-900">
-            Заявки на вывод
-          </h2>
-          <p className="mt-1 text-sm text-zinc-500">
-            Одобрение переводов на карту или IBAN
-          </p>
+          <h2 className="text-lg font-semibold text-zinc-900">{w.title}</h2>
+          <p className="mt-1 text-sm text-zinc-500">{w.description}</p>
         </div>
         {withdrawals.length > 0 && (
           <div className="text-right">
             <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800">
-              {withdrawals.length} в очереди
+              {withdrawals.length} {w.inQueue}
             </span>
             <p className="mt-1 text-xs text-zinc-500">
-              На сумму {formatUah(totalPending)}
+              {w.totalAmount} {formatUah(totalPending)}
             </p>
           </div>
         )}
       </div>
 
       {withdrawals.length === 0 ? (
-        <p className="mt-4 text-sm text-zinc-500">Нет заявок на вывод</p>
+        <p className="mt-4 text-sm text-zinc-500">{w.empty}</p>
       ) : (
         <ul className="mt-4 divide-y divide-zinc-100">
           {withdrawals.map((item) => (
@@ -125,14 +140,14 @@ export function AdminWithdrawalsPanel({
                       <span className="font-mono">{maskPayoutDestination(item.destination)}</span>
                     </p>
                     <p>
-                      Баланс: {formatUah(Number(item.user.balance))} ·{" "}
-                      {new Date(item.createdAt).toLocaleString("ru-RU")}
+                      {w.balance}: {formatUah(Number(item.user.balance))} ·{" "}
+                      {new Date(item.createdAt).toLocaleString(locale)}
                     </p>
                   </div>
                 </div>
-                <ApproveButton paymentId={item.id} />
+                <ApproveButton paymentId={item.id} locale={locale} />
               </div>
-              <RejectForm paymentId={item.id} />
+              <RejectForm paymentId={item.id} locale={locale} />
             </li>
           ))}
         </ul>

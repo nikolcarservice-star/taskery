@@ -52,7 +52,11 @@ export function AdminTeamSection({
 
   if (!showAudit) {
     return (
-      <AdminStaffManager admins={admins} currentAdminId={currentAdminId} />
+      <AdminStaffManager
+        admins={admins}
+        currentAdminId={currentAdminId}
+        locale={locale}
+      />
     );
   }
 
@@ -73,9 +77,13 @@ export function AdminTeamSection({
         onChange={setSection}
       />
       {activeSection === "staff" ? (
-        <AdminStaffManager admins={admins} currentAdminId={currentAdminId} />
+        <AdminStaffManager
+          admins={admins}
+          currentAdminId={currentAdminId}
+          locale={locale}
+        />
       ) : (
-        <AdminAuditPanel entries={auditLogs} />
+        <AdminAuditPanel entries={auditLogs} locale={locale} />
       )}
     </div>
   );

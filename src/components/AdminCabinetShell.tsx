@@ -1,6 +1,7 @@
 import { AdminHeader } from "@/components/AdminHeader";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { PageBackNav } from "@/components/PageBackNav";
+import { getLocale } from "@/lib/i18n/server";
 import { requireAdmin } from "@/lib/session";
 
 type AdminCabinetShellProps = {
@@ -13,13 +14,14 @@ export async function AdminCabinetShell({
   callbackUrl = "/cabinet",
 }: AdminCabinetShellProps) {
   await requireAdmin(callbackUrl);
+  const locale = await getLocale();
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-zinc-100">
       <AdminHeader />
 
       <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-3 py-3 sm:px-4 sm:py-4 lg:flex-row lg:gap-6 lg:px-6 lg:py-6">
-        <AdminSidebar />
+        <AdminSidebar locale={locale} />
         <div className="min-w-0 flex-1">
           <PageBackNav className="mb-3 lg:mb-5" />
           {children}

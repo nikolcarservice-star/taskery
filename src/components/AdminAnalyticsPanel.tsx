@@ -1,11 +1,14 @@
 "use client";
 
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { AdminAnalyticsOverview } from "@/lib/queries/admin-analytics";
 import { formatUah } from "@/lib/freelancer-finances-shared";
+import type { AppLocale } from "@/lib/i18n/types";
 import Link from "next/link";
 
 type AdminAnalyticsPanelProps = {
   analytics: AdminAnalyticsOverview;
+  locale: AppLocale;
   mobile?: boolean;
 };
 
@@ -58,25 +61,47 @@ function DailyBarChart({
 
 export function AdminAnalyticsPanel({
   analytics,
+  locale,
   mobile = false,
 }: AdminAnalyticsPanelProps) {
+  const a = getAdminCopy(locale).panels.analytics;
   const { days, kpis, dailySignups, dailyProjects, dailyGmv } = analytics;
-  const periodLabel = `${days} дн.`;
+  const periodLabel = `${days} ${a.periodDays}`;
 
   const kpiCards = [
-    { label: `Новых пользователей (${periodLabel})`, value: String(kpis.newUsersInPeriod) },
-    { label: `Новых проектов (${periodLabel})`, value: String(kpis.newProjectsInPeriod) },
-    { label: `GMV завершённых сделок (${periodLabel})`, value: formatUah(kpis.releasedGmvInPeriod) },
-    { label: `Комиссии платформы (${periodLabel})`, value: formatUah(kpis.commissionsInPeriod) },
-    { label: "Открытых споров", value: String(kpis.openDisputes), alert: kpis.openDisputes > 0 },
-    { label: "Жалоб в очереди", value: String(kpis.pendingReports), alert: kpis.pendingReports > 0 },
     {
-      label: "Заявок на вывод",
+      label: `${a.newUsers} (${periodLabel})`,
+      value: String(kpis.newUsersInPeriod),
+    },
+    {
+      label: `${a.newProjects} (${periodLabel})`,
+      value: String(kpis.newProjectsInPeriod),
+    },
+    {
+      label: `${a.gmvReleased} (${periodLabel})`,
+      value: formatUah(kpis.releasedGmvInPeriod),
+    },
+    {
+      label: `${a.platformCommissions} (${periodLabel})`,
+      value: formatUah(kpis.commissionsInPeriod),
+    },
+    {
+      label: a.openDisputes,
+      value: String(kpis.openDisputes),
+      alert: kpis.openDisputes > 0,
+    },
+    {
+      label: a.pendingReports,
+      value: String(kpis.pendingReports),
+      alert: kpis.pendingReports > 0,
+    },
+    {
+      label: a.pendingWithdrawals,
       value: `${kpis.pendingWithdrawals} · ${formatUah(kpis.pendingWithdrawalsAmount)}`,
       alert: kpis.pendingWithdrawals > 0,
     },
     {
-      label: "Эскроу (активные)",
+      label: a.activeEscrow,
       value: `${kpis.activeEscrowCount} · ${formatUah(kpis.activeEscrowAmount)}`,
     },
   ];
@@ -85,10 +110,8 @@ export function AdminAnalyticsPanel({
     <section className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-zinc-900">Аналитика платформы</h2>
-          <p className="mt-1 text-sm text-zinc-500">
-            Ключевые метрики и динамика за выбранный период.
-          </p>
+          <h2 className="text-lg font-semibold text-zinc-900">{a.title}</h2>
+          <p className="mt-1 text-sm text-zinc-500">{a.description}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="inline-flex rounded-lg border border-zinc-200 bg-white p-0.5 shadow-sm">
@@ -102,7 +125,8 @@ export function AdminAnalyticsPanel({
                     : "text-zinc-600 hover:bg-zinc-50"
                 }`}
               >
-                {option}д
+                {option}
+                {a.daysShort}
               </Link>
             ))}
           </div>
@@ -111,7 +135,7 @@ export function AdminAnalyticsPanel({
               href="/api/admin/export/finance"
               className="inline-flex rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
             >
-              Экспорт CSV
+              {a.exportCsv}
             </a>
           )}
         </div>
@@ -135,21 +159,21 @@ export function AdminAnalyticsPanel({
 
       <div className="grid gap-4 lg:grid-cols-3">
         <DailyBarChart
-          title="Регистрации"
+          title={a.chartSignups}
           data={dailySignups}
           valueKey="count"
           formatValue={(value) => String(value)}
           colorClass="bg-indigo-500/90 group-hover:bg-indigo-600"
         />
         <DailyBarChart
-          title="Новые проекты"
+          title={a.chartProjects}
           data={dailyProjects}
           valueKey="count"
           formatValue={(value) => String(value)}
           colorClass="bg-sky-500/90 group-hover:bg-sky-600"
         />
         <DailyBarChart
-          title="GMV по дням"
+          title={a.chartGmv}
           data={dailyGmv}
           valueKey="amount"
           formatValue={formatUah}

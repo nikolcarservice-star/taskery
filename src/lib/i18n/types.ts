@@ -610,6 +610,23 @@ export type Dictionary = {
       freelancerProfile: string;
     };
   };
+  profileVerification: {
+    title: string;
+    description: string;
+    verifiedBadgeTitle: string;
+    statuses: {
+      NONE: string;
+      PENDING: string;
+      APPROVED: string;
+      REJECTED: string;
+    };
+    pendingSubmitted: string;
+    approvedBody: string;
+    requirementsHint: string;
+    submit: string;
+    submitting: string;
+    successMessage: string;
+  };
   settings: {
     title: string;
     description: string;

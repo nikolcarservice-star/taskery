@@ -68,11 +68,12 @@ export function AdminPlatformSection({
         <AdminCatalogPanel
           categories={catalogCategories}
           skills={catalogSkills}
+          locale={locale}
         />
       )}
-      {activeSection === "cms" && <AdminCmsPanel pages={cmsPages} />}
+      {activeSection === "cms" && <AdminCmsPanel pages={cmsPages} locale={locale} />}
       {activeSection === "broadcast" && (
-        <AdminBroadcastPanel stats={stats} />
+        <AdminBroadcastPanel stats={stats} locale={locale} />
       )}
     </div>
   );

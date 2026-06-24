@@ -6,16 +6,25 @@ import {
   adminSaveSkill,
   type CatalogActionState,
 } from "@/lib/actions/admin-catalog";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type {
   AdminCategoryItem,
   AdminSkillItem,
 } from "@/lib/queries/admin-catalog";
 import { SUPPORTED_CURRENCIES } from "@/lib/i18n/currencies";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useActionState } from "react";
 
 const initialState: CatalogActionState = {};
 
-function CategoryForm({ category }: { category?: AdminCategoryItem }) {
+function CategoryForm({
+  category,
+  locale,
+}: {
+  category?: AdminCategoryItem;
+  locale: AppLocale;
+}) {
+  const c = getAdminCopy(locale).panels.catalog;
   const [state, formAction, pending] = useActionState(
     adminSaveCategory,
     initialState,
@@ -25,7 +34,7 @@ function CategoryForm({ category }: { category?: AdminCategoryItem }) {
     <form action={formAction} className="space-y-3 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
       {category && <input type="hidden" name="categoryId" value={category.id} />}
       <div>
-        <label className="block text-xs font-medium text-zinc-600">Название</label>
+        <label className="block text-xs font-medium text-zinc-600">{c.nameLabel}</label>
         <input
           name="name"
           required
@@ -34,7 +43,7 @@ function CategoryForm({ category }: { category?: AdminCategoryItem }) {
         />
       </div>
       <div>
-        <label className="block text-xs font-medium text-zinc-600">Описание</label>
+        <label className="block text-xs font-medium text-zinc-600">{c.descriptionLabel}</label>
         <textarea
           name="description"
           rows={2}
@@ -47,15 +56,22 @@ function CategoryForm({ category }: { category?: AdminCategoryItem }) {
         disabled={pending}
         className="rounded-full bg-indigo-600 px-4 py-1.5 text-xs font-medium text-white disabled:opacity-50"
       >
-        {pending ? "Сохранение…" : category ? "Сохранить" : "Добавить категорию"}
+        {pending ? c.saving : category ? c.save : c.addCategory}
       </button>
       {state.error && <p className="text-xs text-red-600">{state.error}</p>}
-      {state.success && <p className="text-xs text-green-700">Сохранено</p>}
+      {state.success && <p className="text-xs text-green-700">{c.saved}</p>}
     </form>
   );
 }
 
-function CategoryMinBudgetForm({ category }: { category: AdminCategoryItem }) {
+function CategoryMinBudgetForm({
+  category,
+  locale,
+}: {
+  category: AdminCategoryItem;
+  locale: AppLocale;
+}) {
+  const c = getAdminCopy(locale).panels.catalog;
   const [state, formAction, pending] = useActionState(
     adminSaveCategoryMinBudget,
     initialState,
@@ -67,12 +83,8 @@ function CategoryMinBudgetForm({ category }: { category: AdminCategoryItem }) {
 
   return (
     <div className="space-y-3 rounded-xl border border-amber-200 bg-amber-50/40 p-4">
-      <p className="text-xs font-semibold text-amber-900">
-        Минимальный бюджет проекта
-      </p>
-      <p className="text-xs text-amber-800/80">
-        Пустое поле — ограничение не действует для этой валюты.
-      </p>
+      <p className="text-xs font-semibold text-amber-900">{c.minBudgetTitle}</p>
+      <p className="text-xs text-amber-800/80">{c.minBudgetHint}</p>
       {SUPPORTED_CURRENCIES.map((currency) => (
         <form key={currency} action={formAction} className="flex flex-wrap items-end gap-2">
           <input type="hidden" name="categoryId" value={category.id} />
@@ -96,12 +108,12 @@ function CategoryMinBudgetForm({ category }: { category: AdminCategoryItem }) {
             disabled={pending}
             className="rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 disabled:opacity-50"
           >
-            {pending ? "…" : "Сохранить"}
+            {pending ? "…" : c.save}
           </button>
         </form>
       ))}
       {state.error && <p className="text-xs text-red-600">{state.error}</p>}
-      {state.success && <p className="text-xs text-green-700">Сохранено</p>}
+      {state.success && <p className="text-xs text-green-700">{c.saved}</p>}
     </div>
   );
 }
@@ -109,10 +121,13 @@ function CategoryMinBudgetForm({ category }: { category: AdminCategoryItem }) {
 function SkillForm({
   categories,
   skill,
+  locale,
 }: {
   categories: AdminCategoryItem[];
   skill?: AdminSkillItem;
+  locale: AppLocale;
 }) {
+  const c = getAdminCopy(locale).panels.catalog;
   const [state, formAction, pending] = useActionState(
     adminSaveSkill,
     initialState,
@@ -122,7 +137,7 @@ function SkillForm({
     <form action={formAction} className="space-y-3 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
       {skill && <input type="hidden" name="skillId" value={skill.id} />}
       <div>
-        <label className="block text-xs font-medium text-zinc-600">Название</label>
+        <label className="block text-xs font-medium text-zinc-600">{c.nameLabel}</label>
         <input
           name="name"
           required
@@ -131,13 +146,13 @@ function SkillForm({
         />
       </div>
       <div>
-        <label className="block text-xs font-medium text-zinc-600">Категория</label>
+        <label className="block text-xs font-medium text-zinc-600">{c.categoryLabel}</label>
         <select
           name="categoryId"
           defaultValue={skill?.categoryId ?? ""}
           className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
         >
-          <option value="">Без категории</option>
+          <option value="">{c.noCategory}</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -150,10 +165,10 @@ function SkillForm({
         disabled={pending}
         className="rounded-full bg-indigo-600 px-4 py-1.5 text-xs font-medium text-white disabled:opacity-50"
       >
-        {pending ? "Сохранение…" : skill ? "Сохранить" : "Добавить навык"}
+        {pending ? c.saving : skill ? c.save : c.addSkill}
       </button>
       {state.error && <p className="text-xs text-red-600">{state.error}</p>}
-      {state.success && <p className="text-xs text-green-700">Сохранено</p>}
+      {state.success && <p className="text-xs text-green-700">{c.saved}</p>}
     </form>
   );
 }
@@ -161,41 +176,44 @@ function SkillForm({
 type AdminCatalogPanelProps = {
   categories: AdminCategoryItem[];
   skills: AdminSkillItem[];
+  locale: AppLocale;
   compact?: boolean;
 };
 
 export function AdminCatalogPanel({
   categories,
   skills,
+  locale,
   compact = false,
 }: AdminCatalogPanelProps) {
+  const c = getAdminCopy(locale).panels.catalog;
+
   return (
     <section
       className={`rounded-2xl border border-zinc-200 bg-white shadow-sm ${
         compact ? "p-4" : "p-6"
       }`}
     >
-      <h2 className="text-lg font-semibold text-zinc-900">Каталог</h2>
-      <p className="mt-1 text-sm text-zinc-500">
-        Категории проектов и навыки фрилансеров
-      </p>
+      <h2 className="text-lg font-semibold text-zinc-900">{c.title}</h2>
+      <p className="mt-1 text-sm text-zinc-500">{c.description}</p>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-2">
         <div>
-          <h3 className="text-sm font-semibold text-zinc-800">Категории</h3>
+          <h3 className="text-sm font-semibold text-zinc-800">{c.categories}</h3>
           <div className="mt-3 space-y-3">
-            <CategoryForm />
+            <CategoryForm locale={locale} />
             {categories.map((category) => (
               <details key={category.id} className="rounded-xl border border-zinc-200">
                 <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-zinc-800">
                   {category.name}
                   <span className="ml-2 text-xs font-normal text-zinc-500">
-                    {category.skillCount} навыков · {category.projectCount} проектов
+                    {category.skillCount} {c.skillsCount} · {category.projectCount}{" "}
+                    {c.projectsCount}
                   </span>
                 </summary>
                 <div className="border-t border-zinc-100 p-4 space-y-4">
-                  <CategoryForm category={category} />
-                  <CategoryMinBudgetForm category={category} />
+                  <CategoryForm category={category} locale={locale} />
+                  <CategoryMinBudgetForm category={category} locale={locale} />
                 </div>
               </details>
             ))}
@@ -203,9 +221,9 @@ export function AdminCatalogPanel({
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-zinc-800">Навыки</h3>
+          <h3 className="text-sm font-semibold text-zinc-800">{c.skills}</h3>
           <div className="mt-3 space-y-3">
-            <SkillForm categories={categories} />
+            <SkillForm categories={categories} locale={locale} />
             <ul className="max-h-96 space-y-2 overflow-y-auto">
               {skills.map((skill) => (
                 <li key={skill.id}>
@@ -213,11 +231,12 @@ export function AdminCatalogPanel({
                     <summary className="cursor-pointer px-4 py-2.5 text-sm text-zinc-800">
                       {skill.name}
                       <span className="ml-2 text-xs text-zinc-500">
-                        {skill.categoryName ?? "—"} · {skill.freelancerCount} фрил.
+                        {skill.categoryName ?? "—"} · {skill.freelancerCount}{" "}
+                        {c.freelancersShort}
                       </span>
                     </summary>
                     <div className="border-t border-zinc-100 p-4">
-                      <SkillForm categories={categories} skill={skill} />
+                      <SkillForm categories={categories} skill={skill} locale={locale} />
                     </div>
                   </details>
                 </li>

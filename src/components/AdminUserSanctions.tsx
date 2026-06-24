@@ -6,16 +6,21 @@ import {
   adminTempBanUser,
   type SanctionActionState,
 } from "@/lib/actions/admin-sanctions";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { AdminUserItem } from "@/lib/queries/admin-users";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useActionState, useState } from "react";
 
 const initialState: SanctionActionState = {};
 
 type AdminUserSanctionsProps = {
   user: AdminUserItem;
+  locale: AppLocale;
 };
 
-export function AdminUserSanctions({ user }: AdminUserSanctionsProps) {
+export function AdminUserSanctions({ user, locale }: AdminUserSanctionsProps) {
+  const s = getAdminCopy(locale).panels.users.sanctions;
+  const c = getAdminCopy(locale).panels.common;
   const [open, setOpen] = useState(false);
   const [warnState, warnAction, warnPending] = useActionState(
     adminIssueWarning,
@@ -43,10 +48,10 @@ export function AdminUserSanctions({ user }: AdminUserSanctionsProps) {
         onClick={() => setOpen((value) => !value)}
         className="text-xs font-medium text-amber-700 hover:text-amber-900"
       >
-        {open ? "Скрыть санкции" : "Санкции ▾"}
+        {open ? s.hide : s.show}
         {user._count.warningsReceived > 0 && (
           <span className="ml-1 rounded-full bg-amber-100 px-1.5 py-0.5 text-amber-900">
-            {user._count.warningsReceived} предупр.
+            {user._count.warningsReceived} {s.warningsShort}
           </span>
         )}
       </button>
@@ -57,7 +62,7 @@ export function AdminUserSanctions({ user }: AdminUserSanctionsProps) {
             <input type="hidden" name="userId" value={user.id} />
             <input
               name="reason"
-              placeholder="Предупреждение"
+              placeholder={s.warnPlaceholder}
               className="min-w-[120px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
             />
             <button
@@ -65,7 +70,7 @@ export function AdminUserSanctions({ user }: AdminUserSanctionsProps) {
               disabled={warnPending}
               className="rounded-full bg-amber-500 px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
             >
-              Предупредить
+              {s.warn}
             </button>
           </form>
 
@@ -78,11 +83,11 @@ export function AdminUserSanctions({ user }: AdminUserSanctionsProps) {
               max={365}
               defaultValue={7}
               className="w-16 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
-              title="Дней"
+              title={s.daysTitle}
             />
             <input
               name="reason"
-              placeholder="Причина временного бана"
+              placeholder={s.tempBanReason}
               className="min-w-[120px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
             />
             <button
@@ -90,7 +95,7 @@ export function AdminUserSanctions({ user }: AdminUserSanctionsProps) {
               disabled={tempBanPending}
               className="rounded-full bg-orange-600 px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
             >
-              Временный бан
+              {s.tempBan}
             </button>
           </form>
 
@@ -101,12 +106,12 @@ export function AdminUserSanctions({ user }: AdminUserSanctionsProps) {
               type="number"
               min={1}
               step={1}
-              placeholder="₴"
+              placeholder={s.fineAmount}
               className="w-20 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
             />
             <input
               name="reason"
-              placeholder="Причина штрафа"
+              placeholder={s.fineReason}
               className="min-w-[120px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
             />
             <button
@@ -114,12 +119,12 @@ export function AdminUserSanctions({ user }: AdminUserSanctionsProps) {
               disabled={finePending}
               className="rounded-full bg-red-700 px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
             >
-              Штраф
+              {s.fine}
             </button>
           </form>
 
           {error && <p className="text-xs text-red-600">{error}</p>}
-          {success && <p className="text-xs text-green-700">Готово</p>}
+          {success && <p className="text-xs text-green-700">{c.done}</p>}
         </div>
       )}
     </div>

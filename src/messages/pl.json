@@ -357,6 +357,23 @@
       "freelancerProfile": "Profil freelancera"
     }
   },
+  "profileVerification": {
+    "title": "Weryfikacja profilu",
+    "description": "Zweryfikowany profil otrzymuje odznakę zaufania na stronie publicznej",
+    "verifiedBadgeTitle": "Zweryfikowany profil",
+    "statuses": {
+      "NONE": "Nie złożono",
+      "PENDING": "W trakcie rozpatrywania",
+      "APPROVED": "Zweryfikowany",
+      "REJECTED": "Odrzucono"
+    },
+    "pendingSubmitted": "Wniosek wysłano {date}. Rozpatrzenie zwykle trwa 1–3 dni robocze.",
+    "approvedBody": "Twój profil jest zweryfikowany — odznaka jest widoczna obok imienia.",
+    "requirementsHint": "Przed złożeniem wypełnij specjalizację, opis (min. 20 znaków) i dodaj co najmniej jedną umiejętność.",
+    "submit": "Złóż wniosek o weryfikację",
+    "submitting": "Wysyłanie…",
+    "successMessage": "Wniosek wysłano do rozpatrzenia"
+  },
   "settings": {
     "title": "Ustawienia",
     "description": "Powiadomienia, język interfejsu i ustawienia bezpieczeństwa.",

@@ -378,6 +378,23 @@
       "freelancerProfile": "Freelancer profile"
     }
   },
+  "profileVerification": {
+    "title": "Profile verification",
+    "description": "A verified profile gets a trust badge on the public page",
+    "verifiedBadgeTitle": "Verified profile",
+    "statuses": {
+      "NONE": "Not submitted",
+      "PENDING": "Under review",
+      "APPROVED": "Verified",
+      "REJECTED": "Rejected"
+    },
+    "pendingSubmitted": "Request submitted on {date}. Review usually takes 1–3 business days.",
+    "approvedBody": "Your profile is verified — the badge appears next to your name.",
+    "requirementsHint": "Before applying, fill in specialization, bio (at least 20 characters), and add at least one skill.",
+    "submit": "Request verification",
+    "submitting": "Submitting…",
+    "successMessage": "Verification request submitted for review"
+  },
   "settings": {
     "title": "Settings",
     "description": "Notifications, interface language and security preferences.",

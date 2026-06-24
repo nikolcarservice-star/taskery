@@ -235,7 +235,9 @@ export function FreelancerPublicProfile({
                     {user.name ?? dict.freelancerProfile.fallbackName}
                   </h1>
                   {isBoost && <ProBadge />}
-                  {profile.isVerified && <VerifiedBadge />}
+                  {profile.isVerified && (
+                    <VerifiedBadge title={dict.profileVerification.verifiedBadgeTitle} />
+                  )}
                 </div>
                 {profile.title && (
                   <p className="mt-1 text-base text-zinc-600 sm:text-lg">

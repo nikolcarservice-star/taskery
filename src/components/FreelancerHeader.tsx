@@ -1,4 +1,3 @@
-import { FreelancerCompetitionsNav } from "@/components/FreelancerCompetitionsNav";
 import { FreelancerHeaderActions } from "@/components/FreelancerHeaderActions";
 import {
   HeaderShell,
@@ -46,7 +45,6 @@ export async function FreelancerHeader() {
           <nav className="flex items-center">
             <div className="hidden items-center gap-x-6 lg:flex lg:gap-x-8">
               <MyTasksNavLink tasks={activeTasks} />
-              <FreelancerCompetitionsNav />
             </div>
 
             <FreelancerHeaderActions isAdmin={isAdmin} />

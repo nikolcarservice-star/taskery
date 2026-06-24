@@ -1,6 +1,8 @@
 "use client";
 
 import { UserAvatar, UserRoleLabel } from "@/components/UserAvatar";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import type { AppLocale } from "@/lib/i18n/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -10,6 +12,7 @@ import type { AdminWorkMode } from "@/lib/admin-work-mode";
 type AdminProfileMenuProps = {
   name: string | null;
   avatar: string | null;
+  locale: AppLocale;
 };
 
 type MenuLinkItem = {
@@ -82,25 +85,29 @@ function MenuLink({
   );
 }
 
-export function AdminProfileMenu({ name, avatar }: AdminProfileMenuProps) {
+export function AdminProfileMenu({ name, avatar, locale }: AdminProfileMenuProps) {
+  const chrome = getAdminCopy(locale).panels.chrome;
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   const mainLinks = useMemo(
     () =>
       [
-        { label: "Мой кабинет", href: "/cabinet", mode: null },
-        { label: "Как заказчик", href: "/client", mode: "client" as const },
-        { label: "Как фрилансер", href: "/dashboard", mode: "freelancer" as const },
-        { label: "Админ-панель", href: "/admin/mobile", mode: null, highlight: true },
+        { label: chrome.myCabinet, href: "/cabinet", mode: null },
+        { label: chrome.workAsClient, href: "/client", mode: "client" as const },
+        { label: chrome.workAsFreelancer, href: "/dashboard", mode: "freelancer" as const },
+        { label: chrome.adminPanel, href: "/admin/mobile", mode: null, highlight: true },
       ] as const,
-    [],
+    [chrome],
   );
 
-  const settingsLinks: MenuLinkItem[] = [
-    { label: "Личные данные", href: "/client/personal" },
-    { label: "Настройки", href: "/client/settings" },
-  ];
+  const settingsLinks: MenuLinkItem[] = useMemo(
+    () => [
+      { label: chrome.personalData, href: "/client/personal" },
+      { label: chrome.settings, href: "/client/settings" },
+    ],
+    [chrome],
+  );
 
   const close = () => setOpen(false);
 
@@ -131,7 +138,7 @@ export function AdminProfileMenu({ name, avatar }: AdminProfileMenuProps) {
         type="button"
         onClick={() => setOpen((value) => !value)}
         className="rounded-full p-1 transition-opacity hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-        aria-label="Меню профиля"
+        aria-label={chrome.profileMenuAria}
         aria-expanded={open}
         aria-haspopup="menu"
       >
@@ -147,9 +154,9 @@ export function AdminProfileMenu({ name, avatar }: AdminProfileMenuProps) {
             <UserAvatar name={name} avatar={avatar} size="sm" isAdmin />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-zinc-900">
-                {name ?? "Администратор"}
+                {name ?? chrome.adminFallback}
               </p>
-              <UserRoleLabel roleLabel="главный администратор" isAdmin />
+              <UserRoleLabel roleLabel={chrome.superAdminRole} isAdmin />
             </div>
           </div>
 
@@ -193,7 +200,7 @@ export function AdminProfileMenu({ name, avatar }: AdminProfileMenuProps) {
             onClick={close}
             className="block px-4 py-2.5 text-sm text-zinc-800 transition-colors hover:bg-zinc-50"
           >
-            Выход
+            {chrome.signOut}
           </Link>
         </div>
       )}

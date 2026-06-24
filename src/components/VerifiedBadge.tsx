@@ -5,7 +5,7 @@ type VerifiedBadgeProps = {
 
 export function VerifiedBadge({
   className = "",
-  title = "Верифицированный профиль",
+  title = "Verified profile",
 }: VerifiedBadgeProps) {
   return (
     <span

@@ -105,6 +105,7 @@ export async function uploadImage(file: File, storagePath: string): Promise<stri
       const blob = await put(pathname, file, {
         access: "public",
         addRandomSuffix: false,
+        allowOverwrite: true,
       });
       return blob.url;
     } catch (error) {
@@ -115,6 +116,7 @@ export async function uploadImage(file: File, storagePath: string): Promise<stri
         const blob = await put(pathname, file, {
           access: "private",
           addRandomSuffix: false,
+          allowOverwrite: true,
         });
         return blob.url;
       }

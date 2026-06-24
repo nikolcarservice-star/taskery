@@ -61,9 +61,12 @@ export function AdminFinanceSection({
         onChange={setSection}
       />
       {activeSection === "withdrawals" ? (
-        <AdminWithdrawalsPanel withdrawals={pendingWithdrawals} />
+        <AdminWithdrawalsPanel
+          withdrawals={pendingWithdrawals}
+          locale={locale}
+        />
       ) : (
-        <AdminFinancePanel finance={finance} />
+        <AdminFinancePanel finance={finance} locale={locale} />
       )}
     </div>
   );

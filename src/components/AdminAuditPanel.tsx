@@ -1,13 +1,22 @@
 "use client";
 
-import { ADMIN_AUDIT_ACTION_LABELS, type AdminAuditEntry } from "@/lib/admin-audit-types";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import type { AdminAuditEntry } from "@/lib/admin-audit-types";
+import type { AppLocale } from "@/lib/i18n/types";
 
 type AdminAuditPanelProps = {
   entries: AdminAuditEntry[];
+  locale: AppLocale;
   mobile?: boolean;
 };
 
-export function AdminAuditPanel({ entries, mobile = false }: AdminAuditPanelProps) {
+export function AdminAuditPanel({
+  entries,
+  locale,
+  mobile = false,
+}: AdminAuditPanelProps) {
+  const a = getAdminCopy(locale).panels.audit;
+
   return (
     <section
       className={
@@ -20,24 +29,22 @@ export function AdminAuditPanel({ entries, mobile = false }: AdminAuditPanelProp
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-zinc-900">
-              Журнал действий ({entries.length})
+              {a.title} ({entries.length})
             </h2>
-            <p className="mt-1 text-sm text-zinc-600">
-              Последние действия администраторов на платформе
-            </p>
+            <p className="mt-1 text-sm text-zinc-600">{a.description}</p>
           </div>
           <a
             href="/api/admin/export/audit"
             className="inline-flex rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
           >
-            Экспорт CSV
+            {a.exportCsv}
           </a>
         </div>
       )}
 
       {entries.length === 0 ? (
         <p className={`text-sm text-zinc-600 ${mobile ? "" : "mt-4"}`}>
-          Записей пока нет
+          {a.empty}
         </p>
       ) : (
         <ul className={`space-y-2 ${mobile ? "" : "mt-4 max-h-96 overflow-y-auto"}`}>
@@ -48,15 +55,17 @@ export function AdminAuditPanel({ entries, mobile = false }: AdminAuditPanelProp
             >
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium text-zinc-900">
-                  {ADMIN_AUDIT_ACTION_LABELS[entry.action] ?? entry.action}
+                  {a.actions[entry.action] ?? entry.action}
                 </span>
                 <span className="text-xs text-zinc-500">
-                  {new Date(entry.createdAt).toLocaleString("ru-RU")}
+                  {new Date(entry.createdAt).toLocaleString(locale)}
                 </span>
               </div>
               <p className="mt-1 text-xs text-zinc-600">
                 {entry.admin.name ?? entry.admin.email}
-                {entry.targetId ? ` · ${entry.targetType ?? "target"}: ${entry.targetId.slice(0, 8)}…` : ""}
+                {entry.targetId
+                  ? ` · ${entry.targetType ?? a.target}: ${entry.targetId.slice(0, 8)}…`
+                  : ""}
               </p>
             </li>
           ))}

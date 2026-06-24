@@ -140,7 +140,6 @@ export function FreelancerSidebar({ isAdmin = false }: FreelancerSidebarProps) {
       href: l("/dashboard/bids"),
       icon: "🔨",
     },
-    { type: "soon", label: f.competitions, icon: "🏆" },
     {
       type: "link",
       label: f.finances,

@@ -6,10 +6,15 @@ import { getLocale } from "@/lib/i18n/server";
 import { getAdminMobileBadges } from "@/lib/queries/admin-mobile-badges";
 import { headers } from "next/headers";
 
-export const metadata = {
-  title: "Админ — Taskery",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  const locale = await getLocale();
+  const title = `${getAdminCopy(locale).panels.chrome.adminPanel} — Taskery`;
+
+  return {
+    title,
+    robots: { index: false, follow: false },
+  };
+}
 
 type AdminMobileLayoutProps = {
   children: React.ReactNode;

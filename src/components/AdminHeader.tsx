@@ -7,9 +7,13 @@ import {
 } from "@/components/HeaderShell";
 import { HeaderInboxNav } from "@/components/inbox/HeaderInboxNav";
 import { auth } from "@/lib/auth";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import { getLocale } from "@/lib/i18n/server";
 
 export async function AdminHeader() {
   const session = await auth();
+  const locale = await getLocale();
+  const chrome = getAdminCopy(locale).panels.chrome;
 
   return (
     <HeaderShell
@@ -18,10 +22,10 @@ export async function AdminHeader() {
         <nav className="flex items-center">
           <div className="hidden items-center gap-x-6 lg:flex lg:gap-x-8">
             <AdminModeLink mode="client" href="/client" className={headerNavLinkClass}>
-              Как заказчик
+              {chrome.workAsClient}
             </AdminModeLink>
             <AdminModeLink mode="freelancer" href="/dashboard" className={headerNavLinkClass}>
-              Как фрилансер
+              {chrome.workAsFreelancer}
             </AdminModeLink>
           </div>
 
@@ -34,6 +38,7 @@ export async function AdminHeader() {
             <AdminProfileMenu
               name={session?.user?.name ?? null}
               avatar={null}
+              locale={locale}
             />
           </div>
         </nav>
