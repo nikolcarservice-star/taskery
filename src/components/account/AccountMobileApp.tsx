@@ -18,7 +18,10 @@ export function AccountMobileApp(props: AccountMobileChromeProps) {
 
   return (
     <>
-      <InboxRefreshPoller />
+      <InboxRefreshPoller
+        initialMessages={props.unreadMessages}
+        initialNotifications={props.unreadNotifications}
+      />
       <CabinetBottomNav {...props} />
     </>
   );

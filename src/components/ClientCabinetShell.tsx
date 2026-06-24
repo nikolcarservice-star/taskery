@@ -1,10 +1,10 @@
 import { ClientHeader } from "@/components/ClientHeader";
-import { InboxRefreshPoller } from "@/components/InboxRefreshPoller";
 import { ClientSidebar } from "@/components/ClientSidebar";
 import { MessageSoundWatcher } from "@/components/MessageSoundWatcher";
 import { PageBackNav } from "@/components/PageBackNav";
 import { getUserSettings } from "@/lib/settings";
 import { getUnreadInboxMessageCount } from "@/lib/messages-inbox";
+import { getUnreadNotificationCount } from "@/lib/notifications";
 import { requireClient } from "@/lib/session";
 
 
@@ -30,9 +30,10 @@ export async function ClientCabinetShell({
   const session = await requireClient(callbackUrl);
 
   const isAdmin = session.user.role === "ADMIN";
-  const [settings, unreadMessages] = await Promise.all([
+  const [settings, unreadMessages, unreadNotifications] = await Promise.all([
     getUserSettings(session.user.id),
     getUnreadInboxMessageCount(session.user.id),
+    getUnreadNotificationCount(session.user.id),
   ]);
 
   return (
@@ -40,6 +41,7 @@ export async function ClientCabinetShell({
       <MessageSoundWatcher
         enabled={settings.soundNewMessages}
         initialUnreadCount={unreadMessages}
+        initialNotificationCount={unreadNotifications}
       />
       <ClientHeader />
 

@@ -1,5 +1,4 @@
 import { FreelancerHeader } from "@/components/FreelancerHeader";
-import { InboxRefreshPoller } from "@/components/InboxRefreshPoller";
 import { FreelancerSidebar } from "@/components/FreelancerSidebar";
 import { MessageSoundWatcher } from "@/components/MessageSoundWatcher";
 import { PageBackNav } from "@/components/PageBackNav";
