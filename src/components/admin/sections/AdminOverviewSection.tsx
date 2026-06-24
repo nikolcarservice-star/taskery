@@ -3,6 +3,7 @@
 import { AdminAnalyticsPanel } from "@/components/AdminAnalyticsPanel";
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
 import {
+  getAdminTabHrefForPlatform,
   getVisibleAdminTabs,
   type AdminTabKey,
 } from "@/lib/admin-tabs";
@@ -22,6 +23,7 @@ type AdminOverviewSectionProps = {
   permissions: AdminPermission[];
   analytics: AdminAnalyticsOverview | null;
   badges: AdminMobileBadges;
+  platform?: "desktop" | "mobile";
 };
 
 function overviewBadge(tab: AdminTabKey, badges: AdminMobileBadges): number {
@@ -42,6 +44,7 @@ export function AdminOverviewSection({
   permissions,
   analytics,
   badges,
+  platform = "desktop",
 }: AdminOverviewSectionProps) {
   const canViewFinance = hasAdminPermission(permissions, "FINANCE");
   const visibleTabs = getVisibleAdminTabs(permissions).filter(
@@ -86,7 +89,7 @@ export function AdminOverviewSection({
               return (
                 <Link
                   key={tab.id}
-                  href={tab.href}
+                  href={getAdminTabHrefForPlatform(tab, platform)}
                   className="group flex items-start gap-3 rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-red-200 hover:bg-red-50/40"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-lg group-hover:bg-red-100">

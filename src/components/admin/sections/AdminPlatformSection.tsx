@@ -15,6 +15,7 @@ type AdminPlatformSectionProps = {
   catalogSkills: AdminSkillItem[];
   cmsPages: CmsPageItem[];
   stats: { freelancers: number; clients: number };
+  basePath?: string;
 };
 
 export function AdminPlatformSection({
@@ -22,6 +23,7 @@ export function AdminPlatformSection({
   catalogSkills,
   cmsPages,
   stats,
+  basePath = "/admin/platform",
 }: AdminPlatformSectionProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -39,7 +41,7 @@ export function AdminPlatformSection({
       params.set("section", section);
     }
     const query = params.toString();
-    router.replace(query ? `/admin/platform?${query}` : "/admin/platform", {
+    router.replace(query ? `${basePath}?${query}` : basePath, {
       scroll: false,
     });
   }

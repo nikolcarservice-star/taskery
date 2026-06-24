@@ -1,52 +1,31 @@
-import { AdminUsersPanel } from "@/components/AdminUsersPanel";
+import { AdminUsersSection } from "@/components/admin/sections/AdminUsersSection";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
 import { ADMIN_MOBILE_ROOT } from "@/lib/admin-mobile-routes";
+import { getPendingProfileVerifications } from "@/lib/queries/admin-verification";
 import { getAdminUsers } from "@/lib/queries/admin-users";
-import type { Role } from "@/generated/prisma/client";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
-type AdminMobileUsersPageProps = {
-  searchParams: Promise<{
-    q?: string;
-    role?: string;
-    status?: string;
-  }>;
-};
-
-export default async function AdminMobileUsersPage({
-  searchParams,
-}: AdminMobileUsersPageProps) {
-  const { permissions } = await getAdminPageContext(
-    `${ADMIN_MOBILE_ROOT}/users`,
-  );
+export default async function AdminMobileUsersPage() {
+  const { permissions } = await getAdminPageContext(`${ADMIN_MOBILE_ROOT}/users`);
 
   if (!hasAdminPermission(permissions, "USERS")) {
     redirect(ADMIN_MOBILE_ROOT);
   }
 
-  const params = await searchParams;
-  const q = params.q?.trim();
-  const role =
-    params.role === "CLIENT" || params.role === "FREELANCER"
-      ? (params.role as Role)
-      : undefined;
-  const status =
-    params.status === "active" ||
-    params.status === "banned" ||
-    params.status === "deleted"
-      ? params.status
-      : "all";
-
-  const users = await getAdminUsers({ q, role, status });
+  const [verificationItems, users] = await Promise.all([
+    getPendingProfileVerifications(),
+    getAdminUsers(),
+  ]);
 
   return (
-    <AdminUsersPanel
-      users={users}
-      mobile
-      initialQuery={q ?? ""}
-      initialRole={role ?? "ALL"}
-      initialStatus={status}
-    />
+    <Suspense fallback={<div className="h-32 animate-pulse rounded-xl bg-zinc-100" />}>
+      <AdminUsersSection
+        basePath={`${ADMIN_MOBILE_ROOT}/users`}
+        verificationItems={verificationItems}
+        users={users}
+      />
+    </Suspense>
   );
 }

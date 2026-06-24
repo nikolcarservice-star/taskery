@@ -7,8 +7,10 @@ import { getPendingModerationProjects } from "@/lib/queries/admin-pending-projec
 import { getModerationAttentionItems } from "@/lib/queries/admin-attention";
 import { getPendingAdminReports } from "@/lib/queries/admin-reports";
 import { getAdminSupportTickets } from "@/lib/queries/admin-support";
+import { getLocale } from "@/lib/i18n/server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function AdminMobileModerationPage() {
   const { permissions, admin } = await getAdminPageContext(
@@ -18,6 +20,8 @@ export default async function AdminMobileModerationPage() {
   if (!hasAdminPermission(permissions, "MODERATION")) {
     redirect(ADMIN_MOBILE_ROOT);
   }
+
+  const locale = await getLocale();
 
   const [
     attentionItems,
@@ -60,17 +64,22 @@ export default async function AdminMobileModerationPage() {
   ]);
 
   return (
-    <AdminModerationStack
-      layout="tabs"
-      attentionItems={attentionItems}
-      reports={reports}
-      disputes={disputes}
-      openProjects={openProjects}
-      pendingProjects={pendingProjects}
-      contentModeration={contentModeration}
-      supportTickets={supportTickets}
-      compact
-      moderationBackHref={`${ADMIN_MOBILE_ROOT}/moderation`}
-    />
+    <Suspense fallback={<div className="h-32 animate-pulse rounded-xl bg-zinc-100" />}>
+      <AdminModerationStack
+        layout="tabs"
+        syncSectionToUrl
+        compact
+        locale={locale}
+        moderationBasePath={`${ADMIN_MOBILE_ROOT}/moderation`}
+        moderationBackHref={`${ADMIN_MOBILE_ROOT}/moderation`}
+        attentionItems={attentionItems}
+        reports={reports}
+        disputes={disputes}
+        openProjects={openProjects}
+        pendingProjects={pendingProjects}
+        contentModeration={contentModeration}
+        supportTickets={supportTickets}
+      />
+    </Suspense>
   );
 }

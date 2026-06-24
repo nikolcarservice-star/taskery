@@ -6,6 +6,8 @@ type AdminCopy = {
   sections: string;
   navAria: string;
   mobileVersion: string;
+  desktopVersion: string;
+  moreSettings: string;
   backToCabinet: string;
   tabs: Record<
     AdminTabKey,
@@ -23,6 +25,8 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     sections: "Разделы",
     navAria: "Навигация админ-панели",
     mobileVersion: "Мобильная версия",
+    desktopVersion: "Полная версия",
+    moreSettings: "Ещё",
     backToCabinet: "В кабинет",
     tabs: {
       overview: {
@@ -63,6 +67,8 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     sections: "Розділи",
     navAria: "Навігація адмін-панелі",
     mobileVersion: "Мобільна версія",
+    desktopVersion: "Повна версія",
+    moreSettings: "Ще",
     backToCabinet: "До кабінету",
     tabs: {
       overview: {
@@ -103,6 +109,8 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     sections: "Sekcje",
     navAria: "Nawigacja panelu admina",
     mobileVersion: "Wersja mobilna",
+    desktopVersion: "Wersja pełna",
+    moreSettings: "Więcej",
     backToCabinet: "Do panelu",
     tabs: {
       overview: {
@@ -143,6 +151,8 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     sections: "Sections",
     navAria: "Admin panel navigation",
     mobileVersion: "Mobile version",
+    desktopVersion: "Desktop version",
+    moreSettings: "More",
     backToCabinet: "Back to cabinet",
     tabs: {
       overview: {

@@ -64,6 +64,7 @@ type AdminModerationStackProps = {
   layout?: "stack" | "tabs";
   syncSectionToUrl?: boolean;
   locale?: AppLocale;
+  moderationBasePath?: string;
 };
 
 const initialState: ActionState = {};
@@ -324,6 +325,7 @@ export function AdminModerationStack({
   layout = "stack",
   syncSectionToUrl = false,
   locale = "ru",
+  moderationBasePath = "/admin/moderation",
 }: AdminModerationStackProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -371,9 +373,12 @@ export function AdminModerationStack({
         params.set("section", section);
       }
       const query = params.toString();
-      router.replace(query ? `/admin/moderation?${query}` : "/admin/moderation", {
-        scroll: false,
-      });
+      router.replace(
+        query ? `${moderationBasePath}?${query}` : moderationBasePath,
+        {
+          scroll: false,
+        },
+      );
       return;
     }
     setLocalSection(section);

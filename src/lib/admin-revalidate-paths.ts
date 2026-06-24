@@ -17,10 +17,6 @@ export function revalidateAdminPanelPaths() {
   revalidatePath("/admin/mobile/moderation");
   revalidatePath("/admin/mobile/users");
   revalidatePath("/admin/mobile/finance");
-  revalidatePath("/admin/mobile/verification");
-  revalidatePath("/admin/mobile/withdrawals");
-  revalidatePath("/admin/mobile/support");
-  revalidatePath("/admin/mobile/catalog");
-  revalidatePath("/admin/mobile/staff");
-  revalidatePath("/admin/mobile/broadcast");
+  revalidatePath("/admin/mobile/platform");
+  revalidatePath("/admin/mobile/team");
 }

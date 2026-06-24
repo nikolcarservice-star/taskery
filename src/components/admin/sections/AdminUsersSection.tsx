@@ -12,11 +12,13 @@ type UsersSectionKey = "verification" | "accounts";
 type AdminUsersSectionProps = {
   verificationItems: AdminVerificationItem[];
   users: AdminUserItem[];
+  basePath?: string;
 };
 
 export function AdminUsersSection({
   verificationItems,
   users,
+  basePath = "/admin/users",
 }: AdminUsersSectionProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -32,7 +34,7 @@ export function AdminUsersSection({
       params.set("section", section);
     }
     const query = params.toString();
-    router.replace(query ? `/admin/users?${query}` : "/admin/users", {
+    router.replace(query ? `${basePath}?${query}` : basePath, {
       scroll: false,
     });
   }

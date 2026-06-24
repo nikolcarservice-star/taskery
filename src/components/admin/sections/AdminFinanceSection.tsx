@@ -12,11 +12,13 @@ type FinanceSectionKey = "withdrawals" | "overview";
 type AdminFinanceSectionProps = {
   finance: AdminFinanceOverview;
   pendingWithdrawals: AdminWithdrawalItem[];
+  basePath?: string;
 };
 
 export function AdminFinanceSection({
   finance,
   pendingWithdrawals,
+  basePath = "/admin/finance",
 }: AdminFinanceSectionProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -32,7 +34,7 @@ export function AdminFinanceSection({
       params.set("section", section);
     }
     const query = params.toString();
-    router.replace(query ? `/admin/finance?${query}` : "/admin/finance", {
+    router.replace(query ? `${basePath}?${query}` : basePath, {
       scroll: false,
     });
   }

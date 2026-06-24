@@ -50,9 +50,7 @@ textarea:-webkit-autofill:focus {
   }
 
   body[data-admin-mobile-app] .admin-mobile-content {
-    padding-bottom: calc(
-      var(--account-mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 1rem
-    );
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
   }
 
   body[data-admin-mobile-app] .admin-mobile-header {

@@ -1,6 +1,7 @@
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import type { AdminPermission } from "@/generated/prisma/client";
 
+export const ADMIN_MOBILE_ROOT = "/admin/mobile";
 export const ADMIN_DESKTOP_ROOT = "/admin/overview";
 
 export type AdminTabKey =
@@ -88,6 +89,17 @@ export const MODERATION_SECTIONS: {
   { id: "support", label: "Поддержка" },
 ];
 
+export function getAdminTabMobileHref(tab: AdminTabDefinition): string {
+  return tab.id === "overview" ? ADMIN_MOBILE_ROOT : `${ADMIN_MOBILE_ROOT}/${tab.id}`;
+}
+
+export function getAdminTabHrefForPlatform(
+  tab: AdminTabDefinition,
+  platform: "desktop" | "mobile",
+): string {
+  return platform === "mobile" ? getAdminTabMobileHref(tab) : tab.href;
+}
+
 export function getVisibleAdminTabs(
   permissions: AdminPermission[],
 ): AdminTabDefinition[] {
@@ -100,25 +112,44 @@ export function isAdminTabKey(value: string | null): value is AdminTabKey {
   return ADMIN_TABS.some((tab) => tab.id === value);
 }
 
+function matchesAdminTabPath(
+  pathname: string,
+  tab: AdminTabDefinition,
+): boolean {
+  const mobileHref = getAdminTabMobileHref(tab);
+  return (
+    pathname === tab.href ||
+    pathname.startsWith(`${tab.href}/`) ||
+    pathname === mobileHref ||
+    pathname.startsWith(`${mobileHref}/`)
+  );
+}
+
 export function resolveAdminTabFromPath(
   pathname: string,
   permissions: AdminPermission[],
 ): AdminTabDefinition {
   const visible = getVisibleAdminTabs(permissions);
-  const match = visible.find(
-    (tab) => pathname === tab.href || pathname.startsWith(`${tab.href}/`),
-  );
+  const match = visible.find((tab) => matchesAdminTabPath(pathname, tab));
   return match ?? visible[0] ?? ADMIN_TABS[0];
 }
 
 export function isAdminDesktopAppPath(pathname: string): boolean {
+  if (pathname.startsWith(ADMIN_MOBILE_ROOT)) return false;
   return (
-    pathname === "/admin/overview" ||
+    pathname === ADMIN_DESKTOP_ROOT ||
     ADMIN_TABS.some(
       (tab) =>
-        tab.href !== "/admin/overview" &&
+        tab.href !== ADMIN_DESKTOP_ROOT &&
         (pathname === tab.href || pathname.startsWith(`${tab.href}/`)),
     )
+  );
+}
+
+export function isAdminMobileAppPath(pathname: string): boolean {
+  return (
+    pathname === ADMIN_MOBILE_ROOT ||
+    pathname.startsWith(`${ADMIN_MOBILE_ROOT}/`)
   );
 }
 
@@ -129,4 +160,10 @@ export function resolveModerationSection(
     return value as ModerationSectionKey;
   }
   return "attention";
+}
+
+export function getModerationBasePath(pathname: string): string {
+  return pathname.startsWith(ADMIN_MOBILE_ROOT)
+    ? `${ADMIN_MOBILE_ROOT}/moderation`
+    : "/admin/moderation";
 }

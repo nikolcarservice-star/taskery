@@ -16,6 +16,7 @@ type AdminTeamSectionProps = {
   currentAdminId: string;
   auditLogs: AdminAuditEntry[];
   showAudit: boolean;
+  basePath?: string;
 };
 
 export function AdminTeamSection({
@@ -23,6 +24,7 @@ export function AdminTeamSection({
   currentAdminId,
   auditLogs,
   showAudit,
+  basePath = "/admin/team",
 }: AdminTeamSectionProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -38,7 +40,7 @@ export function AdminTeamSection({
       params.set("section", section);
     }
     const query = params.toString();
-    router.replace(query ? `/admin/team?${query}` : "/admin/team", {
+    router.replace(query ? `${basePath}?${query}` : basePath, {
       scroll: false,
     });
   }
