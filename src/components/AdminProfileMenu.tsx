@@ -92,7 +92,7 @@ export function AdminProfileMenu({ name, avatar }: AdminProfileMenuProps) {
         { label: "Мой кабинет", href: "/cabinet", mode: null },
         { label: "Как заказчик", href: "/client", mode: "client" as const },
         { label: "Как фрилансер", href: "/dashboard", mode: "freelancer" as const },
-        { label: "Админ-панель", href: "/admin", mode: null, highlight: true },
+        { label: "Админ-панель", href: "/admin/mobile", mode: null, highlight: true },
       ] as const,
     [],
   );

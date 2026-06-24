@@ -8,8 +8,8 @@ export function AdminPanelNavButton() {
 
   return (
     <Link
-      href="/admin/overview"
-      className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700"
+      href="/admin/mobile"
+      className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-colors hover:bg-red-700 sm:px-4 sm:py-2 sm:text-sm"
     >
       {dict.profileMenu.adminPanel}
     </Link>

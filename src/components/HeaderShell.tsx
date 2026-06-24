@@ -42,7 +42,7 @@ export function HeaderShell({
         <div
           className={`mx-auto flex w-full max-w-[1440px] items-center justify-between overflow-visible ${
             isCabinet
-              ? "h-[68px] gap-8 px-10 xl:px-12"
+              ? "h-[68px] gap-2 px-4 sm:gap-4 sm:px-6 lg:gap-8 lg:px-10 xl:px-12"
               : `gap-8 px-6 sm:px-8 lg:px-10 xl:px-12 ${HEADER_HEIGHT_CLASS}`
           }`}
         >

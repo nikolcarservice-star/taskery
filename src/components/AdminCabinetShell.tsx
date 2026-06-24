@@ -18,10 +18,10 @@ export async function AdminCabinetShell({
     <div className="flex min-h-full flex-1 flex-col bg-zinc-100">
       <AdminHeader />
 
-      <div className="mx-auto flex w-full max-w-7xl flex-1 gap-6 px-4 py-6 lg:px-6">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-3 py-3 sm:px-4 sm:py-4 lg:flex-row lg:gap-6 lg:px-6 lg:py-6">
         <AdminSidebar />
         <div className="min-w-0 flex-1">
-          <PageBackNav />
+          <PageBackNav className="mb-3 lg:mb-5" />
           {children}
         </div>
       </div>

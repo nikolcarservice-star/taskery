@@ -50,7 +50,7 @@ export async function AdminHeader() {
       logoHref="/cabinet"
       end={
         <nav className="flex items-center">
-          <div className="flex items-center gap-x-6 lg:gap-x-8">
+          <div className="hidden items-center gap-x-6 lg:flex lg:gap-x-8">
             <AdminModeLink mode="client" href="/client" className={headerNavLinkClass}>
               Как заказчик
             </AdminModeLink>
@@ -59,11 +59,11 @@ export async function AdminHeader() {
             </AdminModeLink>
           </div>
 
-          <div className="ml-6 flex items-center gap-x-3 lg:ml-10 lg:gap-x-4">
+          <div className="ml-6 hidden items-center gap-x-3 lg:ml-10 lg:flex lg:gap-x-4">
             <AdminPanelNavButton />
           </div>
 
-          <div className="ml-4 flex items-center gap-x-0.5 border-l border-zinc-200 pl-4 lg:ml-6 lg:pl-5">
+          <div className="flex items-center gap-x-0.5 lg:ml-6 lg:border-l lg:border-zinc-200 lg:pl-5">
             <MessagesNavButton
               messages={recentMessages}
               unreadCount={unreadMessages}
