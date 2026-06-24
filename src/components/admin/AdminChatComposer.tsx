@@ -6,16 +6,20 @@ import {
   sendAdminConversationMessage,
   type AdminMessageActionState,
 } from "@/lib/actions/admin-messages";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useActionState, useEffect, useRef } from "react";
 
 type AdminChatComposerProps = {
   mode: "conversation" | "bid";
   targetId: string;
+  locale: AppLocale;
 };
 
 const initialState: AdminMessageActionState = {};
 
-export function AdminChatComposer({ mode, targetId }: AdminChatComposerProps) {
+export function AdminChatComposer({ mode, targetId, locale }: AdminChatComposerProps) {
+  const copy = getAdminCopy(locale).review;
   const action =
     mode === "conversation" ? sendAdminConversationMessage : sendAdminBidMessage;
   const [state, formAction, pending] = useActionState(action, initialState);
@@ -45,7 +49,7 @@ export function AdminChatComposer({ mode, targetId }: AdminChatComposerProps) {
       )}
 
       <label htmlFor="admin-chat-content" className="sr-only">
-        Сообщение от администратора
+        {copy.composerLabel}
       </label>
       <textarea
         ref={textareaRef}
@@ -53,21 +57,19 @@ export function AdminChatComposer({ mode, targetId }: AdminChatComposerProps) {
         name="content"
         required
         rows={3}
-        placeholder="Напишите участникам от имени администратора Taskery…"
+        placeholder={copy.composerPlaceholder}
         onKeyDown={handleKeyDown}
         className="w-full resize-none rounded-xl border border-zinc-200 px-4 py-3 text-sm text-zinc-800 outline-none transition-colors placeholder:text-zinc-400 focus:border-red-300 focus:ring-2 focus:ring-red-500/15"
       />
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-zinc-500">
-          Сообщение будет видно заказчику и исполнителю с вашим именем
-        </p>
+        <p className="text-xs text-zinc-500">{copy.composerHint}</p>
         <button
           type="submit"
           disabled={pending}
           className="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {pending ? "Отправка…" : "Отправить"}
+          {pending ? copy.sending : copy.send}
         </button>
       </div>
 

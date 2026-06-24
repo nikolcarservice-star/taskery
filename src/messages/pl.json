@@ -390,10 +390,8 @@
       "pushPermissionDenied": "Zezwól na powiadomienia w przeglądarce",
       "pushSubscribeFailed": "Nie udało się włączyć powiadomień push",
       "pushUnsubscribeFailed": "Nie udało się wyłączyć powiadomień push",
-      "pushSoon": "Wkrótce",
       "soundMessages": "Nowe wiadomości prywatne (dźwięk)",
-      "soundHint": "Krótki sygnał przy nowych nieprzeczytanych wiadomościach",
-      "soundSoon": "Wkrótce"
+      "soundHint": "Krótki sygnał przy nowych nieprzeczytanych wiadomościach"
     },
     "telegram": {
       "connect": "Połącz Telegram",
@@ -430,7 +428,6 @@
       "passwordHint": "Regularnie aktualizuj hasło, aby chronić konto.",
       "changePassword": "Zmień hasło",
       "twoFactor": "Uwierzytelnianie dwuskładnikowe",
-      "twoFactorSoon": "2FA będzie wkrótce dostępne",
       "twoFactorHint": "Na razie używaj silnego hasła i sprawdzaj aktywne sesje.",
       "twoFactorDescription": "Chroń wypłaty jednorazowymi kodami z aplikacji uwierzytelniającej (Google Authenticator, Authy itd.).",
       "twoFactorWithdrawalsHint": "Po włączeniu 2FA kod z aplikacji jest wymagany przy każdej wypłacie.",

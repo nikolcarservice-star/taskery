@@ -1,10 +1,15 @@
 import type { AdminTabDefinition, AdminTabKey, ModerationSectionKey } from "@/lib/admin-tabs";
+import type { AdminPanelsCopy } from "@/lib/admin-i18n-panels";
+import { ADMIN_PANELS_COPY } from "@/lib/admin-i18n-panels";
 import type { AppLocale } from "@/lib/i18n/types";
 
 type AdminCopy = {
   panelTitle: string;
   sections: string;
   navAria: string;
+  tabNavAria: string;
+  adminBadge: string;
+  adminFallbackName: string;
   mobileVersion: string;
   desktopVersion: string;
   moreSettings: string;
@@ -18,6 +23,63 @@ type AdminCopy = {
     }
   >;
   moderationSections: Record<ModerationSectionKey, string>;
+  overview: {
+    statsUsers: string;
+    statsClients: string;
+    statsFreelancers: string;
+    statsProjects: string;
+    quickAccess: string;
+    noPermissions: string;
+  };
+  usersSections: {
+    verification: string;
+    accounts: string;
+  };
+  financeSections: {
+    withdrawals: string;
+    overview: string;
+  };
+  platformSections: {
+    catalog: string;
+    cms: string;
+    broadcast: string;
+  };
+  teamSections: {
+    staff: string;
+    audit: string;
+  };
+  mobileMore: {
+    signedInAs: string;
+    sections: string;
+    workMode: string;
+    workAsClient: string;
+    workAsFreelancer: string;
+    adminCabinet: string;
+    signOut: string;
+  };
+  review: {
+    backToModeration: string;
+    moderationReview: string;
+    adminCanWriteHint: string;
+    projectChatTitle: string;
+    bidChatTitle: string;
+    clientFallback: string;
+    freelancerFallback: string;
+    emptyThread: string;
+    blockedText: string;
+    participant: string;
+    adminLabel: string;
+    composerLabel: string;
+    composerPlaceholder: string;
+    composerHint: string;
+    sending: string;
+    send: string;
+  };
+  attention: {
+    dismiss: string;
+    dismissTitle: string;
+  };
+  panels: AdminPanelsCopy;
 };
 
 const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
@@ -25,6 +87,9 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     panelTitle: "Админ-панель",
     sections: "Разделы",
     navAria: "Навигация админ-панели",
+    tabNavAria: "Подразделы админ-панели",
+    adminBadge: "Taskery Admin",
+    adminFallbackName: "Админ",
     mobileVersion: "Мобильная версия",
     desktopVersion: "Полная версия",
     moreSettings: "Ещё",
@@ -63,11 +128,75 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
       projects: "Проекты",
       support: "Поддержка",
     },
+    overview: {
+      statsUsers: "Пользователей",
+      statsClients: "Заказчиков",
+      statsFreelancers: "Фрилансеров",
+      statsProjects: "Проектов",
+      quickAccess: "Быстрый доступ",
+      noPermissions:
+        "У вашего аккаунта нет назначенных функций. Обратитесь к супер-администратору.",
+    },
+    usersSections: {
+      verification: "Верификация",
+      accounts: "Аккаунты",
+    },
+    financeSections: {
+      withdrawals: "Выводы",
+      overview: "Обзор",
+    },
+    platformSections: {
+      catalog: "Каталог",
+      cms: "CMS",
+      broadcast: "Рассылка",
+    },
+    teamSections: {
+      staff: "Администраторы",
+      audit: "Журнал",
+    },
+    mobileMore: {
+      signedInAs: "Вход выполнен как",
+      sections: "Разделы",
+      workMode: "Режим работы",
+      workAsClient: "Работа как заказчик",
+      workAsFreelancer: "Работа как фрилансер",
+      adminCabinet: "Кабинет администратора",
+      signOut: "Выйти",
+    },
+    review: {
+      backToModeration: "← Назад к модерации",
+      moderationReview: "Просмотр для модерации",
+      adminCanWriteHint:
+        "Администратор может писать в чат от своего имени — участники увидят сообщение с пометкой «Администратор»",
+      projectChatTitle: "Чат проекта",
+      bidChatTitle: "Чат по отклику",
+      clientFallback: "Заказчик",
+      freelancerFallback: "Исполнитель",
+      emptyThread:
+        "Сообщений в переписке пока нет. Вы можете написать первым от имени администратора.",
+      blockedText: "Заблокированный текст",
+      participant: "Участник",
+      adminLabel: "Администратор",
+      composerLabel: "Сообщение от администратора",
+      composerPlaceholder: "Напишите участникам от имени администратора Taskery…",
+      composerHint:
+        "Сообщение будет видно заказчику и исполнителю с вашим именем",
+      sending: "Отправка…",
+      send: "Отправить",
+    },
+    attention: {
+      dismiss: "Скрыть",
+      dismissTitle: "Скрыть уведомление только у вас",
+    },
+    panels: ADMIN_PANELS_COPY.ru,
   },
   uk: {
     panelTitle: "Адмін-панель",
     sections: "Розділи",
     navAria: "Навігація адмін-панелі",
+    tabNavAria: "Підрозділи адмін-панелі",
+    adminBadge: "Taskery Admin",
+    adminFallbackName: "Адмін",
     mobileVersion: "Мобільна версія",
     desktopVersion: "Повна версія",
     moreSettings: "Ще",
@@ -106,11 +235,76 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
       projects: "Проєкти",
       support: "Підтримка",
     },
+    overview: {
+      statsUsers: "Користувачів",
+      statsClients: "Замовників",
+      statsFreelancers: "Фрілансерів",
+      statsProjects: "Проєктів",
+      quickAccess: "Швидкий доступ",
+      noPermissions:
+        "У вашого акаунта немає призначених функцій. Зверніться до супер-адміністратора.",
+    },
+    usersSections: {
+      verification: "Верифікація",
+      accounts: "Акаунти",
+    },
+    financeSections: {
+      withdrawals: "Виведення",
+      overview: "Огляд",
+    },
+    platformSections: {
+      catalog: "Каталог",
+      cms: "CMS",
+      broadcast: "Розсилка",
+    },
+    teamSections: {
+      staff: "Адміністратори",
+      audit: "Журнал",
+    },
+    mobileMore: {
+      signedInAs: "Вхід виконано як",
+      sections: "Розділи",
+      workMode: "Режим роботи",
+      workAsClient: "Робота як замовник",
+      workAsFreelancer: "Робота як фрілансер",
+      adminCabinet: "Кабінет адміністратора",
+      signOut: "Вийти",
+    },
+    review: {
+      backToModeration: "← Назад до модерації",
+      moderationReview: "Перегляд для модерації",
+      adminCanWriteHint:
+        "Адміністратор може писати в чат від свого імені — учасники побачать повідомлення з позначкою «Адміністратор»",
+      projectChatTitle: "Чат проєкту",
+      bidChatTitle: "Чат за відгуком",
+      clientFallback: "Замовник",
+      freelancerFallback: "Виконавець",
+      emptyThread:
+        "Повідомлень у переписці поки немає. Ви можете написати першим від імені адміністратора.",
+      blockedText: "Заблокований текст",
+      participant: "Учасник",
+      adminLabel: "Адміністратор",
+      composerLabel: "Повідомлення від адміністратора",
+      composerPlaceholder:
+        "Напишіть учасникам від імені адміністратора Taskery…",
+      composerHint:
+        "Повідомлення буде видно замовнику та виконавцю з вашим іменем",
+      sending: "Надсилання…",
+      send: "Надіслати",
+    },
+    attention: {
+      dismiss: "Приховати",
+      dismissTitle: "Приховати сповіщення лише у вас",
+    },
+    panels: ADMIN_PANELS_COPY.uk,
   },
   pl: {
     panelTitle: "Panel admina",
     sections: "Sekcje",
     navAria: "Nawigacja panelu admina",
+    tabNavAria: "Podsekcje panelu admina",
+    adminBadge: "Taskery Admin",
+    adminFallbackName: "Admin",
     mobileVersion: "Wersja mobilna",
     desktopVersion: "Wersja pełna",
     moreSettings: "Więcej",
@@ -149,11 +343,76 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
       projects: "Projekty",
       support: "Wsparcie",
     },
+    overview: {
+      statsUsers: "Użytkowników",
+      statsClients: "Zleceniodawców",
+      statsFreelancers: "Freelancerów",
+      statsProjects: "Projektów",
+      quickAccess: "Szybki dostęp",
+      noPermissions:
+        "Twoje konto nie ma przypisanych uprawnień. Skontaktuj się z super-administratorem.",
+    },
+    usersSections: {
+      verification: "Weryfikacja",
+      accounts: "Konta",
+    },
+    financeSections: {
+      withdrawals: "Wypłaty",
+      overview: "Przegląd",
+    },
+    platformSections: {
+      catalog: "Katalog",
+      cms: "CMS",
+      broadcast: "Mailing",
+    },
+    teamSections: {
+      staff: "Administratorzy",
+      audit: "Dziennik",
+    },
+    mobileMore: {
+      signedInAs: "Zalogowano jako",
+      sections: "Sekcje",
+      workMode: "Tryb pracy",
+      workAsClient: "Praca jako zleceniodawca",
+      workAsFreelancer: "Praca jako freelancer",
+      adminCabinet: "Panel administratora",
+      signOut: "Wyloguj",
+    },
+    review: {
+      backToModeration: "← Wróć do moderacji",
+      moderationReview: "Podgląd moderacji",
+      adminCanWriteHint:
+        "Administrator może pisać na czacie w swoim imieniu — uczestnicy zobaczą wiadomość z oznaczeniem „Administrator”",
+      projectChatTitle: "Czat projektu",
+      bidChatTitle: "Czat oferty",
+      clientFallback: "Zleceniodawca",
+      freelancerFallback: "Wykonawca",
+      emptyThread:
+        "Brak wiadomości w rozmowie. Możesz napisać pierwszy jako administrator.",
+      blockedText: "Zablokowany tekst",
+      participant: "Uczestnik",
+      adminLabel: "Administrator",
+      composerLabel: "Wiadomość od administratora",
+      composerPlaceholder:
+        "Napisz do uczestników w imieniu administratora Taskery…",
+      composerHint:
+        "Wiadomość będzie widoczna dla zleceniodawcy i wykonawcy z Twoim imieniem",
+      sending: "Wysyłanie…",
+      send: "Wyślij",
+    },
+    attention: {
+      dismiss: "Ukryj",
+      dismissTitle: "Ukryj powiadomienie tylko u siebie",
+    },
+    panels: ADMIN_PANELS_COPY.pl,
   },
   en: {
     panelTitle: "Admin panel",
     sections: "Sections",
     navAria: "Admin panel navigation",
+    tabNavAria: "Admin panel subsections",
+    adminBadge: "Taskery Admin",
+    adminFallbackName: "Admin",
     mobileVersion: "Mobile version",
     desktopVersion: "Desktop version",
     moreSettings: "More",
@@ -192,6 +451,67 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
       projects: "Projects",
       support: "Support",
     },
+    overview: {
+      statsUsers: "Users",
+      statsClients: "Clients",
+      statsFreelancers: "Freelancers",
+      statsProjects: "Projects",
+      quickAccess: "Quick access",
+      noPermissions:
+        "Your account has no assigned permissions. Contact the super-administrator.",
+    },
+    usersSections: {
+      verification: "Verification",
+      accounts: "Accounts",
+    },
+    financeSections: {
+      withdrawals: "Withdrawals",
+      overview: "Overview",
+    },
+    platformSections: {
+      catalog: "Catalog",
+      cms: "CMS",
+      broadcast: "Broadcast",
+    },
+    teamSections: {
+      staff: "Administrators",
+      audit: "Audit log",
+    },
+    mobileMore: {
+      signedInAs: "Signed in as",
+      sections: "Sections",
+      workMode: "Work mode",
+      workAsClient: "Work as client",
+      workAsFreelancer: "Work as freelancer",
+      adminCabinet: "Admin cabinet",
+      signOut: "Sign out",
+    },
+    review: {
+      backToModeration: "← Back to moderation",
+      moderationReview: "Moderation review",
+      adminCanWriteHint:
+        "Admins can write in chat on their own behalf — participants will see messages marked “Administrator”",
+      projectChatTitle: "Project chat",
+      bidChatTitle: "Bid chat",
+      clientFallback: "Client",
+      freelancerFallback: "Freelancer",
+      emptyThread:
+        "No messages in this thread yet. You can write first as administrator.",
+      blockedText: "Blocked text",
+      participant: "Participant",
+      adminLabel: "Administrator",
+      composerLabel: "Message from administrator",
+      composerPlaceholder: "Write to participants as Taskery administrator…",
+      composerHint:
+        "The message will be visible to the client and freelancer with your name",
+      sending: "Sending…",
+      send: "Send",
+    },
+    attention: {
+      dismiss: "Dismiss",
+      dismissTitle: "Dismiss this alert for you only",
+    },
+    panels: ADMIN_PANELS_COPY.en,
   },
 };
 

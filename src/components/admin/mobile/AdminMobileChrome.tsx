@@ -1,16 +1,22 @@
 import type { AdminTabDefinition } from "@/lib/admin-tabs";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import type { AppLocale } from "@/lib/i18n/types";
 
 export { ADMIN_MOBILE_BOTTOM_NAV_HEIGHT as ADMIN_MOBILE_NAV_HEIGHT } from "@/components/admin/mobile/AdminMobileBottomNav";
 
 type AdminMobileHeaderProps = {
   adminName: string | null;
   activeTab: AdminTabDefinition;
+  locale: AppLocale;
 };
 
 export function AdminMobileHeader({
   adminName,
   activeTab,
+  locale,
 }: AdminMobileHeaderProps) {
+  const copy = getAdminCopy(locale);
+
   return (
     <header className="admin-mobile-header sticky top-0 z-40 border-b border-zinc-200/80 bg-white/95 backdrop-blur-xl">
       <div
@@ -19,14 +25,14 @@ export function AdminMobileHeader({
       >
         <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-red-600">
-            Taskery Admin
+            {copy.adminBadge}
           </p>
           <h1 className="truncate text-lg font-bold text-zinc-900">
             {activeTab.label}
           </h1>
         </div>
         <div className="shrink-0 rounded-full bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 ring-1 ring-red-100">
-          {adminName ?? "Админ"}
+          {adminName ?? copy.adminFallbackName}
         </div>
       </div>
     </header>

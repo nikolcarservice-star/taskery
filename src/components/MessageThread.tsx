@@ -12,7 +12,7 @@ import { formatMoney } from "@/lib/i18n/currencies";
 import { formatRelativeTime } from "@/lib/i18n/relative-time";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { sendMessage, type ActionState } from "@/lib/actions/messages";
-import { useRouter } from "next/navigation";
+import { requestInboxRefresh } from "@/components/inbox/inbox-events";
 
 import type { ContractStatus, MessageKind, ProjectStatus } from "@/generated/prisma/client";
 
@@ -83,7 +83,6 @@ export function MessageThread({
 }: MessageThreadProps) {
   const dict = useDictionary();
   const locale = useDictionaryLocale();
-  const router = useRouter();
   const t = dict.inbox.thread;
   const disputeT = dict.inbox.dispute;
   const common = dict.cabinetForms.common;
@@ -100,9 +99,9 @@ export function MessageThread({
     if (state.success) {
       setDraft("");
       textareaRef.current?.focus();
-      router.refresh();
+      requestInboxRefresh();
     }
-  }, [state.success, router]);
+  }, [state.success]);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {

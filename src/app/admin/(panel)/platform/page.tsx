@@ -1,6 +1,7 @@
 import { AdminPlatformSection } from "@/components/admin/sections/AdminPlatformSection";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
+import { getLocale } from "@/lib/i18n/server";
 import { getAdminCatalogOverview } from "@/lib/queries/admin-catalog";
 import { getCmsPages } from "@/lib/queries/admin-cms";
 import { prisma } from "@/lib/prisma";
@@ -13,6 +14,8 @@ export default async function AdminPlatformPage() {
   if (!hasAdminPermission(permissions, "STAFF_MANAGE")) {
     redirect("/admin/overview");
   }
+
+  const locale = await getLocale();
 
   const [catalogOverview, cmsPages, freelancerCount, clientCount] =
     await Promise.all([
@@ -29,6 +32,7 @@ export default async function AdminPlatformPage() {
         catalogSkills={catalogOverview?.skills ?? []}
         cmsPages={cmsPages}
         stats={{ freelancers: freelancerCount, clients: clientCount }}
+        locale={locale}
       />
     </Suspense>
   );

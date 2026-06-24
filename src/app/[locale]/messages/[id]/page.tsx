@@ -9,7 +9,7 @@ import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { localizedPath } from "@/lib/i18n/routing";
 import { markConversationMessagesRead } from "@/lib/messages-inbox";
 import { markBidMessageNotificationsReadForProject } from "@/lib/notifications";
-import { revalidateInboxPaths } from "@/lib/revalidate-inbox";
+import { ConversationInboxSync } from "@/components/inbox/ConversationInboxSync";
 import { participantMessagesWhere } from "@/lib/messages-visibility";
 import { shouldWarnExternalLinks } from "@/lib/moderation/message-guard";
 import { createMetadata } from "@/lib/metadata";
@@ -91,7 +91,6 @@ export default async function ConversationPage({ params }: ConversationPageProps
     session.user.id,
     conversation.project.id,
   );
-  revalidateInboxPaths();
 
   const isClient = conversation.clientId === session.user.id;
   const isFreelancerRole = conversation.freelancerId === session.user.id;
@@ -99,7 +98,9 @@ export default async function ConversationPage({ params }: ConversationPageProps
   const contract = conversation.project.contract;
 
   const content = (
-    <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
+    <>
+      <ConversationInboxSync />
+      <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
       <ConversationHeader
         conversationId={conversation.id}
         projectTitle={conversation.project.title}
@@ -152,6 +153,7 @@ export default async function ConversationPage({ params }: ConversationPageProps
         }
       />
     </div>
+    </>
   );
 
   if (isFreelancer || session.user.role === "CLIENT") {

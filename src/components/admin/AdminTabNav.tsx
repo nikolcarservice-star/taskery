@@ -12,6 +12,7 @@ type AdminTabNavProps<T extends string> = {
   onChange: (tab: T) => void;
   size?: "md" | "sm";
   className?: string;
+  ariaLabel?: string;
 };
 
 export function AdminTabNav<T extends string>({
@@ -20,6 +21,7 @@ export function AdminTabNav<T extends string>({
   onChange,
   size = "md",
   className = "",
+  ariaLabel = "Admin panel sections",
 }: AdminTabNavProps<T>) {
   const isSmall = size === "sm";
 
@@ -27,7 +29,7 @@ export function AdminTabNav<T extends string>({
     <div
       className={`overflow-x-auto ${className}`}
       role="tablist"
-      aria-label="Разделы админ-панели"
+      aria-label={ariaLabel}
     >
       <div
         className={`inline-flex min-w-full gap-1 rounded-2xl border border-zinc-200 bg-zinc-100/90 p-1 shadow-inner ${

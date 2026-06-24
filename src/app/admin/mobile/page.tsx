@@ -1,6 +1,7 @@
 import { AdminOverviewSection } from "@/components/admin/sections/AdminOverviewSection";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
+import { getLocale } from "@/lib/i18n/server";
 import { getAdminAnalyticsOverview } from "@/lib/queries/admin-analytics";
 import { getAdminMobileBadges } from "@/lib/queries/admin-mobile-badges";
 import { prisma } from "@/lib/prisma";
@@ -8,6 +9,8 @@ import { prisma } from "@/lib/prisma";
 export default async function AdminMobileOverviewPage() {
   const { permissions, admin } = await getAdminPageContext("/admin/mobile");
   const canViewFinance = hasAdminPermission(permissions, "FINANCE");
+
+  const locale = await getLocale();
 
   const [userCount, projectCount, freelancerCount, clientCount, analytics, badges] =
     await Promise.all([
@@ -24,6 +27,7 @@ export default async function AdminMobileOverviewPage() {
   return (
     <AdminOverviewSection
       platform="mobile"
+      locale={locale}
       stats={{
         users: userCount,
         projects: projectCount,

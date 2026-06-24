@@ -10,6 +10,8 @@ import {
   adminTakeReportReview,
   type ModerationActionState,
 } from "@/lib/actions/admin-moderation";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import { adminReportObjectsLabel } from "@/lib/admin-i18n-panels";
 import type {
   AdminReportItem,
   AdminReportProjectGroup,
@@ -21,27 +23,19 @@ import {
   groupAdminReports,
   UNDERPRICED_REPORT_THRESHOLD,
 } from "@/lib/reports-shared";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useActionState } from "react";
 
 const initialState: ModerationActionState = {};
 
-const REASON_LABELS: Record<string, string> = {
-  UNDERPRICED: "Заниженная цена",
-  SPAM: "Спам",
-  FRAUD: "Мошенничество",
-  HARASSMENT: "Оскорбления",
-  IRRELEVANT: "Нерелевантно",
-  POLICY_VIOLATION: "Нарушение правил",
-  FAKE_PROFILE: "Фейковый профиль",
-  OTHER: "Другое",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: "Новая",
-  IN_REVIEW: "В работе",
-};
-
-function ReportRow({ report }: { report: AdminReportItem }) {
+function ReportRow({
+  report,
+  locale,
+}: {
+  report: AdminReportItem;
+  locale: AppLocale;
+}) {
+  const r = getAdminCopy(locale).panels.reports;
   const [reviewState, reviewAction, reviewPending] = useActionState(
     adminTakeReportReview,
     initialState,
@@ -51,7 +45,7 @@ function ReportRow({ report }: { report: AdminReportItem }) {
     <li className="rounded-lg border border-orange-100/80 bg-white px-3 py-2.5 text-sm">
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <span className="rounded-full bg-orange-50 px-2 py-0.5 font-medium text-orange-800">
-          {REASON_LABELS[report.reason] ?? report.reason}
+          {r.reasons[report.reason] ?? report.reason}
         </span>
         <span
           className={`rounded-full px-2 py-0.5 font-medium ${
@@ -60,10 +54,10 @@ function ReportRow({ report }: { report: AdminReportItem }) {
               : "bg-zinc-100 text-zinc-600"
           }`}
         >
-          {STATUS_LABELS[report.status] ?? report.status}
+          {r.statuses[report.status] ?? report.status}
         </span>
         <span className="text-zinc-500">
-          {new Date(report.createdAt).toLocaleString("ru-RU")}
+          {new Date(report.createdAt).toLocaleString(locale)}
         </span>
       </div>
       <p className="mt-1.5 text-zinc-800">
@@ -80,12 +74,12 @@ function ReportRow({ report }: { report: AdminReportItem }) {
             disabled={reviewPending}
             className="rounded-full border border-blue-300 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-50 disabled:opacity-50"
           >
-            {reviewPending ? "…" : "Взять в работу"}
+            {reviewPending ? "…" : r.takeReview}
           </button>
         </form>
       )}
       {report.status === "IN_REVIEW" && (
-        <ResolveReportForm reportId={report.id} />
+        <ResolveReportForm reportId={report.id} locale={locale} />
       )}
       {reviewState.error && (
         <p className="mt-1 text-xs text-red-600">{reviewState.error}</p>
@@ -94,7 +88,14 @@ function ReportRow({ report }: { report: AdminReportItem }) {
   );
 }
 
-function ResolveReportForm({ reportId }: { reportId: string }) {
+function ResolveReportForm({
+  reportId,
+  locale,
+}: {
+  reportId: string;
+  locale: AppLocale;
+}) {
+  const r = getAdminCopy(locale).panels.reports;
   const [state, formAction, pending] = useActionState(
     adminResolveReportNoAction,
     initialState,
@@ -105,7 +106,7 @@ function ResolveReportForm({ reportId }: { reportId: string }) {
       <input type="hidden" name="reportId" value={reportId} />
       <input
         name="adminNote"
-        placeholder="Комментарий"
+        placeholder={r.commentPlaceholder}
         className="min-w-[140px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
       />
       <button
@@ -113,14 +114,22 @@ function ResolveReportForm({ reportId }: { reportId: string }) {
         disabled={pending}
         className="rounded-full border border-emerald-300 px-3 py-1 text-xs font-medium text-emerald-800 hover:bg-emerald-50 disabled:opacity-50"
       >
-        Решить без санкций
+        {r.resolveNoSanctions}
       </button>
       {state.error && <p className="w-full text-xs text-red-600">{state.error}</p>}
     </form>
   );
 }
 
-function ProjectGroupActions({ group }: { group: AdminReportProjectGroup }) {
+function ProjectGroupActions({
+  group,
+  locale,
+}: {
+  group: AdminReportProjectGroup;
+  locale: AppLocale;
+}) {
+  const r = getAdminCopy(locale).panels.reports;
+  const c = getAdminCopy(locale).panels.common;
   const [dismissState, dismissAction, dismissPending] = useActionState(
     adminDismissProjectReports,
     initialState,
@@ -156,7 +165,7 @@ function ProjectGroupActions({ group }: { group: AdminReportProjectGroup }) {
         <input type="hidden" name="projectId" value={group.project.id} />
         <input
           name="adminNote"
-          placeholder="Заметка при отклонении всех жалоб"
+          placeholder={r.dismissAllNote}
           className="min-w-[160px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
         />
         <button
@@ -164,7 +173,7 @@ function ProjectGroupActions({ group }: { group: AdminReportProjectGroup }) {
           disabled={dismissPending}
           className="rounded-full border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
         >
-          Отклонить все ({group.reports.length})
+          {r.dismissAll} ({group.reports.length})
         </button>
       </form>
 
@@ -172,7 +181,7 @@ function ProjectGroupActions({ group }: { group: AdminReportProjectGroup }) {
         <input type="hidden" name="projectId" value={group.project.id} />
         <input
           name="adminNote"
-          placeholder="Причина блокировки проекта"
+          placeholder={r.blockProjectReason}
           className="min-w-[160px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
         />
         <button
@@ -180,7 +189,7 @@ function ProjectGroupActions({ group }: { group: AdminReportProjectGroup }) {
           disabled={blockPending}
           className="rounded-full bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700 disabled:opacity-50"
         >
-          Заблокировать проект
+          {r.blockProject}
         </button>
       </form>
 
@@ -188,7 +197,7 @@ function ProjectGroupActions({ group }: { group: AdminReportProjectGroup }) {
         <input type="hidden" name="userId" value={clientId} />
         <input
           name="adminNote"
-          placeholder="Причина блокировки заказчика"
+          placeholder={r.blockClientReason}
           className="min-w-[160px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
         />
         <button
@@ -196,7 +205,7 @@ function ProjectGroupActions({ group }: { group: AdminReportProjectGroup }) {
           disabled={banPending}
           className="rounded-full bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
         >
-          Заблокировать заказчика
+          {r.blockClient}
         </button>
       </form>
 
@@ -204,7 +213,7 @@ function ProjectGroupActions({ group }: { group: AdminReportProjectGroup }) {
         <input type="hidden" name="userId" value={clientId} />
         <input
           name="adminNote"
-          placeholder="Причина удаления заказчика"
+          placeholder={r.deleteClientReason}
           className="min-w-[160px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
         />
         <button
@@ -212,17 +221,25 @@ function ProjectGroupActions({ group }: { group: AdminReportProjectGroup }) {
           disabled={deletePending}
           className="rounded-full bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
         >
-          Удалить заказчика
+          {r.deleteClient}
         </button>
       </form>
 
       {error && <p className="text-xs text-red-600">{error}</p>}
-      {success && <p className="text-xs text-green-700">Готово</p>}
+      {success && <p className="text-xs text-green-700">{c.done}</p>}
     </div>
   );
 }
 
-function UserGroupActions({ group }: { group: AdminReportUserGroup }) {
+function UserGroupActions({
+  group,
+  locale,
+}: {
+  group: AdminReportUserGroup;
+  locale: AppLocale;
+}) {
+  const r = getAdminCopy(locale).panels.reports;
+  const c = getAdminCopy(locale).panels.common;
   const [dismissState, dismissAction, dismissPending] = useActionState(
     adminDismissUserReports,
     initialState,
@@ -247,7 +264,7 @@ function UserGroupActions({ group }: { group: AdminReportUserGroup }) {
         <input type="hidden" name="userId" value={group.user.id} />
         <input
           name="adminNote"
-          placeholder="Заметка при отклонении всех жалоб"
+          placeholder={r.dismissAllNote}
           className="min-w-[160px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
         />
         <button
@@ -255,7 +272,7 @@ function UserGroupActions({ group }: { group: AdminReportUserGroup }) {
           disabled={dismissPending}
           className="rounded-full border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
         >
-          Отклонить все ({group.reports.length})
+          {r.dismissAll} ({group.reports.length})
         </button>
       </form>
 
@@ -263,7 +280,7 @@ function UserGroupActions({ group }: { group: AdminReportUserGroup }) {
         <input type="hidden" name="userId" value={group.user.id} />
         <input
           name="adminNote"
-          placeholder="Причина блокировки"
+          placeholder={r.blockUserReason}
           className="min-w-[160px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
         />
         <button
@@ -271,7 +288,7 @@ function UserGroupActions({ group }: { group: AdminReportUserGroup }) {
           disabled={banPending}
           className="rounded-full bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
         >
-          Заблокировать пользователя
+          {r.blockUser}
         </button>
       </form>
 
@@ -279,7 +296,7 @@ function UserGroupActions({ group }: { group: AdminReportUserGroup }) {
         <input type="hidden" name="userId" value={group.user.id} />
         <input
           name="adminNote"
-          placeholder="Причина удаления"
+          placeholder={r.deleteUserReason}
           className="min-w-[160px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
         />
         <button
@@ -287,23 +304,31 @@ function UserGroupActions({ group }: { group: AdminReportUserGroup }) {
           disabled={deletePending}
           className="rounded-full bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
         >
-          Удалить пользователя
+          {r.deleteUser}
         </button>
       </form>
 
       {error && <p className="text-xs text-red-600">{error}</p>}
-      {success && <p className="text-xs text-green-700">Готово</p>}
+      {success && <p className="text-xs text-green-700">{c.done}</p>}
     </div>
   );
 }
 
-function ProjectReportGroupCard({ group }: { group: AdminReportProjectGroup }) {
+function ProjectReportGroupCard({
+  group,
+  locale,
+}: {
+  group: AdminReportProjectGroup;
+  locale: AppLocale;
+}) {
+  const r = getAdminCopy(locale).panels.reports;
+  const c = getAdminCopy(locale).panels.common;
   const threshold = UNDERPRICED_REPORT_THRESHOLD;
   const project = group.project;
   const underpriced = project.underpricedReportCount;
   const otherCount = getOtherReportCount(project.reportCount, underpriced);
   const underpricedInQueue = group.reports.filter(
-    (r) => r.reason === "UNDERPRICED",
+    (item) => item.reason === "UNDERPRICED",
   ).length;
   const barPercent = Math.min(
     100,
@@ -322,11 +347,11 @@ function ProjectReportGroupCard({ group }: { group: AdminReportProjectGroup }) {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-semibold text-orange-900">
-              Проект · {group.reports.length} жалоб
+              {r.projectGroup} · {group.reports.length} {r.reportsWord}
             </span>
             {project.moderationHot && (
               <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800">
-                На проверке
+                {r.inReview}
               </span>
             )}
           </div>
@@ -339,16 +364,16 @@ function ProjectReportGroupCard({ group }: { group: AdminReportProjectGroup }) {
           </a>
 
           <p className="mt-1 text-sm text-zinc-600">
-            Бюджет: {formatBudget(project.budget, project.currency)} · Заказчик:{" "}
-            {project.client.name ?? project.client.email}
+            {r.budgetClient}: {formatBudget(project.budget, project.currency)} ·{" "}
+            {c.client}: {project.client.name ?? project.client.email}
           </p>
 
           {underpriced > 0 && (
             <div className="mt-3 max-w-md">
               <p className="text-xs font-medium text-amber-900">
-                Заниженная цена: {underpriced} / {threshold}
+                {r.underpriced}: {underpriced} / {threshold}
                 {underpricedInQueue > 0 &&
-                  ` (в очереди: ${underpricedInQueue})`}
+                  ` (${r.inQueue}: ${underpricedInQueue})`}
               </p>
               <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white">
                 <div
@@ -363,7 +388,7 @@ function ProjectReportGroupCard({ group }: { group: AdminReportProjectGroup }) {
 
           {otherCount > 0 && underpriced === 0 && (
             <p className="mt-2 text-xs text-orange-800">
-              Других жалоб на проект: {otherCount}
+              {r.otherReports}: {otherCount}
             </p>
           )}
         </div>
@@ -371,21 +396,29 @@ function ProjectReportGroupCard({ group }: { group: AdminReportProjectGroup }) {
 
       <ul className="mt-4 space-y-2">
         {group.reports.map((report) => (
-          <ReportRow key={report.id} report={report} />
+          <ReportRow key={report.id} report={report} locale={locale} />
         ))}
       </ul>
 
-      <ProjectGroupActions group={group} />
+      <ProjectGroupActions group={group} locale={locale} />
     </li>
   );
 }
 
-function UserReportGroupCard({ group }: { group: AdminReportUserGroup }) {
+function UserReportGroupCard({
+  group,
+  locale,
+}: {
+  group: AdminReportUserGroup;
+  locale: AppLocale;
+}) {
+  const r = getAdminCopy(locale).panels.reports;
+
   return (
     <li className="rounded-xl border border-orange-200 bg-orange-50/40 p-4">
       <div className="flex flex-wrap items-center gap-2">
         <span className="rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-semibold text-orange-900">
-          Пользователь · {group.reports.length} жалоб
+          {r.userGroup} · {group.reports.length} {r.reportsWord}
         </span>
       </div>
 
@@ -399,59 +432,63 @@ function UserReportGroupCard({ group }: { group: AdminReportUserGroup }) {
 
       <ul className="mt-4 space-y-2">
         {group.reports.map((report) => (
-          <ReportRow key={report.id} report={report} />
+          <ReportRow key={report.id} report={report} locale={locale} />
         ))}
       </ul>
 
-      <UserGroupActions group={group} />
+      <UserGroupActions group={group} locale={locale} />
     </li>
   );
 }
 
 type AdminReportsPanelProps = {
   reports: AdminReportItem[];
+  locale: AppLocale;
 };
 
-export function AdminReportsPanel({ reports }: AdminReportsPanelProps) {
+export function AdminReportsPanel({ reports, locale }: AdminReportsPanelProps) {
+  const r = getAdminCopy(locale).panels.reports;
   const groups = groupAdminReports(reports);
 
   if (groups.length === 0) {
     return (
       <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-zinc-900">Жалобы (0)</h2>
-        <p className="mt-3 text-sm text-zinc-600">Новых жалоб нет</p>
+        <h2 className="text-lg font-semibold text-zinc-900">{r.titleEmpty}</h2>
+        <p className="mt-3 text-sm text-zinc-600">{r.bodyEmpty}</p>
       </section>
     );
   }
 
   const totalReports = reports.length;
+  const objectsLabel = adminReportObjectsLabel(groups.length, r, locale);
 
   return (
     <section className="rounded-2xl border border-orange-200 bg-white p-6 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-orange-900">
-            Жалобы ({totalReports} · {groups.length}{" "}
-            {groups.length === 1 ? "объект" : groups.length < 5 ? "объекта" : "объектов"})
+            {r.title} ({totalReports} · {groups.length} {objectsLabel})
           </h2>
-          <p className="mt-1 text-sm text-zinc-600">
-            Жалобы сгруппированы по проекту или пользователю
-          </p>
+          <p className="mt-1 text-sm text-zinc-600">{r.subtitle}</p>
         </div>
         <a
           href="/api/admin/export/reports"
           className="inline-flex rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
         >
-          Экспорт CSV
+          {r.exportCsv}
         </a>
       </div>
 
       <ul className="mt-4 space-y-4">
         {groups.map((group) =>
           group.kind === "project" ? (
-            <ProjectReportGroupCard key={group.project.id} group={group} />
+            <ProjectReportGroupCard
+              key={group.project.id}
+              group={group}
+              locale={locale}
+            />
           ) : (
-            <UserReportGroupCard key={group.user.id} group={group} />
+            <UserReportGroupCard key={group.user.id} group={group} locale={locale} />
           ),
         )}
       </ul>

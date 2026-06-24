@@ -7,30 +7,35 @@ import {
   adminRejectPortfolioItem,
   type ContentModerationState,
 } from "@/lib/actions/admin-content-moderation";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { ContentModerationOverview } from "@/lib/queries/admin-content-moderation";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useActionState } from "react";
 
 const initialState: ContentModerationState = {};
 
 export function AdminContentModerationPanel({
   queue,
+  locale,
 }: {
   queue: ContentModerationOverview;
+  locale: AppLocale;
 }) {
+  const p = getAdminCopy(locale).panels.contentModeration;
   const total = queue.portfolio.length + queue.avatars.length;
 
   return (
     <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
       <h2 className="text-lg font-semibold text-zinc-900">
-        Модерация контента ({total})
+        {p.title} ({total})
       </h2>
 
       {queue.avatars.length > 0 && (
         <div className="mt-4">
-          <h3 className="text-sm font-medium text-zinc-700">Аватары</h3>
+          <h3 className="text-sm font-medium text-zinc-700">{p.avatars}</h3>
           <ul className="mt-2 space-y-3">
             {queue.avatars.map((item) => (
-              <AvatarRow key={item.userId} item={item} />
+              <AvatarRow key={item.userId} item={item} locale={locale} />
             ))}
           </ul>
         </div>
@@ -38,17 +43,17 @@ export function AdminContentModerationPanel({
 
       {queue.portfolio.length > 0 && (
         <div className="mt-4">
-          <h3 className="text-sm font-medium text-zinc-700">Портфолио</h3>
+          <h3 className="text-sm font-medium text-zinc-700">{p.portfolio}</h3>
           <ul className="mt-2 space-y-3">
             {queue.portfolio.map((item) => (
-              <PortfolioRow key={item.id} item={item} />
+              <PortfolioRow key={item.id} item={item} locale={locale} />
             ))}
           </ul>
         </div>
       )}
 
       {total === 0 && (
-        <p className="mt-3 text-sm text-zinc-600">Очередь пуста</p>
+        <p className="mt-3 text-sm text-zinc-600">{p.empty}</p>
       )}
     </section>
   );
@@ -56,9 +61,12 @@ export function AdminContentModerationPanel({
 
 function AvatarRow({
   item,
+  locale,
 }: {
   item: ContentModerationOverview["avatars"][number];
+  locale: AppLocale;
 }) {
+  const c = getAdminCopy(locale).panels.common;
   const [approveState, approveAction, approvePending] = useActionState(
     adminApproveAvatar,
     initialState,
@@ -87,7 +95,7 @@ function AvatarRow({
             disabled={approvePending}
             className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
           >
-            Одобрить
+            {c.approve}
           </button>
         </form>
         <form action={rejectAction}>
@@ -97,7 +105,7 @@ function AvatarRow({
             disabled={rejectPending}
             className="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 disabled:opacity-50"
           >
-            Отклонить
+            {c.reject}
           </button>
         </form>
       </div>
@@ -110,9 +118,12 @@ function AvatarRow({
 
 function PortfolioRow({
   item,
+  locale,
 }: {
   item: ContentModerationOverview["portfolio"][number];
+  locale: AppLocale;
 }) {
+  const c = getAdminCopy(locale).panels.common;
   const [approveState, approveAction, approvePending] = useActionState(
     adminApprovePortfolioItem,
     initialState,
@@ -136,14 +147,14 @@ function PortfolioRow({
             disabled={approvePending}
             className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
           >
-            Одобрить
+            {c.approve}
           </button>
         </form>
         <form action={rejectAction} className="flex gap-2">
           <input type="hidden" name="itemId" value={item.id} />
           <input
             name="reason"
-            placeholder="Причина"
+            placeholder={c.reason}
             className="rounded-lg border border-zinc-300 px-2 py-1.5 text-xs"
           />
           <button
@@ -151,7 +162,7 @@ function PortfolioRow({
             disabled={rejectPending}
             className="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 disabled:opacity-50"
           >
-            Отклонить
+            {c.reject}
           </button>
         </form>
       </div>

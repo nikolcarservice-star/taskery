@@ -1,6 +1,7 @@
 import { AdminFinanceSection } from "@/components/admin/sections/AdminFinanceSection";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
+import { getLocale } from "@/lib/i18n/server";
 import { getAdminFinanceOverview } from "@/lib/queries/admin-finance";
 import { getPendingWithdrawals } from "@/lib/queries/admin-withdrawals";
 import { redirect } from "next/navigation";
@@ -12,6 +13,8 @@ export default async function AdminFinancePage() {
   if (!hasAdminPermission(permissions, "FINANCE")) {
     redirect("/admin/overview");
   }
+
+  const locale = await getLocale();
 
   const [finance, pendingWithdrawals] = await Promise.all([
     getAdminFinanceOverview(),
@@ -27,6 +30,7 @@ export default async function AdminFinancePage() {
       <AdminFinanceSection
         finance={finance}
         pendingWithdrawals={pendingWithdrawals}
+        locale={locale}
       />
     </Suspense>
   );

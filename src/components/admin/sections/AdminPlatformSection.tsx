@@ -4,8 +4,10 @@ import { AdminBroadcastPanel } from "@/components/AdminBroadcastPanel";
 import { AdminCatalogPanel } from "@/components/AdminCatalogPanel";
 import { AdminCmsPanel } from "@/components/AdminCmsPanel";
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { CmsPageItem } from "@/lib/queries/admin-cms";
 import type { AdminCategoryItem, AdminSkillItem } from "@/lib/queries/admin-catalog";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useRouter, useSearchParams } from "next/navigation";
 
 type PlatformSectionKey = "catalog" | "cms" | "broadcast";
@@ -15,6 +17,7 @@ type AdminPlatformSectionProps = {
   catalogSkills: AdminSkillItem[];
   cmsPages: CmsPageItem[];
   stats: { freelancers: number; clients: number };
+  locale: AppLocale;
   basePath?: string;
 };
 
@@ -23,8 +26,10 @@ export function AdminPlatformSection({
   catalogSkills,
   cmsPages,
   stats,
+  locale,
   basePath = "/admin/platform",
 }: AdminPlatformSectionProps) {
+  const copy = getAdminCopy(locale);
   const router = useRouter();
   const searchParams = useSearchParams();
   const sectionParam = searchParams.get("section");
@@ -50,10 +55,11 @@ export function AdminPlatformSection({
     <div className="space-y-5">
       <AdminTabNav
         size="sm"
+        ariaLabel={copy.tabNavAria}
         tabs={[
-          { id: "catalog" as const, label: "Каталог" },
-          { id: "cms" as const, label: "CMS" },
-          { id: "broadcast" as const, label: "Рассылка" },
+          { id: "catalog" as const, label: copy.platformSections.catalog },
+          { id: "cms" as const, label: copy.platformSections.cms },
+          { id: "broadcast" as const, label: copy.platformSections.broadcast },
         ]}
         active={activeSection}
         onChange={setSection}

@@ -1,6 +1,7 @@
 import { AdminOverviewSection } from "@/components/admin/sections/AdminOverviewSection";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
+import { getLocale } from "@/lib/i18n/server";
 import { getAdminAnalyticsOverview } from "@/lib/queries/admin-analytics";
 import { getAdminMobileBadges } from "@/lib/queries/admin-mobile-badges";
 import { prisma } from "@/lib/prisma";
@@ -19,6 +20,8 @@ export default async function AdminOverviewPage({
 
   const canViewFinance = hasAdminPermission(permissions, "FINANCE");
 
+  const locale = await getLocale();
+
   const [userCount, projectCount, freelancerCount, clientCount, analytics, badges] =
     await Promise.all([
       prisma.user.count(),
@@ -33,6 +36,7 @@ export default async function AdminOverviewPage({
 
   return (
     <AdminOverviewSection
+      locale={locale}
       stats={{
         users: userCount,
         projects: projectCount,

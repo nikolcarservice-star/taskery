@@ -643,10 +643,8 @@ export type Dictionary = {
       pushPermissionDenied: string;
       pushSubscribeFailed: string;
       pushUnsubscribeFailed: string;
-      pushSoon: string;
       soundMessages: string;
       soundHint: string;
-      soundSoon: string;
     };
     telegram: {
       connect: string;
@@ -678,7 +676,6 @@ export type Dictionary = {
       passwordHint: string;
       changePassword: string;
       twoFactor: string;
-      twoFactorSoon: string;
       twoFactorHint: string;
       twoFactorDescription: string;
       twoFactorWithdrawalsHint: string;

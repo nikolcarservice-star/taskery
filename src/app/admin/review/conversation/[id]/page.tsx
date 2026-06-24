@@ -5,6 +5,8 @@ import {
   loadAdminConversationReview,
   resolveAdminReviewBackHref,
 } from "@/lib/admin-review";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import { getLocale } from "@/lib/i18n/server";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 
@@ -22,6 +24,8 @@ export default async function AdminConversationReviewPage({
     redirect("/admin/overview");
   }
 
+  const locale = await getLocale();
+  const copy = getAdminCopy(locale);
   const { id } = await params;
   const { back } = await searchParams;
   const conversation = await loadAdminConversationReview(id);
@@ -36,12 +40,14 @@ export default async function AdminConversationReviewPage({
   if (!admin) notFound();
 
   const backHref = resolveAdminReviewBackHref(back);
-  const clientName = conversation.client.name ?? "Заказчик";
-  const freelancerName = conversation.freelancer.name ?? "Исполнитель";
+  const clientName = conversation.client.name ?? copy.review.clientFallback;
+  const freelancerName =
+    conversation.freelancer.name ?? copy.review.freelancerFallback;
 
   return (
     <AdminReviewShell
-      title="Чат проекта"
+      locale={locale}
+      title={copy.review.projectChatTitle}
       subtitle={`${conversation.project.title} · ${clientName} ↔ ${freelancerName}`}
       backHref={backHref}
     >
@@ -50,6 +56,7 @@ export default async function AdminConversationReviewPage({
         targetId={conversation.id}
         messages={conversation.messages}
         admin={admin}
+        locale={locale}
         participants={{
           client: conversation.client,
           freelancer: conversation.freelancer,

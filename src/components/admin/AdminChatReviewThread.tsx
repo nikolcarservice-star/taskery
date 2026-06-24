@@ -7,12 +7,15 @@ import { MessageContent } from "@/components/MessageContent";
 import { ModerationWarningMessage } from "@/components/ModerationWarningMessage";
 import { UserAvatar } from "@/components/UserAvatar";
 import type { AdminReviewMessage } from "@/lib/admin-review-types";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
+import type { AppLocale } from "@/lib/i18n/types";
 import { formatRelativeTime } from "@/lib/i18n/relative-time";
 
 type AdminChatReviewThreadProps = {
   messages: AdminReviewMessage[];
   adminId: string;
+  locale: AppLocale;
   participants: {
     client: { id: string; name: string | null; avatar?: string | null };
     freelancer: { id: string; name: string | null; avatar?: string | null };
@@ -22,10 +25,11 @@ type AdminChatReviewThreadProps = {
 export function AdminChatReviewThread({
   messages,
   adminId,
+  locale,
   participants,
 }: AdminChatReviewThreadProps) {
+  const copy = getAdminCopy(locale).review;
   const dict = useDictionary();
-  const t = dict.inbox.thread;
 
   const nameById = new Map<string, string | null>([
     [participants.client.id, participants.client.name],
@@ -39,10 +43,7 @@ export function AdminChatReviewThread({
 
   if (messages.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-zinc-500">
-        Сообщений в переписке пока нет. Вы можете написать первым от имени
-        администратора.
-      </p>
+      <p className="py-8 text-center text-sm text-zinc-500">{copy.emptyThread}</p>
     );
   }
 
@@ -51,14 +52,14 @@ export function AdminChatReviewThread({
       {messages.map((msg, index) => {
         if (msg.kind === "EXTERNAL_CONTACT_WARNING") {
           const offenderName =
-            msg.violationUser?.name ?? msg.violationUser?.id ?? t.participant;
+            msg.violationUser?.name ?? msg.violationUser?.id ?? copy.participant;
 
           return (
             <div key={msg.id} className="space-y-2">
               <ModerationWarningMessage violationUserName={offenderName} />
               {msg.blockedSnippet && (
                 <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900">
-                  Заблокированный текст: «{msg.blockedSnippet}»
+                  {copy.blockedText}: «{msg.blockedSnippet}»
                 </p>
               )}
             </div>
@@ -67,7 +68,7 @@ export function AdminChatReviewThread({
 
         if (msg.kind === "DISPUTE_OPENED" && msg.sender) {
           const openedByName =
-            msg.sender.name ?? nameById.get(msg.sender.id) ?? t.participant;
+            msg.sender.name ?? nameById.get(msg.sender.id) ?? copy.participant;
 
           return (
             <DisputeOpenedMessage
@@ -81,7 +82,7 @@ export function AdminChatReviewThread({
 
         if (msg.kind === "DISPUTE_REASON" && msg.sender) {
           const openedByName =
-            msg.sender.name ?? nameById.get(msg.sender.id) ?? t.participant;
+            msg.sender.name ?? nameById.get(msg.sender.id) ?? copy.participant;
 
           return (
             <DisputeReasonMessage
@@ -95,7 +96,7 @@ export function AdminChatReviewThread({
 
         if (msg.kind === "DISPUTE_ADMIN_NOTE" && msg.sender) {
           const openedByName =
-            msg.sender.name ?? nameById.get(msg.sender.id) ?? t.participant;
+            msg.sender.name ?? nameById.get(msg.sender.id) ?? copy.participant;
 
           return (
             <DisputeAdminNoteMessage
@@ -115,7 +116,7 @@ export function AdminChatReviewThread({
         const senderName =
           msg.sender.name ??
           nameById.get(msg.sender.id) ??
-          (isAdminMessage ? "Администратор" : t.participant);
+          (isAdminMessage ? copy.adminLabel : copy.participant);
         const prev = messages[index - 1];
         const showAvatar =
           !prev ||
@@ -142,7 +143,7 @@ export function AdminChatReviewThread({
                   <p className="text-xs font-medium text-zinc-500">{senderName}</p>
                   {isAdminMessage && (
                     <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-800">
-                      Администратор
+                      {copy.adminLabel}
                     </span>
                   )}
                 </div>

@@ -1,6 +1,7 @@
 import { AdminPlatformSection } from "@/components/admin/sections/AdminPlatformSection";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
+import { getLocale } from "@/lib/i18n/server";
 import { ADMIN_MOBILE_ROOT } from "@/lib/admin-mobile-routes";
 import { getAdminCatalogOverview } from "@/lib/queries/admin-catalog";
 import { getCmsPages } from "@/lib/queries/admin-cms";
@@ -16,6 +17,8 @@ export default async function AdminMobilePlatformPage() {
   if (!hasAdminPermission(permissions, "STAFF_MANAGE")) {
     redirect(ADMIN_MOBILE_ROOT);
   }
+
+  const locale = await getLocale();
 
   const [catalogOverview, cmsPages, freelancerCount, clientCount] =
     await Promise.all([
@@ -33,6 +36,7 @@ export default async function AdminMobilePlatformPage() {
         catalogSkills={catalogOverview?.skills ?? []}
         cmsPages={cmsPages}
         stats={{ freelancers: freelancerCount, clients: clientCount }}
+        locale={locale}
       />
     </Suspense>
   );

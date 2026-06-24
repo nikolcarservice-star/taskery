@@ -2,6 +2,8 @@ import { AdminChatReviewPanel } from "@/components/admin/AdminChatReviewPanel";
 import { AdminReviewShell } from "@/components/admin/AdminReviewShell";
 import { auth } from "@/lib/auth";
 import { loadAdminBidReview, resolveAdminReviewBackHref } from "@/lib/admin-review";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import { getLocale } from "@/lib/i18n/server";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 
@@ -19,6 +21,8 @@ export default async function AdminBidReviewPage({
     redirect("/admin/overview");
   }
 
+  const locale = await getLocale();
+  const copy = getAdminCopy(locale);
   const { id } = await params;
   const { back } = await searchParams;
   const bid = await loadAdminBidReview(id);
@@ -34,12 +38,13 @@ export default async function AdminBidReviewPage({
 
   const backHref = resolveAdminReviewBackHref(back);
   const client = bid.project.client;
-  const clientName = client.name ?? "Заказчик";
-  const freelancerName = bid.freelancer.name ?? "Исполнитель";
+  const clientName = client.name ?? copy.review.clientFallback;
+  const freelancerName = bid.freelancer.name ?? copy.review.freelancerFallback;
 
   return (
     <AdminReviewShell
-      title="Переписка по отклику"
+      locale={locale}
+      title={copy.review.bidChatTitle}
       subtitle={`${bid.project.title} · ${clientName} ↔ ${freelancerName}`}
       backHref={backHref}
     >
@@ -48,6 +53,7 @@ export default async function AdminBidReviewPage({
         targetId={bid.id}
         messages={bid.messages}
         admin={admin}
+        locale={locale}
         participants={{
           client,
           freelancer: bid.freelancer,

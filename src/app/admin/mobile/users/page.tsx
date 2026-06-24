@@ -1,6 +1,7 @@
 import { AdminUsersSection } from "@/components/admin/sections/AdminUsersSection";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
+import { getLocale } from "@/lib/i18n/server";
 import { ADMIN_MOBILE_ROOT } from "@/lib/admin-mobile-routes";
 import { getPendingProfileVerifications } from "@/lib/queries/admin-verification";
 import { getAdminUsers } from "@/lib/queries/admin-users";
@@ -14,6 +15,8 @@ export default async function AdminMobileUsersPage() {
     redirect(ADMIN_MOBILE_ROOT);
   }
 
+  const locale = await getLocale();
+
   const [verificationItems, users] = await Promise.all([
     getPendingProfileVerifications(),
     getAdminUsers(),
@@ -25,6 +28,7 @@ export default async function AdminMobileUsersPage() {
         basePath={`${ADMIN_MOBILE_ROOT}/users`}
         verificationItems={verificationItems}
         users={users}
+        locale={locale}
       />
     </Suspense>
   );

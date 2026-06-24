@@ -1,6 +1,7 @@
 import { AdminUsersSection } from "@/components/admin/sections/AdminUsersSection";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
+import { getLocale } from "@/lib/i18n/server";
 import { getPendingProfileVerifications } from "@/lib/queries/admin-verification";
 import { getAdminUsers } from "@/lib/queries/admin-users";
 import { redirect } from "next/navigation";
@@ -13,6 +14,8 @@ export default async function AdminUsersPage() {
     redirect("/admin/overview");
   }
 
+  const locale = await getLocale();
+
   const [verificationItems, users] = await Promise.all([
     getPendingProfileVerifications(),
     getAdminUsers(),
@@ -20,7 +23,11 @@ export default async function AdminUsersPage() {
 
   return (
     <Suspense fallback={<div className="h-32 animate-pulse rounded-xl bg-zinc-100" />}>
-      <AdminUsersSection verificationItems={verificationItems} users={users} />
+      <AdminUsersSection
+        verificationItems={verificationItems}
+        users={users}
+        locale={locale}
+      />
     </Suspense>
   );
 }

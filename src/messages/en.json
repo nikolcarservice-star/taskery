@@ -411,10 +411,8 @@
       "pushPermissionDenied": "Allow notifications in your browser",
       "pushSubscribeFailed": "Could not enable push notifications",
       "pushUnsubscribeFailed": "Could not disable push notifications",
-      "pushSoon": "Soon",
       "soundMessages": "New private messages (sound)",
-      "soundHint": "Short alert when unread messages arrive",
-      "soundSoon": "Soon"
+      "soundHint": "Short alert when unread messages arrive"
     },
     "telegram": {
       "connect": "Connect Telegram",
@@ -451,7 +449,6 @@
       "passwordHint": "Update your password regularly to keep your account secure.",
       "changePassword": "Change password",
       "twoFactor": "Two-factor authentication",
-      "twoFactorSoon": "2FA coming soon",
       "twoFactorHint": "For now, use a strong password and review active sessions.",
       "twoFactorDescription": "Protect withdrawals with one-time codes from an authenticator app (Google Authenticator, Authy, etc.).",
       "twoFactorWithdrawalsHint": "When 2FA is enabled, an app code is required for every withdrawal.",

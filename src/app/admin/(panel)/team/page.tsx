@@ -1,6 +1,7 @@
 import { AdminTeamSection } from "@/components/admin/sections/AdminTeamSection";
 import { hasAdminPermission, isSuperAdmin } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
+import { getLocale } from "@/lib/i18n/server";
 import { getRecentAdminAuditLogs } from "@/lib/admin-audit";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -12,6 +13,8 @@ export default async function AdminTeamPage() {
   if (!hasAdminPermission(permissions, "STAFF_MANAGE")) {
     redirect("/admin/overview");
   }
+
+  const locale = await getLocale();
 
   const canViewAudit =
     hasAdminPermission(permissions, "STAFF_MANAGE") ||
@@ -43,6 +46,7 @@ export default async function AdminTeamPage() {
         currentAdminId={admin.id}
         auditLogs={auditLogs}
         showAudit={canViewAudit && auditLogs.length > 0}
+        locale={locale}
       />
     </Suspense>
   );

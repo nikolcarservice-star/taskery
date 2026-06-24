@@ -3,8 +3,10 @@
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
 import { AdminUsersPanel } from "@/components/AdminUsersPanel";
 import { AdminVerificationPanel } from "@/components/AdminVerificationPanel";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { AdminUserItem } from "@/lib/queries/admin-users";
 import type { AdminVerificationItem } from "@/lib/queries/admin-verification";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useRouter, useSearchParams } from "next/navigation";
 
 type UsersSectionKey = "verification" | "accounts";
@@ -12,14 +14,17 @@ type UsersSectionKey = "verification" | "accounts";
 type AdminUsersSectionProps = {
   verificationItems: AdminVerificationItem[];
   users: AdminUserItem[];
+  locale: AppLocale;
   basePath?: string;
 };
 
 export function AdminUsersSection({
   verificationItems,
   users,
+  locale,
   basePath = "/admin/users",
 }: AdminUsersSectionProps) {
+  const copy = getAdminCopy(locale);
   const router = useRouter();
   const searchParams = useSearchParams();
   const sectionParam = searchParams.get("section");
@@ -43,13 +48,14 @@ export function AdminUsersSection({
     <div className="space-y-5">
       <AdminTabNav
         size="sm"
+        ariaLabel={copy.tabNavAria}
         tabs={[
           {
             id: "verification" as const,
-            label: "Верификация",
+            label: copy.usersSections.verification,
             badge: verificationItems.length,
           },
-          { id: "accounts" as const, label: "Аккаунты" },
+          { id: "accounts" as const, label: copy.usersSections.accounts },
         ]}
         active={activeSection}
         onChange={setSection}

@@ -1,6 +1,7 @@
 import { AdminFinanceSection } from "@/components/admin/sections/AdminFinanceSection";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
+import { getLocale } from "@/lib/i18n/server";
 import { ADMIN_MOBILE_ROOT } from "@/lib/admin-mobile-routes";
 import { getAdminFinanceOverview } from "@/lib/queries/admin-finance";
 import { getPendingWithdrawals } from "@/lib/queries/admin-withdrawals";
@@ -15,6 +16,8 @@ export default async function AdminMobileFinancePage() {
   if (!hasAdminPermission(permissions, "FINANCE")) {
     redirect(ADMIN_MOBILE_ROOT);
   }
+
+  const locale = await getLocale();
 
   const [finance, pendingWithdrawals] = await Promise.all([
     getAdminFinanceOverview(),
@@ -31,6 +34,7 @@ export default async function AdminMobileFinancePage() {
         basePath={`${ADMIN_MOBILE_ROOT}/finance`}
         finance={finance}
         pendingWithdrawals={pendingWithdrawals}
+        locale={locale}
       />
     </Suspense>
   );

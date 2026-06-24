@@ -69,7 +69,14 @@ type AdminModerationStackProps = {
 
 const initialState: ActionState = {};
 
-function DisputeActions({ projectId }: { projectId: string }) {
+function DisputeActions({
+  projectId,
+  locale,
+}: {
+  projectId: string;
+  locale: AppLocale;
+}) {
+  const p = getAdminCopy(locale).panels.disputes;
   const [showSplit, setShowSplit] = useState(false);
   const [releaseState, releaseAction, releasePending] = useActionState(
     adminReleaseDispute,
@@ -93,7 +100,7 @@ function DisputeActions({ projectId }: { projectId: string }) {
           disabled={releasePending}
           className="w-full rounded-xl bg-green-600 px-4 py-2.5 text-sm font-medium text-white active:bg-green-700 disabled:opacity-50 sm:w-auto"
         >
-          Выплатить исполнителю
+          {p.releaseToFreelancer}
         </button>
       </form>
       <form action={refundAction} className="flex-1 sm:flex-none">
@@ -103,7 +110,7 @@ function DisputeActions({ projectId }: { projectId: string }) {
           disabled={refundPending}
           className="w-full rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium text-white active:bg-blue-700 disabled:opacity-50 sm:w-auto"
         >
-          Вернуть заказчику
+          {p.refundToClient}
         </button>
       </form>
       <button
@@ -111,7 +118,7 @@ function DisputeActions({ projectId }: { projectId: string }) {
         onClick={() => setShowSplit((value) => !value)}
         className="w-full rounded-xl border border-violet-300 bg-violet-50 px-4 py-2.5 text-sm font-medium text-violet-800 active:bg-violet-100 sm:w-auto"
       >
-        {showSplit ? "Скрыть частичное решение" : "Частичное решение"}
+        {showSplit ? p.splitHide : p.splitShow}
       </button>
 
       {showSplit && (
@@ -121,7 +128,7 @@ function DisputeActions({ projectId }: { projectId: string }) {
         >
           <input type="hidden" name="projectId" value={projectId} />
           <label className="block text-xs font-medium text-violet-900">
-            Процент исполнителю (1–99)
+            {p.splitPercent}
           </label>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <input
@@ -138,14 +145,14 @@ function DisputeActions({ projectId }: { projectId: string }) {
               disabled={splitPending}
               className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50"
             >
-              {splitPending ? "Применяем…" : "Разделить сумму"}
+              {splitPending ? p.splitApplying : p.splitApply}
             </button>
           </div>
           {splitState.error && (
             <p className="mt-2 text-xs text-red-600">{splitState.error}</p>
           )}
           {splitState.success && (
-            <p className="mt-2 text-xs text-green-700">Спор решён частично</p>
+            <p className="mt-2 text-xs text-green-700">{p.splitResolved}</p>
           )}
         </form>
       )}
@@ -156,13 +163,20 @@ function DisputeActions({ projectId }: { projectId: string }) {
         </p>
       )}
       {(releaseState.success || refundState.success) && (
-        <p className="w-full text-xs text-green-700">Спор решён</p>
+        <p className="w-full text-xs text-green-700">{p.resolved}</p>
       )}
     </div>
   );
 }
 
-function BlockProjectButton({ projectId }: { projectId: string }) {
+function BlockProjectButton({
+  projectId,
+  locale,
+}: {
+  projectId: string;
+  locale: AppLocale;
+}) {
+  const c = getAdminCopy(locale).panels.common;
   const [state, formAction, pending] = useActionState(
     adminBlockProject,
     initialState,
@@ -174,7 +188,7 @@ function BlockProjectButton({ projectId }: { projectId: string }) {
       <input
         name="adminNote"
         required
-        placeholder="Причина блокировки"
+        placeholder={c.blockReason}
         className="rounded-lg border border-red-200 bg-white px-3 py-2 text-xs"
       />
       <button
@@ -182,15 +196,22 @@ function BlockProjectButton({ projectId }: { projectId: string }) {
         disabled={pending}
         className="rounded-xl border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-800 active:bg-red-100 disabled:opacity-50"
       >
-        {pending ? "…" : "Заблокировать"}
+        {pending ? "…" : c.block}
       </button>
       {state.error && <p className="text-xs text-red-600">{state.error}</p>}
-      {state.success && <p className="text-xs text-green-700">Заблокирован</p>}
+      {state.success && <p className="text-xs text-green-700">{c.blocked}</p>}
     </form>
   );
 }
 
-function CloseProjectButton({ projectId }: { projectId: string }) {
+function CloseProjectButton({
+  projectId,
+  locale,
+}: {
+  projectId: string;
+  locale: AppLocale;
+}) {
+  const c = getAdminCopy(locale).panels.common;
   const [state, formAction, pending] = useActionState(
     adminCloseProject,
     initialState,
@@ -204,10 +225,10 @@ function CloseProjectButton({ projectId }: { projectId: string }) {
         disabled={pending}
         className="rounded-xl border border-zinc-300 px-3 py-2 text-xs font-medium text-zinc-700 active:bg-zinc-50 disabled:opacity-50"
       >
-        Закрыть
+        {c.close}
       </button>
       {state.success && (
-        <span className="ml-2 text-xs text-green-700">OK</span>
+        <span className="ml-2 text-xs text-green-700">{c.ok}</span>
       )}
     </form>
   );
@@ -216,17 +237,20 @@ function CloseProjectButton({ projectId }: { projectId: string }) {
 function DisputesSection({
   disputes,
   moderationBackHref,
+  locale,
 }: {
   disputes: DisputeProject[];
   moderationBackHref: string;
+  locale: AppLocale;
 }) {
+  const p = getAdminCopy(locale).panels.disputes;
   return (
     <section className="rounded-2xl border border-red-200 bg-white p-4 shadow-sm sm:p-6">
       <h2 className="text-base font-semibold text-red-900 sm:text-lg">
-        Споры ({disputes.length})
+        {p.title} ({disputes.length})
       </h2>
       {disputes.length === 0 ? (
-        <p className="mt-3 text-sm text-zinc-600">Активных споров нет</p>
+        <p className="mt-3 text-sm text-zinc-600">{p.empty}</p>
       ) : (
         <ul className="mt-4 space-y-3">
           {disputes.map((project) => (
@@ -256,10 +280,10 @@ function DisputesSection({
                       )}
                       className="mt-3 inline-flex items-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-medium text-white active:bg-red-700"
                     >
-                      Открыть чат спора
+                      {p.openChat}
                     </a>
                   )}
-                  <DisputeActions projectId={project.id} />
+                  <DisputeActions projectId={project.id} locale={locale} />
                 </>
               )}
             </li>
@@ -272,16 +296,20 @@ function DisputesSection({
 
 function OpenProjectsSection({
   openProjects,
+  locale,
 }: {
   openProjects: AdminModerationStackProps["openProjects"];
+  locale: AppLocale;
 }) {
+  const p = getAdminCopy(locale).panels.openProjects;
+  const c = getAdminCopy(locale).panels.common;
   return (
     <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6">
       <h2 className="text-base font-semibold text-zinc-900 sm:text-lg">
-        Открытые проекты ({openProjects.length})
+        {p.title} ({openProjects.length})
       </h2>
       {openProjects.length === 0 ? (
-        <p className="mt-3 text-sm text-zinc-600">Нет открытых проектов</p>
+        <p className="mt-3 text-sm text-zinc-600">{p.empty}</p>
       ) : (
         <ul className="mt-4 space-y-3">
           {openProjects.map((project) => (
@@ -297,12 +325,12 @@ function OpenProjectsSection({
                   {project.title}
                 </a>
                 <p className="text-xs text-zinc-500">
-                  {project.client.name ?? "Заказчик"}
+                  {project.client.name ?? c.client}
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
-                <CloseProjectButton projectId={project.id} />
-                <BlockProjectButton projectId={project.id} />
+                <CloseProjectButton projectId={project.id} locale={locale} />
+                <BlockProjectButton projectId={project.id} locale={locale} />
               </div>
             </li>
           ))}
@@ -400,35 +428,38 @@ export function AdminModerationStack({
     <AdminAttentionPanel
       items={attentionItems}
       moderationBackHref={moderationBackHref}
+      locale={locale}
     />
   );
-  const reportsBlock = <AdminReportsPanel reports={reports} />;
+  const reportsBlock = <AdminReportsPanel reports={reports} locale={locale} />;
   const disputesBlock = (
     <DisputesSection
       disputes={disputes}
       moderationBackHref={moderationBackHref}
+      locale={locale}
     />
   );
   const projectsBlock = (
     <div className={gap}>
       {pendingProjects.length > 0 && (
-        <AdminPendingProjectsPanel projects={pendingProjects} />
+        <AdminPendingProjectsPanel projects={pendingProjects} locale={locale} />
       )}
       {contentModeration &&
         (contentModeration.portfolio.length > 0 ||
           contentModeration.avatars.length > 0) && (
-          <AdminContentModerationPanel queue={contentModeration} />
+          <AdminContentModerationPanel queue={contentModeration} locale={locale} />
         )}
-      <OpenProjectsSection openProjects={openProjects} />
+      <OpenProjectsSection openProjects={openProjects} locale={locale} />
     </div>
   );
-  const supportBlock = <AdminSupportPanel tickets={supportTickets} />;
+  const supportBlock = <AdminSupportPanel tickets={supportTickets} locale={locale} />;
 
   if (layout === "tabs") {
     return (
       <div className="space-y-5">
         <AdminTabNav
           size={compact ? "sm" : "md"}
+          ariaLabel={adminCopy.tabNavAria}
           tabs={MODERATION_SECTIONS.map((section) => ({
             id: section.id,
             label: adminCopy.moderationSections[section.id],

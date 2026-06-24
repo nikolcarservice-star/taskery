@@ -24,7 +24,7 @@ export function AdminMobileShell({
 }: AdminMobileShellProps) {
   return (
     <div className="admin-mobile-app-shell flex min-h-dvh flex-col bg-zinc-100">
-      <AdminMobileHeader adminName={adminName} activeTab={activeTab} />
+      <AdminMobileHeader adminName={adminName} activeTab={activeTab} locale={locale} />
 
       <main className="admin-mobile-content flex-1 overflow-y-auto overscroll-contain px-4 py-3">
         <p className="text-sm text-zinc-600">{activeTab.description}</p>

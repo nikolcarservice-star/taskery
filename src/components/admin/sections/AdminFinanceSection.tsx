@@ -3,8 +3,10 @@
 import { AdminFinancePanel } from "@/components/AdminFinancePanel";
 import { AdminWithdrawalsPanel } from "@/components/AdminWithdrawalsPanel";
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { AdminFinanceOverview } from "@/lib/queries/admin-finance";
 import type { AdminWithdrawalItem } from "@/lib/queries/admin-withdrawals";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useRouter, useSearchParams } from "next/navigation";
 
 type FinanceSectionKey = "withdrawals" | "overview";
@@ -12,14 +14,17 @@ type FinanceSectionKey = "withdrawals" | "overview";
 type AdminFinanceSectionProps = {
   finance: AdminFinanceOverview;
   pendingWithdrawals: AdminWithdrawalItem[];
+  locale: AppLocale;
   basePath?: string;
 };
 
 export function AdminFinanceSection({
   finance,
   pendingWithdrawals,
+  locale,
   basePath = "/admin/finance",
 }: AdminFinanceSectionProps) {
+  const copy = getAdminCopy(locale);
   const router = useRouter();
   const searchParams = useSearchParams();
   const sectionParam = searchParams.get("section");
@@ -43,13 +48,14 @@ export function AdminFinanceSection({
     <div className="space-y-5">
       <AdminTabNav
         size="sm"
+        ariaLabel={copy.tabNavAria}
         tabs={[
           {
             id: "withdrawals" as const,
-            label: "Выводы",
+            label: copy.financeSections.withdrawals,
             badge: pendingWithdrawals.length,
           },
-          { id: "overview" as const, label: "Обзор" },
+          { id: "overview" as const, label: copy.financeSections.overview },
         ]}
         active={activeSection}
         onChange={setSection}

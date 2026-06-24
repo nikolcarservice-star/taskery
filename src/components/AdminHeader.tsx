@@ -5,45 +5,11 @@ import {
   HeaderShell,
   headerNavLinkClass,
 } from "@/components/HeaderShell";
-import { MessagesNavButton } from "@/components/MessagesNavButton";
-import { NotificationsNavButton } from "@/components/NotificationsNavButton";
+import { HeaderInboxNav } from "@/components/inbox/HeaderInboxNav";
 import { auth } from "@/lib/auth";
-import {
-  getRecentInboxMessagePreviews,
-  getUnreadInboxMessageCount,
-} from "@/lib/messages-inbox";
-import {
-  getUnreadNotificationCount,
-  getUserNotifications,
-} from "@/lib/notifications";
-import { prisma } from "@/lib/prisma";
-import Link from "next/link";
 
 export async function AdminHeader() {
   const session = await auth();
-
-  const user = session?.user?.email
-    ? await prisma.user.findUnique({
-        where: { email: session.user.email },
-        select: { id: true, name: true, avatar: true },
-      })
-    : null;
-
-  const unreadNotifications = session?.user?.id
-    ? await getUnreadNotificationCount(session.user.id)
-    : 0;
-
-  const recentNotifications = session?.user?.id
-    ? await getUserNotifications(session.user.id, 8)
-    : [];
-
-  const unreadMessages = session?.user?.id
-    ? await getUnreadInboxMessageCount(session.user.id)
-    : 0;
-
-  const recentMessages = session?.user?.id
-    ? await getRecentInboxMessagePreviews(session.user.id, 8)
-    : [];
 
   return (
     <HeaderShell
@@ -64,20 +30,10 @@ export async function AdminHeader() {
           </div>
 
           <div className="flex items-center gap-x-0.5 lg:ml-6 lg:border-l lg:border-zinc-200 lg:pl-5">
-            <MessagesNavButton
-              messages={recentMessages}
-              unreadCount={unreadMessages}
-            />
-
-            <NotificationsNavButton
-              notifications={recentNotifications}
-              unreadCount={unreadNotifications}
-              variant="client"
-            />
-
+            <HeaderInboxNav variant="client" />
             <AdminProfileMenu
-              name={user?.name ?? null}
-              avatar={user?.avatar ?? null}
+              name={session?.user?.name ?? null}
+              avatar={null}
             />
           </div>
         </nav>

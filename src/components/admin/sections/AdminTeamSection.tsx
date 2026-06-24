@@ -7,6 +7,8 @@ import {
 } from "@/components/AdminStaffManager";
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
 import type { AdminAuditEntry } from "@/lib/admin-audit-types";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useRouter, useSearchParams } from "next/navigation";
 
 type TeamSectionKey = "staff" | "audit";
@@ -16,6 +18,7 @@ type AdminTeamSectionProps = {
   currentAdminId: string;
   auditLogs: AdminAuditEntry[];
   showAudit: boolean;
+  locale: AppLocale;
   basePath?: string;
 };
 
@@ -24,8 +27,10 @@ export function AdminTeamSection({
   currentAdminId,
   auditLogs,
   showAudit,
+  locale,
   basePath = "/admin/team",
 }: AdminTeamSectionProps) {
+  const copy = getAdminCopy(locale);
   const router = useRouter();
   const searchParams = useSearchParams();
   const sectionParam = searchParams.get("section");
@@ -55,11 +60,12 @@ export function AdminTeamSection({
     <div className="space-y-5">
       <AdminTabNav
         size="sm"
+        ariaLabel={copy.tabNavAria}
         tabs={[
-          { id: "staff" as const, label: "Администраторы" },
+          { id: "staff" as const, label: copy.teamSections.staff },
           {
             id: "audit" as const,
-            label: "Журнал",
+            label: copy.teamSections.audit,
             badge: auditLogs.length,
           },
         ]}

@@ -5,12 +5,21 @@ import {
   adminRejectProject,
   type ProjectModerationState,
 } from "@/lib/actions/admin-project-moderation";
+import { getAdminCopy } from "@/lib/admin-i18n";
 import type { PendingProjectItem } from "@/lib/queries/admin-pending-projects";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useActionState } from "react";
 
 const initialState: ProjectModerationState = {};
 
-function PendingProjectRow({ project }: { project: PendingProjectItem }) {
+function PendingProjectRow({
+  project,
+  locale,
+}: {
+  project: PendingProjectItem;
+  locale: AppLocale;
+}) {
+  const c = getAdminCopy(locale).panels.common;
   const [approveState, approveAction, approvePending] = useActionState(
     adminApproveProject,
     initialState,
@@ -30,7 +39,7 @@ function PendingProjectRow({ project }: { project: PendingProjectItem }) {
             {project.category ? ` · ${project.category.name}` : ""}
           </p>
           <p className="mt-1 text-xs text-zinc-500">
-            {new Date(project.createdAt).toLocaleString("ru-RU")}
+            {new Date(project.createdAt).toLocaleString(locale)}
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:items-end">
@@ -41,7 +50,7 @@ function PendingProjectRow({ project }: { project: PendingProjectItem }) {
               disabled={approvePending}
               className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
             >
-              Одобрить
+              {c.approve}
             </button>
           </form>
           <form action={rejectAction} className="flex flex-col gap-2 sm:items-end">
@@ -50,7 +59,7 @@ function PendingProjectRow({ project }: { project: PendingProjectItem }) {
               name="reason"
               type="text"
               required
-              placeholder="Причина отклонения"
+              placeholder={c.rejectReason}
               className="w-full min-w-[220px] rounded-lg border border-zinc-300 px-3 py-2 text-sm sm:w-64"
             />
             <button
@@ -58,7 +67,7 @@ function PendingProjectRow({ project }: { project: PendingProjectItem }) {
               disabled={rejectPending}
               className="rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
             >
-              Отклонить
+              {c.reject}
             </button>
           </form>
         </div>
@@ -67,7 +76,7 @@ function PendingProjectRow({ project }: { project: PendingProjectItem }) {
         <p className="mt-2 text-sm text-red-600">{approveState.error ?? rejectState.error}</p>
       )}
       {(approveState.success || rejectState.success) && (
-        <p className="mt-2 text-sm text-emerald-700">Готово</p>
+        <p className="mt-2 text-sm text-emerald-700">{c.done}</p>
       )}
     </li>
   );
@@ -75,11 +84,15 @@ function PendingProjectRow({ project }: { project: PendingProjectItem }) {
 
 export function AdminPendingProjectsPanel({
   projects,
+  locale,
   compact = false,
 }: {
   projects: PendingProjectItem[];
+  locale: AppLocale;
   compact?: boolean;
 }) {
+  const p = getAdminCopy(locale).panels.pendingProjects;
+
   return (
     <section
       className={
@@ -89,14 +102,14 @@ export function AdminPendingProjectsPanel({
       }
     >
       <h2 className="text-lg font-semibold text-zinc-900">
-        Премодерация проектов ({projects.length})
+        {p.title} ({projects.length})
       </h2>
       {projects.length === 0 ? (
-        <p className="mt-3 text-sm text-zinc-600">Нет проектов в очереди</p>
+        <p className="mt-3 text-sm text-zinc-600">{p.empty}</p>
       ) : (
         <ul className="mt-4 space-y-3">
           {projects.map((project) => (
-            <PendingProjectRow key={project.id} project={project} />
+            <PendingProjectRow key={project.id} project={project} locale={locale} />
           ))}
         </ul>
       )}

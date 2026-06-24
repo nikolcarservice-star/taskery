@@ -7,10 +7,12 @@ import {
   getVisibleAdminTabs,
   type AdminTabKey,
 } from "@/lib/admin-tabs";
+import { getAdminCopy, localizeAdminTab } from "@/lib/admin-i18n";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import type { AdminAnalyticsOverview } from "@/lib/queries/admin-analytics";
 import type { AdminPermission } from "@/generated/prisma/client";
 import type { AdminMobileBadges } from "@/lib/queries/admin-mobile-badges";
+import type { AppLocale } from "@/lib/i18n/types";
 import Link from "next/link";
 
 type AdminOverviewSectionProps = {
@@ -23,6 +25,7 @@ type AdminOverviewSectionProps = {
   permissions: AdminPermission[];
   analytics: AdminAnalyticsOverview | null;
   badges: AdminMobileBadges;
+  locale: AppLocale;
   platform?: "desktop" | "mobile";
 };
 
@@ -44,12 +47,14 @@ export function AdminOverviewSection({
   permissions,
   analytics,
   badges,
+  locale,
   platform = "desktop",
 }: AdminOverviewSectionProps) {
+  const copy = getAdminCopy(locale);
   const canViewFinance = hasAdminPermission(permissions, "FINANCE");
-  const visibleTabs = getVisibleAdminTabs(permissions).filter(
-    (tab) => tab.id !== "overview",
-  );
+  const visibleTabs = getVisibleAdminTabs(permissions)
+    .filter((tab) => tab.id !== "overview")
+    .map((tab) => localizeAdminTab(tab, locale));
 
   const hasAnyPermission =
     hasAdminPermission(permissions, "MODERATION") ||
@@ -61,10 +66,10 @@ export function AdminOverviewSection({
     <div className="space-y-8">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          { label: "Пользователей", value: stats.users },
-          { label: "Заказчиков", value: stats.clients },
-          { label: "Фрилансеров", value: stats.freelancers },
-          { label: "Проектов", value: stats.projects },
+          { label: copy.overview.statsUsers, value: stats.users },
+          { label: copy.overview.statsClients, value: stats.clients },
+          { label: copy.overview.statsFreelancers, value: stats.freelancers },
+          { label: copy.overview.statsProjects, value: stats.projects },
         ].map((item) => (
           <div
             key={item.label}
@@ -82,7 +87,9 @@ export function AdminOverviewSection({
 
       {visibleTabs.length > 0 && (
         <section>
-          <h2 className="text-sm font-semibold text-zinc-900">Быстрый доступ</h2>
+          <h2 className="text-sm font-semibold text-zinc-900">
+            {copy.overview.quickAccess}
+          </h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {visibleTabs.map((tab) => {
               const count = overviewBadge(tab.id, badges);
@@ -118,8 +125,7 @@ export function AdminOverviewSection({
 
       {!hasAnyPermission && (
         <section className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
-          У вашего аккаунта нет назначенных функций. Обратитесь к
-          супер-администратору.
+          {copy.overview.noPermissions}
         </section>
       )}
     </div>

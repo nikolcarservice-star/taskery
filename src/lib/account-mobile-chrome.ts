@@ -1,15 +1,11 @@
 import type { Session } from "next-auth";
 import { getAdminWorkMode } from "@/lib/admin-work-mode";
-import { getUnreadInboxMessageCount } from "@/lib/messages-inbox";
-import { getUnreadNotificationCount } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 
 export type AccountMobileRole = "client" | "freelancer";
 
 export type AccountMobileChromeProps = {
   role: AccountMobileRole;
-  unreadMessages: number;
-  unreadNotifications: number;
   isAdmin: boolean;
   userName: string | null;
   userAvatar: string | null;
@@ -47,19 +43,13 @@ export async function getAccountMobileChromeProps(
     return null;
   }
 
-  const [unreadMessages, unreadNotifications, user] = await Promise.all([
-    getUnreadInboxMessageCount(session.user.id),
-    getUnreadNotificationCount(session.user.id),
-    prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { name: true, avatar: true },
-    }),
-  ]);
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { name: true, avatar: true },
+  });
 
   return {
     role,
-    unreadMessages,
-    unreadNotifications,
     isAdmin: session.user.role === "ADMIN",
     userName: user?.name ?? session.user.name ?? null,
     userAvatar: user?.avatar ?? null,
