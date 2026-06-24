@@ -4,6 +4,7 @@ import { logAdminAction } from "@/lib/admin-audit";
 import { auth } from "@/lib/auth";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { prisma } from "@/lib/prisma";
+import { revalidateAdminPanelPaths } from "@/lib/admin-revalidate-paths";
 import { recalculateProjectReportStats } from "@/lib/report-stats";
 import { revalidatePath } from "next/cache";
 
@@ -79,9 +80,7 @@ export async function adminDismissReport(
     targetId: reportId,
   });
 
-  revalidatePath("/admin");
-  revalidatePath("/admin/mobile");
-  revalidatePath("/admin/mobile/moderation");
+  revalidateAdminPanelPaths();
   return { success: true };
 }
 
@@ -111,7 +110,7 @@ export async function adminResolveReportNoAction(
     details: { note },
   });
 
-  revalidatePath("/admin");
+  revalidateAdminPanelPaths();
   revalidatePath("/admin/mobile/moderation");
   return { success: true };
 }
@@ -143,7 +142,7 @@ export async function adminTakeReportReview(
     targetId: reportId,
   });
 
-  revalidatePath("/admin");
+  revalidateAdminPanelPaths();
   revalidatePath("/admin/mobile/moderation");
   return { success: true };
 }
@@ -174,9 +173,7 @@ export async function adminDismissContactWarning(
     update: {},
   });
 
-  revalidatePath("/admin");
-  revalidatePath("/admin/mobile");
-  revalidatePath("/admin/mobile/moderation");
+  revalidateAdminPanelPaths();
   return { success: true };
 }
 
@@ -213,7 +210,7 @@ export async function adminDismissProjectReports(
     details: { note },
   });
 
-  revalidatePath("/admin");
+  revalidateAdminPanelPaths();
   return { success: true };
 }
 
@@ -248,7 +245,7 @@ export async function adminDismissUserReports(
     details: { note },
   });
 
-  revalidatePath("/admin");
+  revalidateAdminPanelPaths();
   return { success: true };
 }
 
@@ -326,7 +323,7 @@ export async function adminBlockProject(
     details: { reason },
   });
 
-  revalidatePath("/admin");
+  revalidateAdminPanelPaths();
   revalidatePath(`/projects/${project.slug}`);
   revalidatePath("/projects");
 
@@ -407,7 +404,7 @@ export async function adminBanUser(
     details: { reason },
   });
 
-  revalidatePath("/admin");
+  revalidateAdminPanelPaths();
   return { success: true };
 }
 
@@ -516,6 +513,6 @@ export async function adminDeleteUser(
     details: { reason },
   });
 
-  revalidatePath("/admin");
+  revalidateAdminPanelPaths();
   return { success: true };
 }

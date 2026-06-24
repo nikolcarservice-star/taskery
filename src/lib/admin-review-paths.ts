@@ -19,5 +19,5 @@ export function resolveAdminReviewBackHref(back?: string): string {
   if (back && back.startsWith("/admin")) {
     return back;
   }
-  return "/admin";
+  return "/admin/moderation";
 }

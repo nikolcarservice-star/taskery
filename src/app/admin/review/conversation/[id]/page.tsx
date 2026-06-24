@@ -19,7 +19,7 @@ export default async function AdminConversationReviewPage({
 }: AdminConversationReviewPageProps) {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
-    redirect("/admin");
+    redirect("/admin/overview");
   }
 
   const { id } = await params;

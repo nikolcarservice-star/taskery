@@ -19,6 +19,7 @@ import {
 import { resolveRequestLocale } from "@/lib/i18n/resolve-request-locale";
 import type { AppLocale } from "@/lib/i18n/types";
 import { getHomeRouteForRole, getLoginPath } from "@/lib/role-redirect";
+import { isAdminDesktopAppPath } from "@/lib/admin-tabs";
 import { ADMIN_MOBILE_ROOT } from "@/lib/admin-mobile-routes";
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
@@ -144,6 +145,7 @@ export default auth((request) => {
   }
 
   const isAdminRoot = pathnameWithoutLocale === "/admin";
+  const isAdminDesktopPanel = isAdminDesktopAppPath(pathnameWithoutLocale);
   const isAdminMobile = pathnameWithoutLocale.startsWith(ADMIN_MOBILE_ROOT);
   const isAdminReview = pathnameWithoutLocale.startsWith("/admin/review");
   const isAdminCabinet = pathnameWithoutLocale.startsWith("/cabinet");
@@ -180,6 +182,48 @@ export default auth((request) => {
     );
   }
 
+  if (isAdminDesktopPanel) {
+    if (session?.user?.role === "ADMIN") {
+      if (
+        isMobileUserAgent(request) &&
+        !request.nextUrl.searchParams.has("desktop")
+      ) {
+        return withPathnameHeader(
+          withLocaleHeaders(
+            NextResponse.redirect(new URL(ADMIN_MOBILE_ROOT, request.url)),
+            activeLocale,
+          ),
+          pathname,
+        );
+      }
+
+      return withPathnameHeader(
+        withLocaleHeaders(
+          withAdminWorkModeCookie(
+            NextResponse.next(),
+            pathnameWithoutLocale,
+            session.user.role,
+          ),
+          activeLocale,
+        ),
+        pathname,
+      );
+    }
+
+    if (!session?.user) {
+      const adminLoginUrl = new URL("/admin", request.url);
+      adminLoginUrl.searchParams.set("callbackUrl", pathnameWithoutLocale);
+      return NextResponse.redirect(adminLoginUrl);
+    }
+
+    return withLocaleHeaders(
+      NextResponse.redirect(
+        new URL(getHomeRouteForRole(session.user.role, activeLocale), request.url),
+      ),
+      activeLocale,
+    );
+  }
+
   if (isAdminMobile || isAdminReview) {
     if (session?.user?.role === "ADMIN") {
       if (
@@ -189,7 +233,7 @@ export default auth((request) => {
       ) {
         return withPathnameHeader(
           withLocaleHeaders(
-            NextResponse.redirect(new URL("/admin", request.url)),
+            NextResponse.redirect(new URL("/admin/overview", request.url)),
             activeLocale,
           ),
           pathname,

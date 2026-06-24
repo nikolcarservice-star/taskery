@@ -161,7 +161,7 @@ export function ClientProfileMenu({
               <MenuLink href="/cabinet" onNavigate={close}>
                 {menu.adminCabinet}
               </MenuLink>
-              <MenuLink href="/admin" onNavigate={close}>
+              <MenuLink href="/admin/overview" onNavigate={close}>
                 <span className="font-medium text-red-700">{menu.adminPanel}</span>
               </MenuLink>
             </>

@@ -18,6 +18,7 @@ import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
 import { adminConversationReviewPath } from "@/lib/admin-review-paths";
 import {
   MODERATION_SECTIONS,
+  resolveModerationSection,
   type ModerationSectionKey,
 } from "@/lib/admin-tabs";
 import { formatBudget } from "@/lib/project-labels";
@@ -25,6 +26,7 @@ import { contractStatusLabels } from "@/lib/contract-labels";
 import type { ContentModerationOverview } from "@/lib/queries/admin-content-moderation";
 import type { PendingProjectItem } from "@/lib/queries/admin-pending-projects";
 import type { AdminSupportTicketItem } from "@/lib/queries/admin-support";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useActionState, useMemo, useState } from "react";
 
 type DisputeProject = {
@@ -58,6 +60,7 @@ type AdminModerationStackProps = {
   compact?: boolean;
   moderationBackHref?: string;
   layout?: "stack" | "tabs";
+  syncSectionToUrl?: boolean;
 };
 
 const initialState: ActionState = {};
@@ -314,9 +317,12 @@ export function AdminModerationStack({
   contentModeration,
   supportTickets = [],
   compact = false,
-  moderationBackHref = "/admin",
+  moderationBackHref = "/admin/moderation",
   layout = "stack",
+  syncSectionToUrl = false,
 }: AdminModerationStackProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const gap = compact ? "space-y-4" : "space-y-8";
   const contentCount = contentModeration
     ? contentModeration.portfolio.length + contentModeration.avatars.length
@@ -344,8 +350,29 @@ export function AdminModerationStack({
     ],
   );
 
-  const [activeSection, setActiveSection] =
+  const [localSection, setLocalSection] =
     useState<ModerationSectionKey>("attention");
+
+  const activeSection = syncSectionToUrl
+    ? resolveModerationSection(searchParams.get("section"))
+    : localSection;
+
+  function setActiveSection(section: ModerationSectionKey) {
+    if (syncSectionToUrl) {
+      const params = new URLSearchParams(searchParams.toString());
+      if (section === "attention") {
+        params.delete("section");
+      } else {
+        params.set("section", section);
+      }
+      const query = params.toString();
+      router.replace(query ? `/admin/moderation?${query}` : "/admin/moderation", {
+        scroll: false,
+      });
+      return;
+    }
+    setLocalSection(section);
+  }
 
   const firstNonEmptySection = useMemo(() => {
     for (const section of MODERATION_SECTIONS) {
