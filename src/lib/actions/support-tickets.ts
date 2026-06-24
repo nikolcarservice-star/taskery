@@ -4,6 +4,7 @@ import { logAdminAction } from "@/lib/admin-audit";
 import { requireModerationAdmin } from "@/lib/actions/admin-moderation";
 import { actionError } from "@/lib/action-errors";
 import { auth } from "@/lib/auth";
+import { createUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import type { SupportTicketCategory } from "@/generated/prisma/client";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -32,14 +33,12 @@ async function notifyTicketUser(
   title: string,
   body: string,
 ) {
-  await prisma.notification.create({
-    data: {
-      userId,
-      type: "SUPPORT_REPLY",
-      title,
-      body,
-      link: `/support/${ticketId}`,
-    },
+  await createUserNotification({
+    userId,
+    type: "SUPPORT_REPLY",
+    title,
+    body,
+    link: `/support/${ticketId}`,
   });
 }
 

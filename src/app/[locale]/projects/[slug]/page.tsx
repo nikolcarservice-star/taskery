@@ -576,9 +576,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
               </p>
 
-              <p className="mt-1 text-2xl font-bold text-emerald-700">
+              <p className="mt-1 text-2xl font-bold tabular-nums text-emerald-700 whitespace-nowrap">
 
-                {formatBudget(project.budget, project.currency)}
+                {formatBudget(project.budget, project.currency, locale)}
 
               </p>
 

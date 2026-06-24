@@ -97,7 +97,7 @@ export function MyProjectsTable({ projects }: MyProjectsTableProps) {
                 <td className="px-5 py-4 text-zinc-600">
                   {project.category?.name ?? t.noFreelancer}
                 </td>
-                <td className="px-5 py-4 text-zinc-600">
+                <td className="px-5 py-4 tabular-nums whitespace-nowrap text-zinc-600">
                   {formatBudget(project.budget, project.currency, locale)}
                 </td>
                 <td className="px-5 py-4">

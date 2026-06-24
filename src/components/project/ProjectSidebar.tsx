@@ -113,8 +113,8 @@ export function ProjectSidebar({
           </div>
           <div className="flex items-center justify-between gap-3">
             <dt className="text-zinc-500">{dict.projectDetail.common.budget}</dt>
-            <dd className="font-semibold text-emerald-700">
-              {formatBudget(budget, currency)}
+            <dd className="font-semibold tabular-nums text-emerald-700 whitespace-nowrap">
+              {formatBudget(budget, currency, locale)}
             </dd>
           </div>
         </dl>

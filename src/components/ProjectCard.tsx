@@ -68,8 +68,8 @@ export function ProjectCard({ project, locale = "ru" }: ProjectCardProps) {
             </Link>
           </h2>
         </div>
-        <p className="text-sm font-semibold text-zinc-900">
-          {formatBudget(project.budget, project.currency)}
+        <p className="text-sm font-semibold tabular-nums text-zinc-900 whitespace-nowrap">
+          {formatBudget(project.budget, project.currency, locale)}
         </p>
       </div>
 

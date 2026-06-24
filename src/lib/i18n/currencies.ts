@@ -86,31 +86,85 @@ function resolveIntlLocale(currency: SupportedCurrency, locale?: AppLocale): str
   return currencyConfig[currency].intlLocale;
 }
 
+/** Parse Prisma Decimal, string, or number without float/formatting surprises. */
+export function parseMoneyAmount(
+  amount: number | { toString(): string } | null | undefined,
+): number | null {
+  if (amount === null || amount === undefined) {
+    return null;
+  }
+
+  if (typeof amount === "number") {
+    return Number.isFinite(amount) ? amount : null;
+  }
+
+  if (typeof amount === "string") {
+    const trimmed = amount.trim().replace(/\s/g, "");
+    if (!trimmed) {
+      return null;
+    }
+    const normalized =
+      trimmed.includes(",") && !trimmed.includes(".")
+        ? trimmed.replace(",", ".")
+        : trimmed;
+    const numeric = Number(normalized);
+    return Number.isFinite(numeric) ? numeric : null;
+  }
+
+  const text = amount.toString().trim();
+  if (!text || text === "[object Object]") {
+    return null;
+  }
+
+  const numeric = Number(text.replace(/\s/g, ""));
+  return Number.isFinite(numeric) ? numeric : null;
+}
+
+export function normalizeMoneyAmount(
+  amount: number,
+  currency: string,
+): number {
+  if (!Number.isFinite(amount)) {
+    return amount;
+  }
+
+  if (currency === "EUR") {
+    return Math.round(amount * 100) / 100;
+  }
+
+  if (currency === "UAH" || currency === "PLN") {
+    return Math.round(amount);
+  }
+
+  return amount;
+}
+
 export function formatMoney(
   amount: number | { toString(): string } | null | undefined,
   currency: string,
   locale?: AppLocale,
 ): string {
-  if (amount === null || amount === undefined) {
-    return "";
-  }
-
-  const numeric = Number(amount);
-  if (!Number.isFinite(numeric)) {
+  const raw = parseMoneyAmount(amount);
+  if (raw === null) {
     return "";
   }
 
   const supported = isSupportedCurrency(currency) ? currency : defaultCurrency;
   const intlLocale = resolveIntlLocale(supported, locale);
+  const config = currencyConfig[supported];
+  const isIntegerCurrency = supported === "UAH" || supported === "PLN";
+  const fractionDigits = isIntegerCurrency ? 0 : 2;
+  const numeric = normalizeMoneyAmount(raw, supported);
 
   try {
-    return new Intl.NumberFormat(intlLocale, {
-      style: "currency",
-      currency: supported,
-      maximumFractionDigits: supported === "UAH" || supported === "PLN" ? 0 : 2,
+    const formatted = new Intl.NumberFormat(intlLocale, {
+      style: "decimal",
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+      useGrouping: true,
     }).format(numeric);
+    return `${formatted}\u00a0${config.symbol}`;
   } catch {
-    const config = currencyConfig[supported];
     return `${numeric.toLocaleString(intlLocale)} ${config.symbol}`;
   }
 }

@@ -10,6 +10,51 @@ import { revalidatePath } from "next/cache";
 
 export type ProjectModerationState = { error?: string; success?: boolean };
 
+type PublishableProject = {
+  id: string;
+  slug: string;
+  clientId: string;
+  title: string;
+};
+
+export async function publishProjectAfterApproval(
+  project: PublishableProject,
+  options?: { adminId?: string },
+) {
+  await prisma.project.update({
+    where: { id: project.id },
+    data: {
+      status: "OPEN",
+      moderationNote: null,
+    },
+  });
+
+  await notifyFreelancersAboutNewProject(project.id);
+
+  await createUserNotification({
+    userId: project.clientId,
+    type: "USER_WARNING",
+    title: "Проект опубликован",
+    body: options?.adminId
+      ? `«${project.title}» прошёл модерацию и доступен в каталоге.`
+      : `«${project.title}» опубликован и доступен в каталоге.`,
+    link: `/projects/${project.slug}`,
+  });
+
+  if (options?.adminId) {
+    await logAdminAction(options.adminId, "PROJECT_APPROVE", {
+      targetType: "project",
+      targetId: project.id,
+    });
+  }
+
+  revalidatePath("/admin/moderation");
+  revalidatePath("/admin/mobile/moderation");
+  revalidatePath("/projects");
+  revalidatePath("/client/projects");
+  revalidatePath(`/projects/${project.slug}`);
+}
+
 export async function adminApproveProject(
   _prevState: ProjectModerationState,
   formData: FormData,
@@ -29,33 +74,7 @@ export async function adminApproveProject(
     return { error: "Проект не в очереди модерации" };
   }
 
-  await prisma.project.update({
-    where: { id: projectId },
-    data: {
-      status: "OPEN",
-      moderationNote: null,
-    },
-  });
-
-  await notifyFreelancersAboutNewProject(projectId);
-
-  await createUserNotification({
-    userId: project.clientId,
-    type: "USER_WARNING",
-    title: "Проект опубликован",
-    body: `«${project.title}» прошёл модерацию и доступен в каталоге.`,
-    link: `/projects/${project.slug}`,
-  });
-
-  await logAdminAction(authResult.admin.id, "PROJECT_APPROVE", {
-    targetType: "project",
-    targetId: projectId,
-  });
-
-  revalidatePath("/admin/moderation");
-  revalidatePath("/admin/mobile/moderation");
-  revalidatePath("/projects");
-  revalidatePath("/client/projects");
+  await publishProjectAfterApproval(project, { adminId: authResult.admin.id });
   return { success: true };
 }
 

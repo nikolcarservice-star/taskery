@@ -3,6 +3,7 @@
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
+import { createUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -42,8 +43,11 @@ async function notifyUser(
   body: string,
   type: "USER_WARNING" | "SUPPORT_REPLY" = "USER_WARNING",
 ) {
-  await prisma.notification.create({
-    data: { userId, type, title, body },
+  await createUserNotification({
+    userId,
+    type,
+    title,
+    body,
   });
 }
 

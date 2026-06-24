@@ -8,7 +8,18 @@ import { auth } from "@/lib/auth";
 import { sendBidNotificationEmail } from "@/lib/email";
 import { absoluteUrl } from "@/lib/seo";
 import { validateCategoryMinBudget } from "@/lib/category-min-budget";
-import { formatMoney, isSupportedCurrency, defaultCurrency } from "@/lib/i18n/currencies";
+import {
+  notifyAdminsNewProjectPending,
+  publishProjectAfterApproval,
+} from "@/lib/actions/admin-project-moderation";
+import { projectPreModerationEnabled } from "@/lib/platform-config";
+import {
+  formatMoney,
+  isSupportedCurrency,
+  defaultCurrency,
+  normalizeMoneyAmount,
+  parseMoneyAmount,
+} from "@/lib/i18n/currencies";
 
 export type CreateProjectState = {
   error?: string;
@@ -73,12 +84,12 @@ export async function createProject(
       return { error: "BUDGET_OR_NEGOTIABLE_REQUIRED" };
     }
 
-    const parsed = Number(budgetRaw);
-    if (!Number.isFinite(parsed) || parsed <= 0) {
+    const parsed = parseMoneyAmount(budgetRaw);
+    if (parsed === null || parsed <= 0) {
       return { error: "BUDGET_MUST_BE_POSITIVE" };
     }
 
-    budget = parsed;
+    budget = normalizeMoneyAmount(parsed, currency);
 
     const minCheck = await validateCategoryMinBudget(
       categoryId,
@@ -120,33 +131,40 @@ export async function createProject(
       budget,
       currency,
       deadline,
-      status: "PENDING_MODERATION",
+      status: projectPreModerationEnabled ? "PENDING_MODERATION" : "OPEN",
     },
   });
 
-  const { notifyAdminsNewProjectPending } = await import(
-    "@/lib/actions/admin-project-moderation"
-  );
-  await notifyAdminsNewProjectPending(project.id, project.title);
+  if (projectPreModerationEnabled) {
+    await notifyAdminsNewProjectPending(project.id, project.title);
 
-  await createUserNotification({
-    userId: session.user.id,
-    type: "USER_WARNING",
-    title: "Проект на модерации",
-    body: `«${project.title}» отправлен на проверку. Мы уведомим вас после публикации.`,
-    link: "/client/projects",
-  });
+    await createUserNotification({
+      userId: session.user.id,
+      type: "USER_WARNING",
+      title: "Проект на модерации",
+      body: `«${project.title}» отправлен на проверку. Мы уведомим вас после публикации.`,
+      link: "/client/projects",
+    });
+  } else {
+    await publishProjectAfterApproval({
+      id: project.id,
+      slug: project.slug,
+      clientId: project.clientId,
+      title: project.title,
+    });
+  }
 
   revalidatePath("/projects/my");
   revalidatePath("/client/projects");
   revalidatePath("/client");
   revalidatePath("/projects");
   revalidatePath("/notifications");
+  revalidatePath(`/projects/${project.slug}`);
   return {
     success: true,
     projectId: project.id,
     projectSlug: project.slug,
-    pendingModeration: true,
+    pendingModeration: projectPreModerationEnabled,
   };
 }
 
