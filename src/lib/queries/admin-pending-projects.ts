@@ -9,6 +9,10 @@ export type PendingProjectItem = {
   category: { name: string } | null;
 };
 
+export async function getPendingModerationProjectCount(): Promise<number> {
+  return prisma.project.count({ where: { status: "PENDING_MODERATION" } });
+}
+
 export async function getPendingModerationProjects(): Promise<PendingProjectItem[]> {
   const projects = await prisma.project.findMany({
     where: { status: "PENDING_MODERATION" },

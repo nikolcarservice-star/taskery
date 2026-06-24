@@ -403,6 +403,13 @@
       "blogDigest": "Blog digest (no more than once a week)",
       "telegramMessages": "New private messages",
       "pushBrowser": "Browser push notifications",
+      "pushHint": "Instant alerts for new bids and messages",
+      "pushWorking": "Connecting…",
+      "pushUnsupported": "Your browser does not support push notifications",
+      "pushNotConfigured": "Push is not configured on the server",
+      "pushPermissionDenied": "Allow notifications in your browser",
+      "pushSubscribeFailed": "Could not enable push notifications",
+      "pushUnsubscribeFailed": "Could not disable push notifications",
       "pushSoon": "Soon",
       "soundMessages": "New private messages (sound)",
       "soundSoon": "Soon"
@@ -750,6 +757,7 @@
         "title": "My projects",
         "intro": "All your published jobs.",
         "newProject": "+ New project",
+        "moderationPendingBanner": "Your project was submitted for moderation. After review it will appear in the catalog and you will receive a notification.",
         "newPage": {
           "title": "New project",
           "intro": "Publish a job — freelancers can respond with proposals.",

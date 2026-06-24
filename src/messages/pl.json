@@ -382,6 +382,13 @@
       "blogDigest": "Przegląd artykułów bloga (max raz w tygodniu)",
       "telegramMessages": "Nowe wiadomości prywatne",
       "pushBrowser": "Powiadomienia push w przeglądarce",
+      "pushHint": "Natychmiastowe alerty o nowych ofertach i wiadomościach",
+      "pushWorking": "Łączenie…",
+      "pushUnsupported": "Przeglądarka nie obsługuje powiadomień push",
+      "pushNotConfigured": "Push nie jest skonfigurowany na serwerze",
+      "pushPermissionDenied": "Zezwól na powiadomienia w przeglądarce",
+      "pushSubscribeFailed": "Nie udało się włączyć powiadomień push",
+      "pushUnsubscribeFailed": "Nie udało się wyłączyć powiadomień push",
       "pushSoon": "Wkrótce",
       "soundMessages": "Nowe wiadomości prywatne (dźwięk)",
       "soundSoon": "Wkrótce"
@@ -729,6 +736,7 @@
         "title": "Moje projekty",
         "intro": "Wszystkie opublikowane zlecenia.",
         "newProject": "+ Nowy projekt",
+        "moderationPendingBanner": "Projekt został wysłany do moderacji. Po weryfikacji pojawi się w katalogu i otrzymasz powiadomienie.",
         "newPage": {
           "title": "Nowy projekt",
           "intro": "Opublikuj zlecenie — freelancerzy mogą odpowiedzieć propozycjami.",

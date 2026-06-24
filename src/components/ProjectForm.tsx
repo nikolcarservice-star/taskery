@@ -39,7 +39,14 @@ export function ProjectForm({ categories }: ProjectFormProps) {
   const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
-    if (state.success && state.projectId) {
+    if (!state.success) return;
+
+    if (state.pendingModeration) {
+      router.push(l("/client/projects?moderation=pending"));
+      return;
+    }
+
+    if (state.projectId) {
       router.push(
         l(
           getProjectPath({
@@ -49,7 +56,7 @@ export function ProjectForm({ categories }: ProjectFormProps) {
         ),
       );
     }
-  }, [state.success, state.projectId, state.projectSlug, router, l]);
+  }, [state.success, state.pendingModeration, state.projectId, state.projectSlug, router, l]);
 
   const inputClassName =
     "mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500";

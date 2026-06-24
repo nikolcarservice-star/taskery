@@ -2,7 +2,9 @@ import { hasAdminPermission } from "@/lib/admin-permissions";
 import type { AdminPermission } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getModerationAttentionItems } from "@/lib/queries/admin-attention";
+import { getContentModerationCount } from "@/lib/queries/admin-content-moderation";
 import { getPendingAdminReports } from "@/lib/queries/admin-reports";
+import { getPendingModerationProjectCount } from "@/lib/queries/admin-pending-projects";
 import { getOpenSupportTicketCount } from "@/lib/queries/admin-support";
 import { getPendingWithdrawalCount } from "@/lib/queries/admin-withdrawals";
 import { getPendingVerificationCount } from "@/lib/queries/admin-verification";
@@ -30,14 +32,22 @@ export async function getAdminMobileBadges(
   if (hasAdminPermission(permissions, "MODERATION")) {
     tasks.push(
       (async () => {
-        const [attention, reports, disputes, supportCount] = await Promise.all([
+        const [attention, reports, disputes, supportCount, pendingProjects, contentCount] =
+          await Promise.all([
           getModerationAttentionItems(adminId),
           getPendingAdminReports(),
           prisma.project.count({ where: { status: "UNDER_DISPUTE" } }),
           getOpenSupportTicketCount(),
+          getPendingModerationProjectCount(),
+          getContentModerationCount(),
         ]);
         badges.moderation =
-          attention.length + reports.length + disputes + supportCount;
+          attention.length +
+          reports.length +
+          disputes +
+          supportCount +
+          pendingProjects +
+          contentCount;
       })(),
     );
   }

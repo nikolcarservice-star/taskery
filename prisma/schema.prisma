@@ -274,8 +274,24 @@ model User {
   assignedSupportTickets  SupportTicket[]      @relation("AssignedSupportTickets")
   supportTicketMessages   SupportTicketMessage[]
   verifiedProfiles        FreelancerProfile[]  @relation("VerifiedProfiles")
+  pushSubscriptions       PushSubscription[]
 
   @@map("users")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  endpoint  String
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, endpoint])
+  @@index([userId])
+  @@map("push_subscriptions")
 }
 
 model Notification {

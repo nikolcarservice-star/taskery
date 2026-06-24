@@ -79,6 +79,16 @@ export function AdminMobileMore({ permissions, adminEmail }: AdminMobileMoreProp
             <span className="text-zinc-400">›</span>
           </Link>
           <Link
+            href={`${ADMIN_MOBILE_ROOT}/cms`}
+            className="flex items-center justify-between px-4 py-3.5 text-sm font-medium text-zinc-800 active:bg-zinc-50"
+          >
+            <span className="flex items-center gap-3">
+              <span className="text-lg">📄</span>
+              Статические страницы (CMS)
+            </span>
+            <span className="text-zinc-400">›</span>
+          </Link>
+          <Link
             href={`${ADMIN_MOBILE_ROOT}/staff`}
             className="flex items-center justify-between px-4 py-3.5 text-sm font-medium text-zinc-800 active:bg-zinc-50"
           >

@@ -3,6 +3,7 @@
 import { logAdminAction } from "@/lib/admin-audit";
 import { notifyAdminsWithPermission } from "@/lib/admin-notify";
 import { requireModerationAdmin } from "@/lib/actions/admin-moderation";
+import { createUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { notifyFreelancersAboutNewProject } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
@@ -38,14 +39,12 @@ export async function adminApproveProject(
 
   await notifyFreelancersAboutNewProject(projectId);
 
-  await prisma.notification.create({
-    data: {
-      userId: project.clientId,
-      type: "USER_WARNING",
-      title: "Проект опубликован",
-      body: `«${project.title}» прошёл модерацию и доступен в каталоге.`,
-      link: `/projects/${project.slug}`,
-    },
+  await createUserNotification({
+    userId: project.clientId,
+    type: "USER_WARNING",
+    title: "Проект опубликован",
+    body: `«${project.title}» прошёл модерацию и доступен в каталоге.`,
+    link: `/projects/${project.slug}`,
   });
 
   await logAdminAction(authResult.admin.id, "PROJECT_APPROVE", {
@@ -53,7 +52,7 @@ export async function adminApproveProject(
     targetId: projectId,
   });
 
-  revalidatePath("/admin");
+  revalidatePath("/admin/moderation");
   revalidatePath("/admin/mobile/moderation");
   revalidatePath("/projects");
   revalidatePath("/client/projects");
@@ -91,14 +90,12 @@ export async function adminRejectProject(
     },
   });
 
-  await prisma.notification.create({
-    data: {
-      userId: project.clientId,
-      type: "USER_WARNING",
-      title: "Проект отклонён",
-      body: `«${project.title}»: ${reason}`,
-      link: `/client/projects`,
-    },
+  await createUserNotification({
+    userId: project.clientId,
+    type: "USER_WARNING",
+    title: "Проект отклонён",
+    body: `«${project.title}»: ${reason}`,
+    link: `/client/projects`,
   });
 
   await logAdminAction(authResult.admin.id, "PROJECT_REJECT", {
@@ -107,7 +104,7 @@ export async function adminRejectProject(
     details: { reason },
   });
 
-  revalidatePath("/admin");
+  revalidatePath("/admin/moderation");
   revalidatePath("/admin/mobile/moderation");
   revalidatePath("/client/projects");
   return { success: true };
@@ -121,7 +118,7 @@ export async function notifyAdminsNewProjectPending(
     type: "ADMIN_PROJECT_PENDING",
     title: "Проект на модерации",
     body: title,
-    link: "/admin",
+    link: "/admin/moderation",
     metadata: { projectId },
     emailSubject: "Новый проект на модерации",
   });

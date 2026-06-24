@@ -1,3 +1,5 @@
+import { createUserNotification } from "@/lib/create-user-notification";
+import { sendPushToUser } from "@/lib/push-notifications";
 import { getProjectPath } from "@/lib/slug";
 import { MESSAGE_NOTIFICATION_TYPES } from "@/lib/messages-inbox";
 import { prisma } from "@/lib/prisma";
@@ -77,6 +79,16 @@ export async function notifyFreelancersAboutNewProject(projectId: string) {
 
   await prisma.notification.createMany({ data });
 
+  await Promise.all(
+    data.map((item) =>
+      sendPushToUser(item.userId, {
+        title: item.title,
+        body: item.body ?? "",
+        url: item.link ?? undefined,
+      }),
+    ),
+  );
+
   return data.length;
 }
 
@@ -102,17 +114,15 @@ export async function notifyFreelancerBidAccepted(
 
   const clientName = project.client.name ?? "Заказчик";
 
-  await prisma.notification.create({
-    data: {
-      userId: freelancerId,
-      type: "BID_ACCEPTED",
-      title: "Вас выбрали исполнителем",
-      body: `${clientName} · ${project.title}`,
-      link,
-      metadata: {
-        projectId: project.id,
-        conversationId: project.conversation?.id ?? null,
-      },
+  await createUserNotification({
+    userId: freelancerId,
+    type: "BID_ACCEPTED",
+    title: "Вас выбрали исполнителем",
+    body: `${clientName} · ${project.title}`,
+    link,
+    metadata: {
+      projectId: project.id,
+      conversationId: project.conversation?.id ?? null,
     },
   });
 }
@@ -139,18 +149,16 @@ export async function notifyClientNewBid({
 
   const freelancerName = freelancer?.name ?? "Фрилансер";
 
-  await prisma.notification.create({
-    data: {
-      userId: clientId,
-      type: "NEW_BID",
-      title: "Новый отклик на проект",
-      body: `${freelancerName} · ${projectTitle}`,
-      link: getProjectPath({ id: projectId, slug: projectSlug }),
-      metadata: {
-        projectId,
-        bidId,
-        freelancerId,
-      },
+  await createUserNotification({
+    userId: clientId,
+    type: "NEW_BID",
+    title: "Новый отклик на проект",
+    body: `${freelancerName} · ${projectTitle}`,
+    link: getProjectPath({ id: projectId, slug: projectSlug }),
+    metadata: {
+      projectId,
+      bidId,
+      freelancerId,
     },
   });
 }
@@ -185,19 +193,17 @@ export async function notifyBidMessage({
   const preview =
     content.length > 120 ? `${content.slice(0, 117)}…` : content;
 
-  await prisma.notification.create({
-    data: {
-      userId: recipientId,
-      type: "BID_MESSAGE",
-      title: "Новое сообщение по отклику",
-      body: `${senderName} · ${projectTitle}`,
-      link: getProjectPath({ id: projectId, slug: projectSlug }),
-      metadata: {
-        projectId,
-        bidId,
-        senderId,
-        preview,
-      },
+  await createUserNotification({
+    userId: recipientId,
+    type: "BID_MESSAGE",
+    title: "Новое сообщение по отклику",
+    body: `${senderName} · ${projectTitle}`,
+    link: getProjectPath({ id: projectId, slug: projectSlug }),
+    metadata: {
+      projectId,
+      bidId,
+      senderId,
+      preview,
     },
   });
 }

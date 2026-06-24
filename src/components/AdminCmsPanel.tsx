@@ -19,13 +19,25 @@ const LOCALES = [
   { value: "pl", label: "PL" },
 ];
 
-export function AdminCmsPanel({ pages }: { pages: CmsPageItem[] }) {
+export function AdminCmsPanel({
+  pages,
+  compact = false,
+}: {
+  pages: CmsPageItem[];
+  compact?: boolean;
+}) {
   const [state, formAction, pending] = useActionState(adminSaveCmsPage, initialState);
 
   const pageMap = new Map(pages.map((page) => [`${page.slug}:${page.locale}`, page]));
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+    <section
+      className={
+        compact
+          ? "rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm"
+          : "rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+      }
+    >
       <h2 className="text-lg font-semibold text-zinc-900">CMS — статические страницы</h2>
       <p className="mt-1 text-sm text-zinc-500">
         Страницы доступны по адресу /[locale]/pages/[slug]

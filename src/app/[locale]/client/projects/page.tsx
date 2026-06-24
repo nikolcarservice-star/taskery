@@ -10,6 +10,7 @@ import Link from "next/link";
 
 type ClientProjectsPageProps = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ moderation?: string }>;
 };
 
 export async function generateMetadata({ params }: ClientProjectsPageProps) {
@@ -26,8 +27,12 @@ export async function generateMetadata({ params }: ClientProjectsPageProps) {
   });
 }
 
-export default async function ClientProjectsPage({ params }: ClientProjectsPageProps) {
+export default async function ClientProjectsPage({
+  params,
+  searchParams,
+}: ClientProjectsPageProps) {
   const locale = await requireAppLocale(params);
+  const { moderation } = await searchParams;
   const dict = await getDictionary(locale);
   const p = dict.pages.client.projects;
   const l = (path: string) => localizedPath(locale, path);
@@ -61,6 +66,12 @@ export default async function ClientProjectsPage({ params }: ClientProjectsPageP
           {p.newProject}
         </Link>
       </div>
+
+      {moderation === "pending" && (
+        <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {p.moderationPendingBanner}
+        </div>
+      )}
 
       <MyProjectsTable projects={projects} />
     </div>

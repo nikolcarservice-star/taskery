@@ -5,6 +5,7 @@ import { FormActionError } from "@/components/FormActionError";
 import { LocalizationSettings } from "@/components/LocalizationSettings";
 import { useLocalizedPath } from "@/components/LocalizedLink";
 import { TwoFactorSettings } from "@/components/TwoFactorSettings";
+import { PushBrowserSettings } from "@/components/PushBrowserSettings";
 import { SessionLogoutAllButton } from "@/components/SessionLogoutAllButton";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { stripLocalePrefix } from "@/lib/i18n/routing";
@@ -153,14 +154,8 @@ function ServiceSettingsTab({
       </SettingsSection>
 
       <SettingsSection title={t.sections.push}>
-        <div className="space-y-3">
-          <CheckboxRow
-            name="pushBrowser"
-            label={t.email.pushBrowser}
-            defaultChecked={settings.pushBrowser}
-            hint={t.email.pushSoon}
-            disabled
-          />
+        <PushBrowserSettings initialEnabled={settings.pushBrowser} />
+        <div className="mt-3">
           <CheckboxRow
             name="soundNewMessages"
             label={t.email.soundMessages}

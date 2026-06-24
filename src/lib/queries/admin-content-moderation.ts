@@ -26,6 +26,17 @@ export type ContentModerationOverview = {
   avatars: PendingAvatarItem[];
 };
 
+export async function getContentModerationCount(): Promise<number> {
+  const [portfolioCount, avatarCount] = await Promise.all([
+    prisma.portfolioItem.count({ where: { moderationStatus: "PENDING" } }),
+    prisma.user.count({
+      where: { pendingAvatar: { not: null }, deletedAt: null },
+    }),
+  ]);
+
+  return portfolioCount + avatarCount;
+}
+
 export async function getContentModerationQueue(): Promise<ContentModerationOverview> {
   const [portfolio, avatars] = await Promise.all([
     prisma.portfolioItem.findMany({

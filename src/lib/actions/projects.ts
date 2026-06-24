@@ -1,5 +1,6 @@
 "use server";
 
+import { createUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { generateUniqueProjectSlug } from "@/lib/slug";
 import { revalidatePath } from "next/cache";
@@ -127,6 +128,14 @@ export async function createProject(
     "@/lib/actions/admin-project-moderation"
   );
   await notifyAdminsNewProjectPending(project.id, project.title);
+
+  await createUserNotification({
+    userId: session.user.id,
+    type: "USER_WARNING",
+    title: "Проект на модерации",
+    body: `«${project.title}» отправлен на проверку. Мы уведомим вас после публикации.`,
+    link: "/client/projects",
+  });
 
   revalidatePath("/projects/my");
   revalidatePath("/client/projects");

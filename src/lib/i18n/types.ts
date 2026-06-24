@@ -634,6 +634,13 @@ export type Dictionary = {
       blogDigest: string;
       telegramMessages: string;
       pushBrowser: string;
+      pushHint: string;
+      pushWorking: string;
+      pushUnsupported: string;
+      pushNotConfigured: string;
+      pushPermissionDenied: string;
+      pushSubscribeFailed: string;
+      pushUnsubscribeFailed: string;
       pushSoon: string;
       soundMessages: string;
       soundSoon: string;
@@ -901,6 +908,7 @@ export type Dictionary = {
         title: string;
         intro: string;
         newProject: string;
+        moderationPendingBanner: string;
         newPage: {
           title: string;
           intro: string;
