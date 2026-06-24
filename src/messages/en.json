@@ -1001,6 +1001,7 @@
       "chooseFile": "Choose file",
       "removePhoto": "Remove photo",
       "fileHint": "JPG, PNG or WebP, up to 5 MB.",
+      "photoPendingModeration": "Photo uploaded and awaiting moderator review. It will appear on your public profile after approval.",
       "contactsTitle": "Contact info",
       "contactsDescription": "Email is used for login and notifications.",
       "email": "Email",

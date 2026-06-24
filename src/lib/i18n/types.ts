@@ -1125,6 +1125,7 @@ export type Dictionary = {
       chooseFile: string;
       removePhoto: string;
       fileHint: string;
+      photoPendingModeration: string;
       contactsTitle: string;
       contactsDescription: string;
       email: string;

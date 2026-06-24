@@ -980,6 +980,7 @@
       "chooseFile": "Wybierz plik",
       "removePhoto": "Usuń zdjęcie",
       "fileHint": "JPG, PNG lub WebP, do 5 MB.",
+      "photoPendingModeration": "Zdjęcie zostało przesłane i czeka na weryfikację moderatora. Po zatwierdzeniu pojawi się w profilu publicznym.",
       "contactsTitle": "Dane kontaktowe",
       "contactsDescription": "Email służy do logowania i powiadomień.",
       "email": "Email",

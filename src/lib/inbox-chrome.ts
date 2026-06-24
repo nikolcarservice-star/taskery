@@ -25,9 +25,11 @@ export async function getInboxChromeData(userId: string) {
     getUserSettings(userId),
     prisma.user.findUnique({
       where: { id: userId },
-      select: { name: true, avatar: true },
+      select: { name: true, avatar: true, pendingAvatar: true },
     }),
   ]);
+
+  const displayAvatar = user?.avatar ?? user?.pendingAvatar ?? null;
 
   return {
     unreadMessages,
@@ -37,7 +39,7 @@ export async function getInboxChromeData(userId: string) {
     soundEnabled: settings.soundNewMessages,
     user: {
       name: user?.name ?? null,
-      avatar: user?.avatar ?? null,
+      avatar: displayAvatar,
     },
   };
 }

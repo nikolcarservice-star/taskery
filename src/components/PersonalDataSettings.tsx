@@ -20,6 +20,8 @@ import {
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { stripLocalePrefix } from "@/lib/i18n/routing";
 import {
+  isAvatarPendingModeration,
+  ownProfileAvatarUrl,
   type LanguageLevel,
   type PersonalDataForm,
   type PersonalDataTab,
@@ -28,7 +30,8 @@ import {
 import Link from "next/link";
 import { maskPayoutDestination } from "@/lib/withdrawals-shared";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
+import { requestInboxRefresh } from "@/components/inbox/inbox-events";
 
 type PersonalDataSettingsProps = {
   data: PersonalDataForm;
@@ -345,33 +348,30 @@ function MyDataTab({ data, isClient }: { data: PersonalDataForm; isClient: boole
 function PhotoTab({ data, isClient }: { data: PersonalDataForm; isClient: boolean }) {
   const dict = useDictionary();
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const t = dict.cabinetForms.personalData;
   const common = dict.cabinetForms.common;
   const [state, formAction, pending] = useActionState(
     updateProfilePhoto,
     initialState,
   );
-  const [preview, setPreview] = useState(data.avatar);
+  const [preview, setPreview] = useState(() => ownProfileAvatarUrl(data));
   const [fileName, setFileName] = useState<string | null>(null);
   const [removePhoto, setRemovePhoto] = useState(false);
   const [clientError, setClientError] = useState<string | null>(null);
+  const avatarPendingModeration = isAvatarPendingModeration(data);
 
   useEffect(() => {
-    setPreview(data.avatar);
-  }, [data.avatar]);
+    setPreview(ownProfileAvatarUrl(data));
+  }, [data.avatar, data.pendingAvatar]);
 
   useEffect(() => {
     if (!state.success) return;
 
+    requestInboxRefresh();
     router.refresh();
     setFileName(null);
     setRemovePhoto(false);
-    setPreview((current) => {
-      if (current?.startsWith("blob:")) {
-        URL.revokeObjectURL(current);
-      }
-      return current;
-    });
   }, [state.success, router]);
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -396,6 +396,7 @@ function PhotoTab({ data, isClient }: { data: PersonalDataForm; isClient: boolea
       }
       return URL.createObjectURL(file);
     });
+    formRef.current?.requestSubmit();
   }
 
   function handleRemovePhoto() {
@@ -410,7 +411,12 @@ function PhotoTab({ data, isClient }: { data: PersonalDataForm; isClient: boolea
   }
 
   return (
-    <form action={formAction} encType="multipart/form-data" className="space-y-6">
+    <form
+      ref={formRef}
+      action={formAction}
+      encType="multipart/form-data"
+      className="space-y-6"
+    >
       <SectionTitle
         title={t.photoTitle}
         description={isClient ? t.photoDescriptionClient : t.photoDescriptionFreelancer}
@@ -441,7 +447,7 @@ function PhotoTab({ data, isClient }: { data: PersonalDataForm; isClient: boolea
                   className="sr-only"
                 />
               </label>
-              {data.avatar && !removePhoto && (
+              {ownProfileAvatarUrl(data) && !removePhoto && (
                 <button
                   type="button"
                   onClick={handleRemovePhoto}
@@ -451,6 +457,9 @@ function PhotoTab({ data, isClient }: { data: PersonalDataForm; isClient: boolea
                 </button>
               )}
             </div>
+            {avatarPendingModeration && !removePhoto && (
+              <p className="mt-2 text-xs text-amber-700">{t.photoPendingModeration}</p>
+            )}
             {fileName ? (
               <p className="mt-2 text-xs text-zinc-500">{fileName}</p>
             ) : (

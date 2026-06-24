@@ -986,6 +986,7 @@
       "chooseFile": "Обрати файл",
       "removePhoto": "Видалити фото",
       "fileHint": "JPG, PNG або WebP, до 5 МБ.",
+      "photoPendingModeration": "Фото завантажено та очікує перевірки модератором. Після схвалення воно з’явиться у публічному профілі.",
       "contactsTitle": "Контактні дані",
       "contactsDescription": "Email використовується для входу та сповіщень.",
       "email": "Email",

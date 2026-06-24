@@ -45,13 +45,13 @@ export async function getAccountMobileChromeProps(
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { name: true, avatar: true },
+    select: { name: true, avatar: true, pendingAvatar: true },
   });
 
   return {
     role,
     isAdmin: session.user.role === "ADMIN",
     userName: user?.name ?? session.user.name ?? null,
-    userAvatar: user?.avatar ?? null,
+    userAvatar: user?.avatar ?? user?.pendingAvatar ?? null,
   };
 }

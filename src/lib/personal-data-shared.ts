@@ -8,6 +8,20 @@ export type UserLanguageRow = {
   level: LanguageLevel;
 };
 
+export function ownProfileAvatarUrl(data: {
+  avatar: string | null;
+  pendingAvatar?: string | null;
+}): string | null {
+  return data.avatar ?? data.pendingAvatar ?? null;
+}
+
+export function isAvatarPendingModeration(data: {
+  avatar: string | null;
+  pendingAvatar?: string | null;
+}): boolean {
+  return Boolean(data.pendingAvatar && data.pendingAvatar !== data.avatar);
+}
+
 export type PersonalDataForm = {
   email: string;
   role: string;
@@ -18,6 +32,7 @@ export type PersonalDataForm = {
   city: string | null;
   phone: string | null;
   avatar: string | null;
+  pendingAvatar: string | null;
   wantsFreelanceProjects: boolean;
   wantsRemoteWork: boolean;
   languages: UserLanguageRow[];

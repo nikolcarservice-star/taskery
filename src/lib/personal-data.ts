@@ -33,6 +33,7 @@ export async function getPersonalData(userId: string): Promise<PersonalDataForm>
       city: true,
       phone: true,
       avatar: true,
+      pendingAvatar: true,
       languages: { orderBy: { language: "asc" } },
       freelancerProfile: {
         select: {
@@ -78,6 +79,7 @@ export async function getPersonalData(userId: string): Promise<PersonalDataForm>
     city: user.city,
     phone: user.phone,
     avatar: user.avatar,
+    pendingAvatar: user.pendingAvatar,
     wantsFreelanceProjects:
       user.freelancerProfile?.wantsFreelanceProjects ?? true,
     wantsRemoteWork: user.freelancerProfile?.wantsRemoteWork ?? false,

@@ -133,7 +133,7 @@ export async function updateProfilePhoto(
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { avatar: true },
+    select: { avatar: true, pendingAvatar: true },
   });
 
   if (!user) {
@@ -141,10 +141,15 @@ export async function updateProfilePhoto(
   }
 
   if (removeAvatar) {
-    await deleteLocalAvatar(user.avatar);
+    if (isManagedImageUrl(user.avatar)) {
+      await deleteLocalAvatar(user.avatar);
+    }
+    if (isManagedImageUrl(user.pendingAvatar)) {
+      await deleteLocalAvatar(user.pendingAvatar);
+    }
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { avatar: null },
+      data: { avatar: null, pendingAvatar: null },
     });
     revalidatePersonalPaths(session.user.id);
     revalidatePath("/profile");
@@ -159,8 +164,12 @@ export async function updateProfilePhoto(
     const avatar = await saveUserAvatar(session.user.id, file);
 
     if (contentPreModerationEnabled) {
-      if (isManagedImageUrl(user.avatar)) {
-        await deleteLocalAvatar(user.avatar);
+      if (
+        user.pendingAvatar &&
+        isManagedImageUrl(user.pendingAvatar) &&
+        user.pendingAvatar !== avatar
+      ) {
+        await deleteLocalAvatar(user.pendingAvatar);
       }
 
       await prisma.user.update({
