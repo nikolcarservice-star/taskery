@@ -473,7 +473,8 @@
       "myReviewDone": "Вы уже оставили отзыв",
       "myReviewTitlePrefix": "Ваша оценка ",
       "waitingPartnerPrefix": "Ожидаем отзыв от ",
-      "waitingPartnerFallback": "второй стороны сделки"
+      "waitingPartnerFallback": "второй стороны сделки",
+      "hiddenUntilMutual": "Отзывы станут видны обеим сторонам после того, как заказчик и исполнитель оставят оценку друг другу."
     },
     "featuredBadge": "★ В топе"
   },

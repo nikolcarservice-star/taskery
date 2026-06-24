@@ -43,11 +43,31 @@ function toReviewRow(
 export async function getReviewsReceived(userId: string): Promise<ReviewRow[]> {
   const reviews = await prisma.review.findMany({
     where: { toUserId: userId },
-    select: reviewListSelect,
+    select: {
+      ...reviewListSelect,
+      contract: {
+        select: {
+          project: { select: { title: true, slug: true } },
+          _count: { select: { reviews: true } },
+        },
+      },
+    },
     orderBy: { createdAt: "desc" },
   });
 
-  return reviews.map(toReviewRow);
+  return reviews
+    .filter((review) => review.contract._count.reviews >= 2)
+    .map((review) =>
+      toReviewRow({
+        id: review.id,
+        rating: review.rating,
+        text: review.text,
+        createdAt: review.createdAt,
+        fromUser: review.fromUser,
+        toUser: review.toUser,
+        contract: { project: review.contract.project },
+      }),
+    );
 }
 
 export async function getReviewsGiven(userId: string): Promise<ReviewRow[]> {

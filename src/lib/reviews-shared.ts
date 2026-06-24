@@ -34,3 +34,18 @@ export function reviewTargetLabel(partnerRole: Role): string {
       ? "заказчика"
       : "участника сделки";
 }
+
+export function isMutualReviewComplete(reviewCount: number): boolean {
+  return reviewCount >= 2;
+}
+
+export function reviewsVisibleToParticipant<T extends { fromUserId: string }>(
+  reviews: T[],
+  currentUserId: string,
+): T[] {
+  if (isMutualReviewComplete(reviews.length)) {
+    return reviews;
+  }
+
+  return reviews.filter((review) => review.fromUserId === currentUserId);
+}

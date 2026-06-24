@@ -1458,7 +1458,8 @@
       "myReviewDone": "You already left a review",
       "myReviewTitlePrefix": "Your review as ",
       "waitingPartnerPrefix": "Waiting for review from ",
-      "waitingPartnerFallback": "the other party"
+      "waitingPartnerFallback": "the other party",
+      "hiddenUntilMutual": "Reviews become visible to both sides once the client and freelancer have rated each other."
     },
     "featuredBadge": "★ Featured"
   },

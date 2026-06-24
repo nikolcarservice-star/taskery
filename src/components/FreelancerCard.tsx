@@ -1,6 +1,7 @@
 "use client";
 
 import { ProBadge } from "@/components/ProBadge";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import type { AppLocale } from "@/lib/i18n/types";
 import { localizedPath } from "@/lib/i18n/routing";
@@ -41,18 +42,12 @@ export function FreelancerCard({ freelancer, locale = "ru" }: FreelancerCardProp
   return (
     <article className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-lg font-semibold text-zinc-600">
-          {freelancer.avatar ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={freelancer.avatar}
-              alt=""
-              className="h-12 w-12 rounded-full object-cover"
-            />
-          ) : (
-            (freelancer.name?.[0] ?? "F").toUpperCase()
-          )}
-        </div>
+        <UserAvatar
+          name={freelancer.name}
+          avatar={freelancer.avatar}
+          size="md"
+          className="h-12 w-12 text-lg"
+        />
         <div className="min-w-0 flex-1">
           <h2 className="text-lg font-semibold text-zinc-900">
             <Link

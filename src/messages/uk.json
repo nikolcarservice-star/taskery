@@ -1443,7 +1443,8 @@
       "myReviewDone": "You already left a review",
       "myReviewTitlePrefix": "Your review as ",
       "waitingPartnerPrefix": "Waiting for review from ",
-      "waitingPartnerFallback": "the other party"
+      "waitingPartnerFallback": "the other party",
+      "hiddenUntilMutual": "Відгуки стануть видимими для обох сторін після того, як замовник і виконавець оцінять одне одного."
     },
     "featuredBadge": "★ Featured"
   },

@@ -77,6 +77,7 @@ export default async function FreelancerPage({ params }: FreelancerPageProps) {
         take: 10,
         include: {
           fromUser: { select: { name: true, role: true } },
+          contract: { select: { _count: { select: { reviews: true } } } },
         },
       },
     },
@@ -133,7 +134,15 @@ export default async function FreelancerPage({ params }: FreelancerPageProps) {
           portfolioItems: profile.portfolioItems,
           isVerified: profile.verificationStatus === "APPROVED",
         }}
-        reviews={user.reviewsReceived}
+        reviews={user.reviewsReceived
+          .filter((review) => review.contract._count.reviews >= 2)
+          .map((review) => ({
+            id: review.id,
+            rating: review.rating,
+            text: review.text,
+            createdAt: review.createdAt,
+            fromUser: review.fromUser,
+          }))}
         isOwnProfile={isOwnProfile}
         isViewerClient={
           session?.user?.role === "CLIENT" || session?.user?.role === "ADMIN"

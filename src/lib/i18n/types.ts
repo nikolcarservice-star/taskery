@@ -365,6 +365,7 @@ export type Dictionary = {
       myReviewTitlePrefix: string;
       waitingPartnerPrefix: string;
       waitingPartnerFallback: string;
+      hiddenUntilMutual: string;
     };
     featuredBadge: string;
   };

@@ -8,6 +8,7 @@ import {
   type ActionState,
 } from "@/lib/actions/profile";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
+import { resolveAssetDisplayUrl } from "@/lib/blob-url";
 import Link from "next/link";
 import { useActionState } from "react";
 
@@ -40,13 +41,14 @@ function PortfolioCard({
   deletePending: boolean;
 }) {
   const t = useDictionary().cabinetForms.portfolio;
+  const imageSrc = resolveAssetDisplayUrl(item.imageUrl);
 
   return (
     <article className="group overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-md">
-      {item.imageUrl ? (
+      {imageSrc ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={item.imageUrl}
+          src={imageSrc}
           alt=""
           className="h-44 w-full object-cover"
         />

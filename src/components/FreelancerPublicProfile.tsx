@@ -18,6 +18,7 @@ import {
   type LanguageLevel,
 } from "@/lib/personal-data-shared";
 import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
+import { resolveAssetDisplayUrl } from "@/lib/blob-url";
 import { isProUser } from "@/lib/slug";
 import Link from "next/link";
 
@@ -128,12 +129,14 @@ function PortfolioCard({
   item: FreelancerPortfolioItem;
   viewLabel: string;
 }) {
+  const imageSrc = resolveAssetDisplayUrl(item.imageUrl);
+
   return (
     <article className="group overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-md">
-      {item.imageUrl ? (
+      {imageSrc ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={item.imageUrl}
+          src={imageSrc}
           alt=""
           className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
         />

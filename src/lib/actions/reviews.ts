@@ -71,7 +71,13 @@ export async function createReview(
     },
   });
 
-  await recalculateUserRating(toUserId);
+  const reviewCount = await prisma.review.count({ where: { contractId } });
+  if (reviewCount >= 2) {
+    await Promise.all([
+      recalculateUserRating(contract.clientId),
+      recalculateUserRating(contract.freelancerId),
+    ]);
+  }
 
   revalidatePath(`/projects/${contract.project.slug}`);
   revalidatePath(`/freelancers/${contract.freelancerId}`);
