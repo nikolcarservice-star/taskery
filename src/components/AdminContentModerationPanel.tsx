@@ -8,11 +8,54 @@ import {
   type ContentModerationState,
 } from "@/lib/actions/admin-content-moderation";
 import { getAdminCopy } from "@/lib/admin-i18n";
+import { resolveAssetDisplayUrl } from "@/lib/blob-url";
 import type { ContentModerationOverview } from "@/lib/queries/admin-content-moderation";
 import type { AppLocale } from "@/lib/i18n/types";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 const initialState: ContentModerationState = {};
+
+const approveButtonClass =
+  "w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors active:bg-emerald-700 disabled:opacity-50 sm:w-auto sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-xs sm:font-medium";
+
+const rejectButtonClass =
+  "w-full rounded-xl border border-red-300 bg-white px-4 py-3 text-sm font-semibold text-red-700 transition-colors active:bg-red-50 disabled:opacity-50 sm:w-auto sm:rounded-lg sm:px-3 sm:py-1.5 sm:text-xs sm:font-medium";
+
+function ModerationPreviewImage({
+  url,
+  name,
+  className = "h-20 w-20 rounded-2xl object-cover sm:h-16 sm:w-16 sm:rounded-full",
+  rounded = "rounded-2xl sm:rounded-full",
+}: {
+  url: string | null | undefined;
+  name: string;
+  className?: string;
+  rounded?: string;
+}) {
+  const [failed, setFailed] = useState(false);
+  const src = resolveAssetDisplayUrl(url);
+  const initial = (name[0] ?? "U").toUpperCase();
+
+  if (!src || failed) {
+    return (
+      <div
+        className={`flex shrink-0 items-center justify-center bg-indigo-100 text-lg font-semibold text-indigo-700 ${rounded} ${className}`}
+      >
+        {initial}
+      </div>
+    );
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt=""
+      className={`shrink-0 bg-zinc-100 ${className}`}
+      onError={() => setFailed(true)}
+    />
+  );
+}
 
 export function AdminContentModerationPanel({
   queue,
@@ -25,8 +68,8 @@ export function AdminContentModerationPanel({
   const total = queue.portfolio.length + queue.avatars.length;
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-      <h2 className="text-lg font-semibold text-zinc-900">
+    <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6">
+      <h2 className="text-base font-semibold text-zinc-900 sm:text-lg">
         {p.title} ({total})
       </h2>
 
@@ -67,6 +110,7 @@ function AvatarRow({
   locale: AppLocale;
 }) {
   const c = getAdminCopy(locale).panels.common;
+  const displayName = item.name ?? item.email;
   const [approveState, approveAction, approvePending] = useActionState(
     adminApproveAvatar,
     initialState,
@@ -77,40 +121,38 @@ function AvatarRow({
   );
 
   return (
-    <li className="flex flex-col gap-3 rounded-xl border border-zinc-200 p-4 sm:flex-row sm:items-center">
-      <img
-        src={item.pendingAvatar}
-        alt=""
-        className="h-16 w-16 rounded-full object-cover"
-      />
-      <div className="flex-1 text-sm">
-        <p className="font-medium text-zinc-900">{item.name ?? item.email}</p>
-        <p className="text-zinc-500">{item.email}</p>
+    <li className="rounded-xl border border-zinc-200 p-3 sm:p-4">
+      <div className="flex items-start gap-3">
+        <ModerationPreviewImage
+          url={item.pendingAvatar}
+          name={displayName}
+          className="h-20 w-20 rounded-2xl object-cover sm:h-16 sm:w-16 sm:rounded-full"
+        />
+        <div className="min-w-0 flex-1 text-sm">
+          <p className="font-medium text-zinc-900">{displayName}</p>
+          <p className="truncate text-zinc-500">{item.email}</p>
+        </div>
       </div>
-      <div className="flex gap-2">
-        <form action={approveAction}>
+
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:flex sm:justify-end">
+        <form action={approveAction} className="min-w-0">
           <input type="hidden" name="userId" value={item.userId} />
-          <button
-            type="submit"
-            disabled={approvePending}
-            className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
-          >
+          <button type="submit" disabled={approvePending} className={approveButtonClass}>
             {c.approve}
           </button>
         </form>
-        <form action={rejectAction}>
+        <form action={rejectAction} className="min-w-0">
           <input type="hidden" name="userId" value={item.userId} />
-          <button
-            type="submit"
-            disabled={rejectPending}
-            className="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 disabled:opacity-50"
-          >
+          <button type="submit" disabled={rejectPending} className={rejectButtonClass}>
             {c.reject}
           </button>
         </form>
       </div>
+
       {(approveState.error || rejectState.error) && (
-        <p className="text-xs text-red-600">{approveState.error ?? rejectState.error}</p>
+        <p className="mt-2 text-xs text-red-600">
+          {approveState.error ?? rejectState.error}
+        </p>
       )}
     </li>
   );
@@ -124,6 +166,7 @@ function PortfolioRow({
   locale: AppLocale;
 }) {
   const c = getAdminCopy(locale).panels.common;
+  const displayName = item.freelancer.name ?? item.freelancer.email;
   const [approveState, approveAction, approvePending] = useActionState(
     adminApprovePortfolioItem,
     initialState,
@@ -134,40 +177,44 @@ function PortfolioRow({
   );
 
   return (
-    <li className="rounded-xl border border-zinc-200 p-4">
+    <li className="rounded-xl border border-zinc-200 p-3 sm:p-4">
+      {item.imageUrl ? (
+        <ModerationPreviewImage
+          url={item.imageUrl}
+          name={displayName}
+          className="mb-3 h-40 w-full rounded-xl object-cover sm:h-32 sm:w-40"
+          rounded="rounded-xl"
+        />
+      ) : null}
+
       <p className="font-medium text-zinc-900">{item.title}</p>
-      <p className="text-sm text-zinc-600">
-        {item.freelancer.name ?? item.freelancer.email}
-      </p>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <p className="text-sm text-zinc-600">{displayName}</p>
+
+      <div className="mt-3 space-y-2">
         <form action={approveAction}>
           <input type="hidden" name="itemId" value={item.id} />
-          <button
-            type="submit"
-            disabled={approvePending}
-            className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
-          >
+          <button type="submit" disabled={approvePending} className={approveButtonClass}>
             {c.approve}
           </button>
         </form>
-        <form action={rejectAction} className="flex gap-2">
+
+        <form action={rejectAction} className="space-y-2">
           <input type="hidden" name="itemId" value={item.id} />
           <input
             name="reason"
             placeholder={c.reason}
-            className="rounded-lg border border-zinc-300 px-2 py-1.5 text-xs"
+            className="w-full rounded-xl border border-zinc-300 px-3 py-2.5 text-sm sm:rounded-lg sm:px-2 sm:py-1.5 sm:text-xs"
           />
-          <button
-            type="submit"
-            disabled={rejectPending}
-            className="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 disabled:opacity-50"
-          >
+          <button type="submit" disabled={rejectPending} className={rejectButtonClass}>
             {c.reject}
           </button>
         </form>
       </div>
+
       {(approveState.error || rejectState.error) && (
-        <p className="mt-2 text-xs text-red-600">{approveState.error ?? rejectState.error}</p>
+        <p className="mt-2 text-xs text-red-600">
+          {approveState.error ?? rejectState.error}
+        </p>
       )}
     </li>
   );
