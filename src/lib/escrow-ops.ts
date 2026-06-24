@@ -1,18 +1,7 @@
+import { EscrowError } from "@/lib/escrow-errors";
 import { prisma } from "@/lib/prisma";
 
-export class EscrowError extends Error {
-  constructor(
-    message: string,
-    readonly code:
-      | "NOT_FOUND"
-      | "INVALID_STATUS"
-      | "INSUFFICIENT_BALANCE"
-      | "ALREADY_PROCESSED",
-  ) {
-    super(message);
-    this.name = "EscrowError";
-  }
-}
+export { EscrowError, mapEscrowError } from "@/lib/escrow-errors";
 
 export async function atomicFundContract(
   contractId: string,
@@ -26,10 +15,7 @@ export async function atomicFundContract(
     });
 
     if (contractResult.count === 0) {
-      throw new EscrowError(
-        "Средства по этому проекту уже внесены",
-        "ALREADY_PROCESSED",
-      );
+      throw new EscrowError("ESCROW_ALREADY_FUNDED");
     }
 
     const balanceResult = await tx.user.updateMany({
@@ -38,10 +24,7 @@ export async function atomicFundContract(
     });
 
     if (balanceResult.count === 0) {
-      throw new EscrowError(
-        `Недостаточно средств. Нужно ${amount.toLocaleString("uk-UA")} ₴. Пополните баланс.`,
-        "INSUFFICIENT_BALANCE",
-      );
+      throw new EscrowError("ESCROW_INSUFFICIENT_BALANCE");
     }
   });
 }
@@ -61,7 +44,7 @@ export async function atomicReleaseContract(
     });
 
     if (contractResult.count === 0) {
-      throw new EscrowError("Средства уже обработаны", "ALREADY_PROCESSED");
+      throw new EscrowError("FUNDS_ALREADY_PROCESSED");
     }
 
     await tx.user.update({
@@ -104,7 +87,7 @@ export async function atomicRefundContract(
     });
 
     if (contractResult.count === 0) {
-      throw new EscrowError("Средства уже обработаны", "ALREADY_PROCESSED");
+      throw new EscrowError("FUNDS_ALREADY_PROCESSED");
     }
 
     if (creditBalance) {
@@ -136,7 +119,7 @@ export async function atomicReleaseDispute(
     });
 
     if (contractResult.count === 0) {
-      throw new EscrowError("Средства уже обработаны", "ALREADY_PROCESSED");
+      throw new EscrowError("FUNDS_ALREADY_PROCESSED");
     }
 
     await tx.user.update({
@@ -170,10 +153,7 @@ export function calculateSplitDisputeAmounts(
   freelancerPercent: number,
 ) {
   if (freelancerPercent <= 0 || freelancerPercent >= 100) {
-    throw new EscrowError(
-      "Для частичного решения укажите процент от 1 до 99",
-      "INVALID_STATUS",
-    );
+    throw new EscrowError("DISPUTE_SPLIT_PERCENT_RANGE");
   }
 
   const payout =
@@ -184,7 +164,7 @@ export function calculateSplitDisputeAmounts(
     Math.round((totalAmount - payout - commission) * 100) / 100;
 
   if (clientRefund < 0) {
-    throw new EscrowError("Некорректное распределение суммы", "INVALID_STATUS");
+    throw new EscrowError("DISPUTE_SPLIT_INVALID");
   }
 
   return { payout, commission, clientRefund };
@@ -216,7 +196,7 @@ export async function atomicSplitDispute(
     });
 
     if (contractResult.count === 0) {
-      throw new EscrowError("Средства уже обработаны", "ALREADY_PROCESSED");
+      throw new EscrowError("FUNDS_ALREADY_PROCESSED");
     }
 
     if (payout > 0) {
@@ -274,7 +254,7 @@ export async function atomicOpenDispute(
     });
 
     if (!contract) {
-      throw new EscrowError("Средства уже обработаны", "INVALID_STATUS");
+      throw new EscrowError("FUNDS_ALREADY_PROCESSED");
     }
 
     const projectResult = await tx.project.updateMany({
@@ -283,10 +263,7 @@ export async function atomicOpenDispute(
     });
 
     if (projectResult.count === 0) {
-      throw new EscrowError(
-        "Спор можно открыть только для проекта в работе",
-        "INVALID_STATUS",
-      );
+      throw new EscrowError("DISPUTE_OPEN_IN_PROGRESS_ONLY");
     }
 
     if (chat) {

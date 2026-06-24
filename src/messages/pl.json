@@ -243,6 +243,50 @@
     "supportEmailLabel": "Email",
     "proSupport": "Użytkownicy PRO otrzymują priorytetowe wsparcie."
   },
+  "support": {
+    "meta": {
+      "listTitle": "Wsparcie",
+      "listDescription": "Zgłoszenia do pomocy technicznej Taskery",
+      "ticketTitle": "Zgłoszenie do wsparcia",
+      "ticketDescription": "Rozmowa z pomocą techniczną Taskery"
+    },
+    "h1": "Wsparcie",
+    "intro": "Utwórz zgłoszenie — administrator odpowie w tej sekcji.",
+    "newTicketTitle": "Nowe zgłoszenie",
+    "myTicketsTitle": "Moje zgłoszenia ({count})",
+    "emptyTickets": "Brak zgłoszeń",
+    "backToTickets": "Moje zgłoszenia",
+    "backToSupportAdmin": "Wsparcie",
+    "status": {
+      "OPEN": "Otwarte",
+      "IN_PROGRESS": "W toku",
+      "RESOLVED": "Rozwiązane",
+      "CLOSED": "Zamknięte"
+    },
+    "form": {
+      "successRedirect": "Zgłoszenie utworzone. Przekierowujemy…",
+      "category": "Kategoria",
+      "subject": "Temat",
+      "message": "Wiadomość",
+      "categories": {
+        "GENERAL": "Pytanie ogólne",
+        "PAYMENT": "Płatność i saldo",
+        "DISPUTE": "Spór dotyczący projektu",
+        "ACCOUNT": "Konto",
+        "OTHER": "Inne"
+      },
+      "submitting": "Wysyłanie…",
+      "submit": "Utwórz zgłoszenie"
+    },
+    "thread": {
+      "supportLabel": "Wsparcie",
+      "youLabel": "Ty",
+      "replyPlaceholder": "Twoja odpowiedź",
+      "replySent": "Wiadomość wysłana",
+      "sending": "Wysyłanie…",
+      "send": "Wyślij"
+    }
+  },
   "pricing": {
     "h1": "Cennik",
     "intro": "Zleceniodawcy korzystają za darmo.",
@@ -822,6 +866,8 @@
       "adminBadge": "Administrator",
       "placeholder": "Wpisz wiadomość…",
       "attachFiles": "Dołącz pliki",
+      "formatPlaceholder": "tekst",
+      "linkLabelPlaceholder": "tekst",
       "send": "Wyślij",
       "sending": "Wysyłanie…"
     },
@@ -1863,7 +1909,14 @@
     "TWO_FACTOR_INVALID": "Nieprawidłowy kod 2FA",
     "TWO_FACTOR_ALREADY_ENABLED": "2FA jest już włączone",
     "TWO_FACTOR_NOT_ENABLED": "2FA nie jest włączone",
-    "TWO_FACTOR_SETUP_REQUIRED": "Najpierw rozpocznij konfigurację 2FA"
+    "TWO_FACTOR_SETUP_REQUIRED": "Najpierw rozpocznij konfigurację 2FA",
+    "TICKET_SUBJECT_REQUIRED": "Podaj temat zgłoszenia",
+    "TICKET_NOT_FOUND_OR_CLOSED": "Zgłoszenie nie zostało znalezione lub jest zamknięte",
+    "ESCROW_OPERATION_FAILED": "Nie udało się wykonać operacji escrow",
+    "ESCROW_INSUFFICIENT_BALANCE": "Niewystarczające saldo. Doładuj konto, aby wpłacić środki do escrow.",
+    "DISPUTE_SPLIT_PERCENT_RANGE": "Dla częściowego rozstrzygnięcia podaj procent od 1 do 99",
+    "DISPUTE_SPLIT_INVALID": "Nieprawidłowy podział kwoty",
+    "DISPUTE_OPEN_IN_PROGRESS_ONLY": "Spór można otworzyć tylko dla projektu w toku"
   },
   "cookies": {
     "title": "Używamy plików cookie",

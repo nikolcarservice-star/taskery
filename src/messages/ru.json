@@ -264,6 +264,50 @@
     "supportEmailLabel": "Email",
     "proSupport": "PRO-пользователи получают приоритетную поддержку."
   },
+  "support": {
+    "meta": {
+      "listTitle": "Поддержка",
+      "listDescription": "Обращения в службу поддержки Taskery",
+      "ticketTitle": "Обращение в поддержку",
+      "ticketDescription": "Переписка со службой поддержки Taskery"
+    },
+    "h1": "Поддержка",
+    "intro": "Создайте обращение — администратор ответит в этом разделе.",
+    "newTicketTitle": "Новое обращение",
+    "myTicketsTitle": "Мои обращения ({count})",
+    "emptyTickets": "Обращений пока нет",
+    "backToTickets": "Мои обращения",
+    "backToSupportAdmin": "Поддержка",
+    "status": {
+      "OPEN": "Открыто",
+      "IN_PROGRESS": "В работе",
+      "RESOLVED": "Решено",
+      "CLOSED": "Закрыто"
+    },
+    "form": {
+      "successRedirect": "Обращение создано. Перенаправляем…",
+      "category": "Категория",
+      "subject": "Тема",
+      "message": "Сообщение",
+      "categories": {
+        "GENERAL": "Общий вопрос",
+        "PAYMENT": "Оплата и баланс",
+        "DISPUTE": "Спор по проекту",
+        "ACCOUNT": "Аккаунт",
+        "OTHER": "Другое"
+      },
+      "submitting": "Отправка…",
+      "submit": "Создать обращение"
+    },
+    "thread": {
+      "supportLabel": "Поддержка",
+      "youLabel": "Вы",
+      "replyPlaceholder": "Ваш ответ",
+      "replySent": "Сообщение отправлено",
+      "sending": "Отправка…",
+      "send": "Отправить"
+    }
+  },
   "pricing": {
     "h1": "Тарифы",
     "intro": "Заказчики работают бесплатно. TaskBoost даёт фрилансерам больше видимости и инструменты продвижения.",
@@ -1273,6 +1317,8 @@
       "adminBadge": "Администратор",
       "placeholder": "Начните набирать сообщение…",
       "attachFiles": "Приложить файлы",
+      "formatPlaceholder": "текст",
+      "linkLabelPlaceholder": "текст",
       "send": "Отправить",
       "sending": "Отправка…"
     },
@@ -1854,7 +1900,14 @@
     "TWO_FACTOR_INVALID": "Неверный код 2FA",
     "TWO_FACTOR_ALREADY_ENABLED": "2FA уже включена",
     "TWO_FACTOR_NOT_ENABLED": "2FA не включена",
-    "TWO_FACTOR_SETUP_REQUIRED": "Сначала начните настройку 2FA"
+    "TWO_FACTOR_SETUP_REQUIRED": "Сначала начните настройку 2FA",
+    "TICKET_SUBJECT_REQUIRED": "Укажите тему обращения",
+    "TICKET_NOT_FOUND_OR_CLOSED": "Обращение не найдено или закрыто",
+    "ESCROW_OPERATION_FAILED": "Не удалось выполнить операцию с эскроу",
+    "ESCROW_INSUFFICIENT_BALANCE": "Недостаточно средств на балансе. Пополните баланс для внесения в эскроу.",
+    "DISPUTE_SPLIT_PERCENT_RANGE": "Для частичного решения укажите процент от 1 до 99",
+    "DISPUTE_SPLIT_INVALID": "Некорректное распределение суммы",
+    "DISPUTE_OPEN_IN_PROGRESS_ONLY": "Спор можно открыть только для проекта в работе"
   },
   "cookies": {
     "title": "Мы используем cookies",

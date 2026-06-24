@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { nanoid } from "nanoid";
 import { prisma } from "@/lib/prisma";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { getEmailLocaleForUser } from "@/lib/i18n/user-locale";
 import { validatePassword } from "@/lib/password-policy";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { absoluteUrl } from "@/lib/seo";
@@ -22,7 +23,10 @@ export async function requestPasswordReset(
     return { success: true };
   }
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true, passwordHash: true, email: true, interfaceLanguage: true },
+  });
 
   // Always show success to prevent email enumeration
   if (!user?.passwordHash) {
@@ -40,6 +44,7 @@ export async function requestPasswordReset(
   await sendPasswordResetEmail(
     user.email,
     absoluteUrl(`/reset-password?token=${token}`),
+    await getEmailLocaleForUser(user.id),
   );
 
   return { success: true };

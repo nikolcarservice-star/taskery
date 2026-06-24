@@ -264,6 +264,50 @@
     "supportEmailLabel": "Email",
     "proSupport": "PRO users receive priority support."
   },
+  "support": {
+    "meta": {
+      "listTitle": "Support",
+      "listDescription": "Taskery support requests",
+      "ticketTitle": "Support request",
+      "ticketDescription": "Conversation with Taskery support"
+    },
+    "h1": "Support",
+    "intro": "Create a request — an administrator will reply in this section.",
+    "newTicketTitle": "New request",
+    "myTicketsTitle": "My requests ({count})",
+    "emptyTickets": "No requests yet",
+    "backToTickets": "My requests",
+    "backToSupportAdmin": "Support",
+    "status": {
+      "OPEN": "Open",
+      "IN_PROGRESS": "In progress",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed"
+    },
+    "form": {
+      "successRedirect": "Request created. Redirecting…",
+      "category": "Category",
+      "subject": "Subject",
+      "message": "Message",
+      "categories": {
+        "GENERAL": "General question",
+        "PAYMENT": "Payment and balance",
+        "DISPUTE": "Project dispute",
+        "ACCOUNT": "Account",
+        "OTHER": "Other"
+      },
+      "submitting": "Sending…",
+      "submit": "Create request"
+    },
+    "thread": {
+      "supportLabel": "Support",
+      "youLabel": "You",
+      "replyPlaceholder": "Your reply",
+      "replySent": "Message sent",
+      "sending": "Sending…",
+      "send": "Send"
+    }
+  },
   "pricing": {
     "h1": "Pricing",
     "intro": "Clients use Taskery for free. TaskBoost gives freelancers more visibility and promotion tools.",
@@ -843,6 +887,8 @@
       "adminBadge": "Administrator",
       "placeholder": "Type your message…",
       "attachFiles": "Attach files",
+      "formatPlaceholder": "text",
+      "linkLabelPlaceholder": "text",
       "send": "Send",
       "sending": "Sending…"
     },
@@ -1884,7 +1930,14 @@
     "TWO_FACTOR_INVALID": "Invalid 2FA code",
     "TWO_FACTOR_ALREADY_ENABLED": "2FA is already enabled",
     "TWO_FACTOR_NOT_ENABLED": "2FA is not enabled",
-    "TWO_FACTOR_SETUP_REQUIRED": "Start 2FA setup first"
+    "TWO_FACTOR_SETUP_REQUIRED": "Start 2FA setup first",
+    "TICKET_SUBJECT_REQUIRED": "Enter a subject for your request",
+    "TICKET_NOT_FOUND_OR_CLOSED": "Request not found or closed",
+    "ESCROW_OPERATION_FAILED": "Could not complete the escrow operation",
+    "ESCROW_INSUFFICIENT_BALANCE": "Insufficient balance. Top up your balance to fund escrow.",
+    "DISPUTE_SPLIT_PERCENT_RANGE": "For a partial resolution, enter a percentage from 1 to 99",
+    "DISPUTE_SPLIT_INVALID": "Invalid amount split",
+    "DISPUTE_OPEN_IN_PROGRESS_ONLY": "A dispute can only be opened for a project in progress"
   },
   "cookies": {
     "title": "We use cookies",

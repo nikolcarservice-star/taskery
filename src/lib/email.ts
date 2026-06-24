@@ -1,4 +1,6 @@
 import { Resend } from "resend";
+import { fillEmailTemplate, getEmailTemplates } from "@/lib/email-i18n";
+import type { AppLocale } from "@/lib/i18n/types";
 import { siteConfig } from "@/lib/seo";
 
 export const emailEnabled = Boolean(process.env.RESEND_API_KEY);
@@ -27,27 +29,48 @@ export async function sendEmail({
   return { ok: true as const };
 }
 
-export async function sendPasswordResetEmail(to: string, resetUrl: string) {
+function siteVars(): Record<string, string> {
+  return { siteName: siteConfig.name };
+}
+
+export async function sendPasswordResetEmail(
+  to: string,
+  resetUrl: string,
+  locale: AppLocale,
+) {
+  const t = getEmailTemplates(locale);
+  const vars = { ...siteVars(), resetUrl };
+
   return sendEmail({
     to,
-    subject: `Сброс пароля — ${siteConfig.name}`,
+    subject: fillEmailTemplate(t.passwordResetSubject, vars),
     html: `
-      <h2>Сброс пароля</h2>
-      <p>Вы запросили сброс пароля на ${siteConfig.name}.</p>
-      <p><a href="${resetUrl}">Нажмите здесь, чтобы задать новый пароль</a></p>
-      <p>Ссылка действительна 1 час. Если вы не запрашивали сброс — проигнорируйте письмо.</p>
+      <h2>${fillEmailTemplate(t.passwordResetHeading, vars)}</h2>
+      <p>${fillEmailTemplate(t.passwordResetIntro, vars)}</p>
+      <p><a href="${resetUrl}">${fillEmailTemplate(t.passwordResetCta, vars)}</a></p>
+      <p>${fillEmailTemplate(t.passwordResetExpiry, vars)}</p>
     `,
   });
 }
 
-export async function sendWelcomeEmail(to: string, name: string | null) {
+export async function sendWelcomeEmail(
+  to: string,
+  name: string | null,
+  locale: AppLocale,
+) {
+  const t = getEmailTemplates(locale);
+  const vars = siteVars();
+  const heading = name
+    ? fillEmailTemplate(t.welcomeHeadingNamed, { ...vars, name })
+    : fillEmailTemplate(t.welcomeHeading, vars);
+
   return sendEmail({
     to,
-    subject: `Добро пожаловать в ${siteConfig.name}!`,
+    subject: fillEmailTemplate(t.welcomeSubject, vars),
     html: `
-      <h2>Добро пожаловать${name ? `, ${name}` : ""}!</h2>
-      <p>Ваш аккаунт на ${siteConfig.name} успешно создан.</p>
-      <p><a href="${siteConfig.url}">Перейти на платформу</a></p>
+      <h2>${heading}</h2>
+      <p>${fillEmailTemplate(t.welcomeIntro, vars)}</p>
+      <p><a href="${siteConfig.url}">${fillEmailTemplate(t.welcomeCta, vars)}</a></p>
     `,
   });
 }
@@ -56,13 +79,17 @@ export async function sendBidNotificationEmail(
   to: string,
   projectTitle: string,
   projectUrl: string,
+  locale: AppLocale,
 ) {
+  const t = getEmailTemplates(locale);
+  const vars = { ...siteVars(), projectTitle, projectUrl };
+
   return sendEmail({
     to,
-    subject: `Новый отклик на проект «${projectTitle}»`,
+    subject: fillEmailTemplate(t.bidSubject, vars),
     html: `
-      <p>На ваш проект «${projectTitle}» поступил новый отклик.</p>
-      <p><a href="${projectUrl}">Посмотреть отклики</a></p>
+      <p>${fillEmailTemplate(t.bidBody, vars)}</p>
+      <p><a href="${projectUrl}">${fillEmailTemplate(t.bidCta, vars)}</a></p>
     `,
   });
 }

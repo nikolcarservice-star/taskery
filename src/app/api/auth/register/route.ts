@@ -3,6 +3,7 @@ import { isAppLocale, LOCALE_COOKIE } from "@/lib/i18n/config";
 import { parseInterfaceLanguage } from "@/lib/i18n/user-locale";
 import { prisma } from "@/lib/prisma";
 import { sendWelcomeEmail } from "@/lib/email";
+import { getEmailLocaleForUser } from "@/lib/i18n/user-locale";
 import { validatePassword } from "@/lib/password-policy";
 import {
   checkRateLimit,
@@ -108,9 +109,19 @@ export async function POST(request: Request) {
             }
           : {}),
       },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        interfaceLanguage: true,
+      },
     });
 
-    await sendWelcomeEmail(user.email, user.name);
+    await sendWelcomeEmail(
+      user.email,
+      user.name,
+      await getEmailLocaleForUser(user.id),
+    );
 
     return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
   } catch (error) {

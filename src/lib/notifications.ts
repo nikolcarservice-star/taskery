@@ -219,7 +219,7 @@ export async function notifyBidMessage({
 
   void maybeSendMessageNotificationEmail({
     recipientId,
-    subject: `Новое сообщение по отклику — ${projectTitle}`,
+    kind: "bid",
     senderName,
     projectTitle,
     preview: content,

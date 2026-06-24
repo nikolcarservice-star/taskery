@@ -2,6 +2,7 @@ import { AccountBrowsePage } from "@/components/account/AccountBrowsePage";
 import { CreateSupportTicketForm } from "@/components/CreateSupportTicketForm";
 import { PageBackNav } from "@/components/PageBackNav";
 import { auth } from "@/lib/auth";
+import { getLocaleConfig } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { localizedPath } from "@/lib/i18n/routing";
@@ -16,20 +17,14 @@ type SupportPageProps = {
 
 export async function generateMetadata({ params }: SupportPageProps) {
   const locale = await requireAppLocale(params);
+  const dict = await getDictionary(locale);
   return createMetadata({
-    title: "Поддержка",
-    description: "Обращения в службу поддержки Taskery",
+    title: dict.support.meta.listTitle,
+    description: dict.support.meta.listDescription,
     path: "/support",
     locale,
   });
 }
-
-const STATUS_LABELS: Record<string, string> = {
-  OPEN: "Открыто",
-  IN_PROGRESS: "В работе",
-  RESOLVED: "Решено",
-  CLOSED: "Закрыто",
-};
 
 export default async function SupportPage({ params }: SupportPageProps) {
   const locale = await requireAppLocale(params);
@@ -40,6 +35,8 @@ export default async function SupportPage({ params }: SupportPageProps) {
 
   const dict = await getDictionary(locale);
   const tickets = await getUserSupportTickets(session.user.id);
+  const intlLocale = getLocaleConfig(locale).intlLocale;
+  const t = dict.support;
 
   return (
     <AccountBrowsePage
@@ -50,27 +47,23 @@ export default async function SupportPage({ params }: SupportPageProps) {
     >
       <>
         <PageBackNav className="mb-4 lg:hidden" />
-        <h1 className="text-2xl font-bold text-zinc-900 sm:text-3xl">
-          Поддержка
-        </h1>
-        <p className="mt-2 text-sm text-zinc-600">
-          Создайте обращение — администратор ответит в этом разделе.
-        </p>
+        <h1 className="text-2xl font-bold text-zinc-900 sm:text-3xl">{t.h1}</h1>
+        <p className="mt-2 text-sm text-zinc-600">{t.intro}</p>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-2">
           <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6">
-            <h2 className="font-semibold text-zinc-900">Новое обращение</h2>
+            <h2 className="font-semibold text-zinc-900">{t.newTicketTitle}</h2>
             <div className="mt-4">
-              <CreateSupportTicketForm locale={locale} />
+              <CreateSupportTicketForm />
             </div>
           </div>
 
           <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6">
             <h2 className="font-semibold text-zinc-900">
-              Мои обращения ({tickets.length})
+              {t.myTicketsTitle.replace("{count}", String(tickets.length))}
             </h2>
             {tickets.length === 0 ? (
-              <p className="mt-4 text-sm text-zinc-600">Обращений пока нет</p>
+              <p className="mt-4 text-sm text-zinc-600">{t.emptyTickets}</p>
             ) : (
               <ul className="mt-4 space-y-3">
                 {tickets.map((ticket) => (
@@ -81,10 +74,11 @@ export default async function SupportPage({ params }: SupportPageProps) {
                     >
                       <div className="flex flex-wrap items-center gap-2 text-xs">
                         <span className="rounded-full bg-zinc-200 px-2 py-0.5 text-zinc-700">
-                          {STATUS_LABELS[ticket.status] ?? ticket.status}
+                          {t.status[ticket.status as keyof typeof t.status] ??
+                            ticket.status}
                         </span>
                         <span className="text-zinc-500">
-                          {new Date(ticket.updatedAt).toLocaleDateString("ru-RU")}
+                          {new Date(ticket.updatedAt).toLocaleDateString(intlLocale)}
                         </span>
                       </div>
                       <p className="mt-2 font-medium text-zinc-900">

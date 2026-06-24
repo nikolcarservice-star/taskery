@@ -2,16 +2,25 @@
 
 import { createSupportTicket, type TicketActionState } from "@/lib/actions/support-tickets";
 import { FormActionError } from "@/components/FormActionError";
+import { useDictionary, useDictionaryLocale } from "@/lib/i18n/dictionary-context";
+import { localizedPath } from "@/lib/i18n/routing";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 
 const initialState: TicketActionState = {};
 
-type CreateSupportTicketFormProps = {
-  locale: string;
-};
+const CATEGORY_KEYS = [
+  "GENERAL",
+  "PAYMENT",
+  "DISPUTE",
+  "ACCOUNT",
+  "OTHER",
+] as const;
 
-export function CreateSupportTicketForm({ locale }: CreateSupportTicketFormProps) {
+export function CreateSupportTicketForm() {
+  const dict = useDictionary();
+  const locale = useDictionaryLocale();
+  const t = dict.support.form;
   const router = useRouter();
   const [state, formAction, pending] = useActionState(
     createSupportTicket,
@@ -20,7 +29,7 @@ export function CreateSupportTicketForm({ locale }: CreateSupportTicketFormProps
 
   useEffect(() => {
     if (state.success) {
-      router.push(`/${locale}/support`);
+      router.push(localizedPath(locale, "/support"));
       router.refresh();
     }
   }, [state.success, router, locale]);
@@ -28,7 +37,7 @@ export function CreateSupportTicketForm({ locale }: CreateSupportTicketFormProps
   if (state.success) {
     return (
       <div className="rounded-xl bg-green-50 p-6 text-sm text-green-800">
-        Обращение создано. Перенаправляем…
+        {t.successRedirect}
       </div>
     );
   }
@@ -37,23 +46,23 @@ export function CreateSupportTicketForm({ locale }: CreateSupportTicketFormProps
     <form action={formAction} className="space-y-4">
       <div>
         <label htmlFor="category" className="block text-sm font-medium text-zinc-700">
-          Категория
+          {t.category}
         </label>
         <select
           id="category"
           name="category"
           className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
         >
-          <option value="GENERAL">Общий вопрос</option>
-          <option value="PAYMENT">Оплата и баланс</option>
-          <option value="DISPUTE">Спор по проекту</option>
-          <option value="ACCOUNT">Аккаунт</option>
-          <option value="OTHER">Другое</option>
+          {CATEGORY_KEYS.map((key) => (
+            <option key={key} value={key}>
+              {t.categories[key]}
+            </option>
+          ))}
         </select>
       </div>
       <div>
         <label htmlFor="subject" className="block text-sm font-medium text-zinc-700">
-          Тема
+          {t.subject}
         </label>
         <input
           id="subject"
@@ -65,7 +74,7 @@ export function CreateSupportTicketForm({ locale }: CreateSupportTicketFormProps
       </div>
       <div>
         <label htmlFor="message" className="block text-sm font-medium text-zinc-700">
-          Сообщение
+          {t.message}
         </label>
         <textarea
           id="message"
@@ -82,7 +91,7 @@ export function CreateSupportTicketForm({ locale }: CreateSupportTicketFormProps
         disabled={pending}
         className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
       >
-        {pending ? "Отправка…" : "Создать обращение"}
+        {pending ? t.submitting : t.submit}
       </button>
     </form>
   );

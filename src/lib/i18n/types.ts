@@ -162,6 +162,50 @@ export type Dictionary = {
     supportEmailLabel: string;
     proSupport: string;
   };
+  support: {
+    meta: {
+      listTitle: string;
+      listDescription: string;
+      ticketTitle: string;
+      ticketDescription: string;
+    };
+    h1: string;
+    intro: string;
+    newTicketTitle: string;
+    myTicketsTitle: string;
+    emptyTickets: string;
+    backToTickets: string;
+    backToSupportAdmin: string;
+    status: {
+      OPEN: string;
+      IN_PROGRESS: string;
+      RESOLVED: string;
+      CLOSED: string;
+    };
+    form: {
+      successRedirect: string;
+      category: string;
+      subject: string;
+      message: string;
+      categories: {
+        GENERAL: string;
+        PAYMENT: string;
+        DISPUTE: string;
+        ACCOUNT: string;
+        OTHER: string;
+      };
+      submitting: string;
+      submit: string;
+    };
+    thread: {
+      supportLabel: string;
+      youLabel: string;
+      replyPlaceholder: string;
+      replySent: string;
+      sending: string;
+      send: string;
+    };
+  };
   pricing: {
     h1: string;
     intro: string;
@@ -984,6 +1028,8 @@ export type Dictionary = {
       adminBadge: string;
       placeholder: string;
       attachFiles: string;
+      formatPlaceholder: string;
+      linkLabelPlaceholder: string;
       send: string;
       sending: string;
     };
@@ -1534,6 +1580,13 @@ export type Dictionary = {
     TWO_FACTOR_ALREADY_ENABLED: string;
     TWO_FACTOR_NOT_ENABLED: string;
     TWO_FACTOR_SETUP_REQUIRED: string;
+    TICKET_SUBJECT_REQUIRED: string;
+    TICKET_NOT_FOUND_OR_CLOSED: string;
+    ESCROW_OPERATION_FAILED: string;
+    ESCROW_INSUFFICIENT_BALANCE: string;
+    DISPUTE_SPLIT_PERCENT_RANGE: string;
+    DISPUTE_SPLIT_INVALID: string;
+    DISPUTE_OPEN_IN_PROGRESS_ONLY: string;
   };
   reports: {
     reportProject: string;

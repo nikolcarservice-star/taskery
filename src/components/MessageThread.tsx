@@ -13,6 +13,12 @@ import { formatRelativeTime } from "@/lib/i18n/relative-time";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { sendMessage, type ActionState } from "@/lib/actions/messages";
 import { requestInboxRefresh } from "@/components/inbox/inbox-events";
+import {
+  insertMarkdownLink,
+  toggleListLine,
+  wrapTextareaMarkup,
+  type TextareaEdit,
+} from "@/lib/message-composer-format";
 
 import type { ContractStatus, MessageKind, ProjectStatus } from "@/generated/prisma/client";
 
@@ -51,9 +57,11 @@ const initialState: ActionState = {};
 
 function ComposerToolbarButton({
   label,
+  onClick,
   children,
 }: {
   label: string;
+  onClick: () => void;
   children: React.ReactNode;
 }) {
   return (
@@ -61,6 +69,7 @@ function ComposerToolbarButton({
       type="button"
       title={label}
       aria-label={label}
+      onClick={onClick}
       className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
     >
       {children}
@@ -102,6 +111,52 @@ export function MessageThread({
       requestInboxRefresh();
     }
   }, [state.success]);
+
+  function applyTextareaEdit(edit: TextareaEdit) {
+    setDraft(edit.value);
+    requestAnimationFrame(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        return;
+      }
+      textarea.focus();
+      textarea.setSelectionRange(edit.selectionStart, edit.selectionEnd);
+    });
+  }
+
+  function withTextareaSelection(
+    edit: (value: string, start: number, end: number) => TextareaEdit,
+  ) {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      return;
+    }
+    applyTextareaEdit(
+      edit(textarea.value, textarea.selectionStart, textarea.selectionEnd),
+    );
+  }
+
+  function handleBold() {
+    withTextareaSelection((value, start, end) =>
+      wrapTextareaMarkup(value, start, end, "**", "**", t.formatPlaceholder),
+    );
+  }
+
+  function handleItalic() {
+    withTextareaSelection((value, start, end) =>
+      wrapTextareaMarkup(value, start, end, "*", "*", t.formatPlaceholder),
+    );
+  }
+
+  function handleList() {
+    withTextareaSelection(toggleListLine);
+  }
+
+  function handleLink() {
+    withTextareaSelection((value, start, end) =>
+      insertMarkdownLink(value, start, end, t.linkLabelPlaceholder),
+    );
+  }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -317,18 +372,18 @@ export function MessageThread({
 
           <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-colors focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-500/15">
             <div className="flex items-center gap-0.5 border-b border-zinc-100 px-2 py-1.5">
-              <ComposerToolbarButton label={common.bold}>
+              <ComposerToolbarButton label={common.bold} onClick={handleBold}>
                 <span className="text-xs font-bold">B</span>
               </ComposerToolbarButton>
-              <ComposerToolbarButton label={common.italic}>
+              <ComposerToolbarButton label={common.italic} onClick={handleItalic}>
                 <span className="text-xs italic">I</span>
               </ComposerToolbarButton>
-              <ComposerToolbarButton label={common.list}>
+              <ComposerToolbarButton label={common.list} onClick={handleList}>
                 <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                 </svg>
               </ComposerToolbarButton>
-              <ComposerToolbarButton label={common.link}>
+              <ComposerToolbarButton label={common.link} onClick={handleLink}>
                 <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
                 </svg>

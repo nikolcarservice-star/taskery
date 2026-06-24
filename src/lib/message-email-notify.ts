@@ -1,4 +1,6 @@
 import { sendEmail, emailEnabled } from "@/lib/email";
+import { fillEmailTemplate, getEmailTemplates } from "@/lib/email-i18n";
+import { getEmailLocaleForUser } from "@/lib/i18n/user-locale";
 import { prisma } from "@/lib/prisma";
 import { absoluteUrl, siteConfig } from "@/lib/seo";
 
@@ -10,9 +12,11 @@ function escapeHtml(value: string): string {
     .replaceAll('"', "&quot;");
 }
 
+type MessageEmailKind = "conversation" | "bid";
+
 type MessageEmailParams = {
   recipientId: string;
-  subject: string;
+  kind: MessageEmailKind;
   senderName: string;
   projectTitle: string;
   preview: string;
@@ -21,7 +25,7 @@ type MessageEmailParams = {
 
 export async function maybeSendMessageNotificationEmail({
   recipientId,
-  subject,
+  kind,
   senderName,
   projectTitle,
   preview,
@@ -41,20 +45,27 @@ export async function maybeSendMessageNotificationEmail({
   if (!recipient?.email || recipient.deletedAt) return;
   if (!recipient.settings?.emailNewMessages) return;
 
+  const locale = await getEmailLocaleForUser(recipientId);
+  const t = getEmailTemplates(locale);
+  const vars = {
+    siteName: siteConfig.name,
+    senderName: escapeHtml(senderName),
+    projectTitle: escapeHtml(projectTitle),
+  };
   const url = absoluteUrl(link);
-  const safeSender = escapeHtml(senderName);
-  const safeTitle = escapeHtml(projectTitle);
   const safePreview = escapeHtml(preview.slice(0, 500));
+  const subjectTemplate =
+    kind === "bid" ? t.bidMessageSubject : t.messageSubject;
 
   try {
     await sendEmail({
       to: recipient.email,
-      subject,
+      subject: fillEmailTemplate(subjectTemplate, vars),
       html: `
-        <p><strong>${safeSender}</strong> написал вам по проекту «${safeTitle}»:</p>
+        <p>${fillEmailTemplate(t.messageBody, vars)}</p>
         <blockquote style="margin:16px 0;padding:12px 16px;border-left:3px solid #e4e4e7;color:#3f3f46">${safePreview}</blockquote>
-        <p><a href="${url}">Открыть переписку</a></p>
-        <p style="color:#71717a;font-size:12px">Вы получили это письмо, потому что включили уведомления о новых сообщениях в настройках ${siteConfig.name}.</p>
+        <p><a href="${url}">${fillEmailTemplate(t.messageCta, vars)}</a></p>
+        <p style="color:#71717a;font-size:12px">${fillEmailTemplate(t.messageFooter, vars)}</p>
       `,
     });
   } catch (error) {
@@ -87,18 +98,23 @@ export async function maybeSendProjectMatchEmail({
   if (!recipient?.email || recipient.deletedAt) return;
   if (!recipient.settings?.emailProjectDigest) return;
 
+  const locale = await getEmailLocaleForUser(recipientId);
+  const t = getEmailTemplates(locale);
+  const vars = {
+    siteName: siteConfig.name,
+    projectTitle: escapeHtml(projectTitle),
+    categoryName: escapeHtml(categoryName),
+  };
   const url = absoluteUrl(link);
-  const safeTitle = escapeHtml(projectTitle);
-  const safeCategory = escapeHtml(categoryName);
 
   try {
     await sendEmail({
       to: recipient.email,
-      subject: `Новый проект в категории «${safeCategory}»`,
+      subject: fillEmailTemplate(t.projectMatchSubject, vars),
       html: `
-        <p>Опубликован проект «${safeTitle}» в категории «${safeCategory}».</p>
-        <p><a href="${url}">Посмотреть проект</a></p>
-        <p style="color:#71717a;font-size:12px">Вы получили это письмо, потому что включили дайджест новых проектов в настройках ${siteConfig.name}.</p>
+        <p>${fillEmailTemplate(t.projectMatchBody, vars)}</p>
+        <p><a href="${url}">${fillEmailTemplate(t.projectMatchCta, vars)}</a></p>
+        <p style="color:#71717a;font-size:12px">${fillEmailTemplate(t.projectMatchFooter, vars)}</p>
       `,
     });
   } catch (error) {

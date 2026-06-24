@@ -11,7 +11,7 @@ import { prisma } from "@/lib/prisma";
 
 import {
 
-  EscrowError,
+  mapEscrowError,
 
   atomicFundContract,
 
@@ -61,11 +61,7 @@ async function getClientSession() {
 
 
 function escrowErrorMessage(error: unknown): string {
-
-  if (error instanceof EscrowError) return error.message;
-
-  return "Не удалось выполнить операцию";
-
+  return mapEscrowError(error);
 }
 
 

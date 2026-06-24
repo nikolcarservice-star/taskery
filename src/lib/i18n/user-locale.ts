@@ -14,6 +14,41 @@ export function parseInterfaceLanguage(value: string | null | undefined): AppLoc
   return defaultLocale;
 }
 
+const emailLocaleSelect = {
+  interfaceLanguage: true,
+  settings: { select: { preferredLocale: true } },
+} as const;
+
+export async function getEmailLocaleForUser(userId: string): Promise<AppLocale> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: emailLocaleSelect,
+  });
+
+  if (!user) {
+    return defaultLocale;
+  }
+
+  return parseInterfaceLanguage(
+    user.interfaceLanguage ?? user.settings?.preferredLocale,
+  );
+}
+
+export async function getEmailLocaleForEmail(email: string): Promise<AppLocale> {
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: emailLocaleSelect,
+  });
+
+  if (!user) {
+    return defaultLocale;
+  }
+
+  return parseInterfaceLanguage(
+    user.interfaceLanguage ?? user.settings?.preferredLocale,
+  );
+}
+
 export async function getUserLocalePreferences(
   userId: string,
 ): Promise<UserLocalePreferences> {

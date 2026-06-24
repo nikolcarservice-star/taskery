@@ -4,11 +4,11 @@ import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
 import {
-  EscrowError,
   atomicRefundContract,
   atomicReleaseDispute,
   atomicSplitDispute,
   calculateSplitDisputeAmounts,
+  mapEscrowError,
 } from "@/lib/escrow-ops";
 import { createUserNotification } from "@/lib/create-user-notification";
 import {
@@ -49,9 +49,8 @@ async function requireAdminSession(
 }
 
 function escrowErrorMessage(error: unknown): string {
-  if (error instanceof EscrowError) return error.message;
   if (error instanceof StripeRefundError) return error.message;
-  return "Не удалось выполнить операцию";
+  return mapEscrowError(error);
 }
 
 async function loadDisputeProject(projectId: string) {

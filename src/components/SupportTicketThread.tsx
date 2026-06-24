@@ -2,6 +2,7 @@
 
 import { replySupportTicket, type TicketActionState } from "@/lib/actions/support-tickets";
 import { FormActionError } from "@/components/FormActionError";
+import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { useActionState } from "react";
 
 const initialState: TicketActionState = {};
@@ -16,13 +17,17 @@ type SupportTicketThreadProps = {
     sender: { name: string | null; role: string };
   }[];
   closed: boolean;
+  intlLocale: string;
 };
 
 export function SupportTicketThread({
   ticketId,
   messages,
   closed,
+  intlLocale,
 }: SupportTicketThreadProps) {
+  const dict = useDictionary();
+  const t = dict.support.thread;
   const [state, formAction, pending] = useActionState(
     replySupportTicket,
     initialState,
@@ -42,9 +47,9 @@ export function SupportTicketThread({
           >
             <p className="text-xs font-medium text-zinc-500">
               {message.isStaff
-                ? "Поддержка"
-                : (message.sender.name ?? "Вы")}{" "}
-              · {new Date(message.createdAt).toLocaleString("ru-RU")}
+                ? t.supportLabel
+                : (message.sender.name ?? t.youLabel)}{" "}
+              · {new Date(message.createdAt).toLocaleString(intlLocale)}
             </p>
             <p className="mt-2 whitespace-pre-wrap leading-relaxed">
               {message.content}
@@ -60,19 +65,19 @@ export function SupportTicketThread({
             name="content"
             required
             rows={4}
-            placeholder="Ваш ответ"
+            placeholder={t.replyPlaceholder}
             className="w-full rounded-xl border border-zinc-300 px-4 py-3 text-sm"
           />
           <FormActionError error={state.error} className="text-sm text-red-600" />
           {state.success && (
-            <p className="text-sm text-green-700">Сообщение отправлено</p>
+            <p className="text-sm text-green-700">{t.replySent}</p>
           )}
           <button
             type="submit"
             disabled={pending}
             className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white disabled:opacity-50"
           >
-            {pending ? "Отправка…" : "Отправить"}
+            {pending ? t.sending : t.send}
           </button>
         </form>
       )}

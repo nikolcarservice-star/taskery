@@ -249,6 +249,50 @@
     "supportEmailLabel": "Email",
     "proSupport": "PRO-користувачі отримують пріоритетну підтримку."
   },
+  "support": {
+    "meta": {
+      "listTitle": "Підтримка",
+      "listDescription": "Звернення до служби підтримки Taskery",
+      "ticketTitle": "Звернення до підтримки",
+      "ticketDescription": "Переписка зі службою підтримки Taskery"
+    },
+    "h1": "Підтримка",
+    "intro": "Створіть звернення — адміністратор відповість у цьому розділі.",
+    "newTicketTitle": "Нове звернення",
+    "myTicketsTitle": "Мої звернення ({count})",
+    "emptyTickets": "Звернень поки немає",
+    "backToTickets": "Мої звернення",
+    "backToSupportAdmin": "Підтримка",
+    "status": {
+      "OPEN": "Відкрито",
+      "IN_PROGRESS": "В роботі",
+      "RESOLVED": "Вирішено",
+      "CLOSED": "Закрито"
+    },
+    "form": {
+      "successRedirect": "Звернення створено. Перенаправляємо…",
+      "category": "Категорія",
+      "subject": "Тема",
+      "message": "Повідомлення",
+      "categories": {
+        "GENERAL": "Загальне питання",
+        "PAYMENT": "Оплата та баланс",
+        "DISPUTE": "Спір щодо проєкту",
+        "ACCOUNT": "Обліковий запис",
+        "OTHER": "Інше"
+      },
+      "submitting": "Надсилання…",
+      "submit": "Створити звернення"
+    },
+    "thread": {
+      "supportLabel": "Підтримка",
+      "youLabel": "Ви",
+      "replyPlaceholder": "Ваша відповідь",
+      "replySent": "Повідомлення надіслано",
+      "sending": "Надсилання…",
+      "send": "Надіслати"
+    }
+  },
   "pricing": {
     "h1": "Тарифи",
     "intro": "Замовники працюють безкоштовно. TaskBoost дає фрілансерам більше видимості.",
@@ -828,6 +872,8 @@
       "adminBadge": "Адміністратор",
       "placeholder": "Почніть набирати повідомлення…",
       "attachFiles": "Додати файли",
+      "formatPlaceholder": "текст",
+      "linkLabelPlaceholder": "текст",
       "send": "Надіслати",
       "sending": "Надсилання…"
     },
@@ -1869,7 +1915,14 @@
     "TWO_FACTOR_INVALID": "Невірний код 2FA",
     "TWO_FACTOR_ALREADY_ENABLED": "2FA вже увімкнено",
     "TWO_FACTOR_NOT_ENABLED": "2FA не увімкнено",
-    "TWO_FACTOR_SETUP_REQUIRED": "Спочатку почніть налаштування 2FA"
+    "TWO_FACTOR_SETUP_REQUIRED": "Спочатку почніть налаштування 2FA",
+    "TICKET_SUBJECT_REQUIRED": "Вкажіть тему звернення",
+    "TICKET_NOT_FOUND_OR_CLOSED": "Звернення не знайдено або закрито",
+    "ESCROW_OPERATION_FAILED": "Не вдалося виконати операцію з ескроу",
+    "ESCROW_INSUFFICIENT_BALANCE": "Недостатньо коштів на балансі. Поповніть баланс для внесення в ескроу.",
+    "DISPUTE_SPLIT_PERCENT_RANGE": "Для часткового рішення вкажіть відсоток від 1 до 99",
+    "DISPUTE_SPLIT_INVALID": "Некоректний розподіл суми",
+    "DISPUTE_OPEN_IN_PROGRESS_ONLY": "Спір можна відкрити лише для проєкту в роботі"
   },
   "cookies": {
     "title": "Ми використовуємо cookies",

@@ -56,7 +56,7 @@ export async function createSupportTicket(
   );
 
   if (!subject || subject.length < 3) {
-    return { error: "Укажите тему обращения" };
+    return actionError("TICKET_SUBJECT_REQUIRED");
   }
   if (!message || message.length < 10) {
     return actionError("CONTACT_MESSAGE_TOO_SHORT");
@@ -102,7 +102,7 @@ export async function replySupportTicket(
   });
 
   if (!ticket || ticket.status === "CLOSED") {
-    return { error: "Обращение не найдено или закрыто" };
+    return actionError("TICKET_NOT_FOUND_OR_CLOSED");
   }
 
   const isAdmin = session.user.role === "ADMIN";

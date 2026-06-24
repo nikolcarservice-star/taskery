@@ -119,7 +119,7 @@ export async function sendMessage(
 
   void maybeSendMessageNotificationEmail({
     recipientId,
-    subject: `Новое сообщение — ${conversation.project.title}`,
+    kind: "conversation",
     senderName,
     projectTitle: conversation.project.title,
     preview: content,

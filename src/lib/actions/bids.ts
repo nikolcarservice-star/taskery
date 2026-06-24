@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { sendBidNotificationEmail } from "@/lib/email";
+import { getEmailLocaleForUser } from "@/lib/i18n/user-locale";
 import { notifyClientNewBid } from "@/lib/notifications";
 import { prisma } from "@/lib/prisma";
 import { absoluteUrl } from "@/lib/seo";
@@ -100,6 +101,7 @@ export async function createBid(
     project.client.email,
     project.title,
     absoluteUrl(`/projects/${project.slug}`),
+    await getEmailLocaleForUser(project.clientId),
   );
 
   await notifyClientNewBid({
