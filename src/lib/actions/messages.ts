@@ -1,6 +1,7 @@
 "use server";
 
 import { createUserNotification } from "@/lib/create-user-notification";
+import { maybeSendMessageNotificationEmail } from "@/lib/message-email-notify";
 import { auth } from "@/lib/auth";
 import { actionError } from "@/lib/action-errors";
 import { createConversationContactWarning } from "@/lib/moderation/contact-warnings";
@@ -100,16 +101,29 @@ export async function sendMessage(
     session.user.name ??
     (session.user.role === "ADMIN" ? "Администратор" : "Участник");
 
+  const preview =
+    content.length > 120 ? `${content.slice(0, 117)}…` : content;
+  const messageLink = `/messages/${conversationId}`;
+
   await createUserNotification({
     userId: recipientId,
     type: "NEW_MESSAGE",
     title: "Новое сообщение",
     body: `${senderName} · ${conversation.project.title}`,
-    link: `/messages/${conversationId}`,
+    link: messageLink,
     metadata: {
       conversationId,
-      preview: content.length > 120 ? `${content.slice(0, 117)}…` : content,
+      preview,
     },
+  });
+
+  void maybeSendMessageNotificationEmail({
+    recipientId,
+    subject: `Новое сообщение — ${conversation.project.title}`,
+    senderName,
+    projectTitle: conversation.project.title,
+    preview: content,
+    link: messageLink,
   });
 
   await prisma.conversation.update({

@@ -45,25 +45,6 @@ function formatSentAt(iso: string, locale: string) {
   return `${datePart}, ${timePart}`;
 }
 
-function ToolbarButton({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      title={label}
-      aria-label={label}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-500 transition-colors hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-800"
-    >
-      {children}
-    </button>
-  );
-}
-
 export function MessagesInbox({ conversations }: MessagesInboxProps) {
   const dict = useDictionary();
   const locale = useDictionaryLocale();
@@ -129,47 +110,28 @@ export function MessagesInbox({ conversations }: MessagesInboxProps) {
             onSuccess={() => setSelected(new Set())}
           />
         )}
-        <div className="flex flex-1 items-center gap-2 sm:max-w-md sm:ml-auto">
-          <div className="relative min-w-0 flex-1">
-            <input
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={t.searchPlaceholder}
-              className="w-full rounded-lg border border-zinc-200 bg-white py-2 pl-3 pr-10 text-sm text-zinc-800 shadow-sm outline-none transition-colors placeholder:text-zinc-400 hover:border-zinc-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+        <div className="relative min-w-0 flex-1 sm:max-w-md sm:ml-auto">
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={t.searchPlaceholder}
+            className="w-full rounded-lg border border-zinc-200 bg-white py-2 pl-3 pr-10 text-sm text-zinc-800 shadow-sm outline-none transition-colors placeholder:text-zinc-400 hover:border-zinc-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+          />
+          <svg
+            aria-hidden="true"
+            className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m21 21-4.35-4.35M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"
             />
-            <svg
-              aria-hidden="true"
-              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m21 21-4.35-4.35M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"
-              />
-            </svg>
-          </div>
-          <ToolbarButton label={t.filterProjects}>
-            <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 7.5 12 3 3.75 7.5 12 12l8.25-4.5Z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 15l7.5-4.5" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 16.5 12 21l7.5-4.5" />
-            </svg>
-          </ToolbarButton>
-          <ToolbarButton label={t.attachments}>
-            <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
-            </svg>
-          </ToolbarButton>
-          <ToolbarButton label={t.favorites}>
-            <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
-            </svg>
-          </ToolbarButton>
+          </svg>
         </div>
       </div>
 

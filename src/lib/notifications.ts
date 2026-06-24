@@ -1,4 +1,8 @@
 import { createUserNotification, createUserNotificationsBatch } from "@/lib/create-user-notification";
+import {
+  maybeSendMessageNotificationEmail,
+  maybeSendProjectMatchEmail,
+} from "@/lib/message-email-notify";
 import { getProjectPath } from "@/lib/slug";
 import { MESSAGE_NOTIFICATION_TYPES } from "@/lib/messages-inbox";
 import { prisma } from "@/lib/prisma";
@@ -77,6 +81,21 @@ export async function notifyFreelancersAboutNewProject(projectId: string) {
   }));
 
   await createUserNotificationsBatch(data);
+
+  const digestFreelancers = freelancers.filter(
+    (freelancer) => freelancer.settings?.emailProjectDigest,
+  );
+
+  await Promise.all(
+    digestFreelancers.map((freelancer) =>
+      maybeSendProjectMatchEmail({
+        recipientId: freelancer.id,
+        projectTitle: project.title,
+        categoryName,
+        link,
+      }),
+    ),
+  );
 
   return data.length;
 }
@@ -182,18 +201,29 @@ export async function notifyBidMessage({
   const preview =
     content.length > 120 ? `${content.slice(0, 117)}…` : content;
 
+  const messageLink = getProjectPath({ id: projectId, slug: projectSlug });
+
   await createUserNotification({
     userId: recipientId,
     type: "BID_MESSAGE",
     title: "Новое сообщение по отклику",
     body: `${senderName} · ${projectTitle}`,
-    link: getProjectPath({ id: projectId, slug: projectSlug }),
+    link: messageLink,
     metadata: {
       projectId,
       bidId,
       senderId,
       preview,
     },
+  });
+
+  void maybeSendMessageNotificationEmail({
+    recipientId,
+    subject: `Новое сообщение по отклику — ${projectTitle}`,
+    senderName,
+    projectTitle,
+    preview: content,
+    link: messageLink,
   });
 }
 
