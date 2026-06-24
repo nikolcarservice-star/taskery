@@ -1,3 +1,6 @@
+import type { AppLocale } from "@/lib/i18n/types";
+import type { ActionErrorCode } from "@/lib/action-errors";
+
 export const MIN_WITHDRAWAL_UAH = 500;
 
 export type WithdrawalPayoutMethod = "CARD" | "IBAN";
@@ -9,6 +12,13 @@ export type WithdrawalMetadata = {
   approvedById?: string;
   rejectedById?: string;
   reviewedAt?: string;
+};
+
+const METHOD_LABELS: Record<AppLocale, Record<WithdrawalPayoutMethod, string>> = {
+  ru: { CARD: "Карта", IBAN: "IBAN" },
+  uk: { CARD: "Картка", IBAN: "IBAN" },
+  pl: { CARD: "Karta", IBAN: "IBAN" },
+  en: { CARD: "Card", IBAN: "IBAN" },
 };
 
 export function parseWithdrawalMetadata(
@@ -34,8 +44,11 @@ export function parseWithdrawalMetadata(
   };
 }
 
-export function withdrawalMethodLabel(method: WithdrawalPayoutMethod): string {
-  return method === "CARD" ? "Карта" : "IBAN";
+export function withdrawalMethodLabel(
+  method: WithdrawalPayoutMethod,
+  locale: AppLocale = "en",
+): string {
+  return METHOD_LABELS[locale][method];
 }
 
 export function maskPayoutDestination(destination: string): string {
@@ -46,14 +59,16 @@ export function maskPayoutDestination(destination: string): string {
 export function validatePayoutDetails(
   method: string | null,
   destination: string | null,
-): { method: WithdrawalPayoutMethod; destination: string } | { error: string } {
+):
+  | { method: WithdrawalPayoutMethod; destination: string }
+  | { error: ActionErrorCode } {
   if (method !== "CARD" && method !== "IBAN") {
-    return { error: "Выберите способ выплаты" };
+    return { error: "WITHDRAWAL_PAYOUT_METHOD_REQUIRED" };
   }
 
   const trimmed = destination?.trim();
   if (!trimmed || trimmed.length < 4) {
-    return { error: "Укажите реквизиты для выплаты" };
+    return { error: "WITHDRAWAL_PAYOUT_DESTINATION_REQUIRED" };
   }
 
   const normalized =
@@ -62,11 +77,11 @@ export function validatePayoutDetails(
       : trimmed.replace(/\s/g, "").toUpperCase();
 
   if (method === "CARD" && !/^\d{12,19}$/.test(normalized)) {
-    return { error: "Номер карты должен содержать 12–19 цифр" };
+    return { error: "WITHDRAWAL_CARD_INVALID" };
   }
 
   if (method === "IBAN" && normalized.length < 15) {
-    return { error: "Укажите корректный IBAN" };
+    return { error: "WITHDRAWAL_IBAN_INVALID" };
   }
 
   return { method, destination: normalized };

@@ -1,9 +1,10 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
-import { createUserNotification } from "@/lib/create-user-notification";
+import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -15,7 +16,7 @@ export type VerificationActionState = {
 async function requireUsersAdmin() {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
-    return { error: "Доступ запрещён" } as const;
+    return actionError("ACCESS_DENIED");
   }
 
   const admin = await prisma.user.findUnique({
@@ -24,11 +25,11 @@ async function requireUsersAdmin() {
   });
 
   if (!admin?.adminActive) {
-    return { error: "Аккаунт деактивирован" } as const;
+    return actionError("ADMIN_ACCOUNT_DEACTIVATED");
   }
 
   if (!hasAdminPermission(admin.adminPermissions, "USERS")) {
-    return { error: "Недостаточно прав" } as const;
+    return actionError("ADMIN_INSUFFICIENT_PERMISSION");
   }
 
   return { admin } as const;
@@ -42,7 +43,7 @@ export async function adminApproveVerification(
   if ("error" in authResult) return { error: authResult.error };
 
   const userId = (formData.get("userId") as string | null)?.trim();
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
 
   const profile = await prisma.freelancerProfile.findUnique({
     where: { userId },
@@ -50,7 +51,7 @@ export async function adminApproveVerification(
   });
 
   if (!profile || profile.verificationStatus !== "PENDING") {
-    return { error: "Заявка не найдена или уже обработана" };
+    return actionError("VERIFICATION_REQUEST_NOT_FOUND");
   }
 
   const now = new Date();
@@ -65,11 +66,10 @@ export async function adminApproveVerification(
     },
   });
 
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId,
     type: "USER_WARNING",
-    title: "Профиль верифицирован",
-    body: "Администрация подтвердила ваш профиль. Значок верификации отображается на странице профиля.",
+    template: "VERIFICATION_APPROVED",
     link: `/freelancers/${userId}`,
   });
 
@@ -96,7 +96,7 @@ export async function adminRejectVerification(
     (formData.get("note") as string | null)?.trim() ||
     "Профиль не прошёл проверку";
 
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
 
   const profile = await prisma.freelancerProfile.findUnique({
     where: { userId },
@@ -104,7 +104,7 @@ export async function adminRejectVerification(
   });
 
   if (!profile || profile.verificationStatus !== "PENDING") {
-    return { error: "Заявка не найдена или уже обработана" };
+    return actionError("VERIFICATION_REQUEST_NOT_FOUND");
   }
 
   await prisma.freelancerProfile.update({
@@ -117,11 +117,11 @@ export async function adminRejectVerification(
     },
   });
 
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId,
     type: "USER_WARNING",
-    title: "Верификация отклонена",
-    body: note,
+    template: "VERIFICATION_REJECTED",
+    variables: { reason: note },
     link: "/dashboard/profile",
   });
 

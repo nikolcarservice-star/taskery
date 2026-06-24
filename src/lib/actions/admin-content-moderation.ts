@@ -1,5 +1,6 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { logAdminAction } from "@/lib/admin-audit";
 import { requireModerationAdmin } from "@/lib/actions/admin-moderation";
 import { deleteLocalAvatar, isManagedImageUrl } from "@/lib/avatar-upload";
@@ -16,7 +17,7 @@ export async function adminApprovePortfolioItem(
   if ("error" in authResult) return { error: authResult.error };
 
   const itemId = (formData.get("itemId") as string | null)?.trim();
-  if (!itemId) return { error: "Работа не найдена" };
+  if (!itemId) return actionError("PORTFOLIO_ITEM_NOT_FOUND");
 
   const item = await prisma.portfolioItem.update({
     where: { id: itemId },
@@ -47,7 +48,7 @@ export async function adminRejectPortfolioItem(
   const reason =
     (formData.get("reason") as string | null)?.trim() || "Не соответствует правилам";
 
-  if (!itemId) return { error: "Работа не найдена" };
+  if (!itemId) return actionError("PORTFOLIO_ITEM_NOT_FOUND");
 
   const item = await prisma.portfolioItem.update({
     where: { id: itemId },
@@ -76,7 +77,7 @@ export async function adminApproveAvatar(
   if ("error" in authResult) return { error: authResult.error };
 
   const userId = (formData.get("userId") as string | null)?.trim();
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -84,7 +85,7 @@ export async function adminApproveAvatar(
   });
 
   if (!user?.pendingAvatar) {
-    return { error: "Нет аватара на проверке" };
+    return actionError("AVATAR_NOT_PENDING_REVIEW");
   }
 
   if (user.avatar && isManagedImageUrl(user.avatar) && user.avatar !== user.pendingAvatar) {
@@ -117,7 +118,7 @@ export async function adminRejectAvatar(
   if ("error" in authResult) return { error: authResult.error };
 
   const userId = (formData.get("userId") as string | null)?.trim();
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -125,7 +126,7 @@ export async function adminRejectAvatar(
   });
 
   if (!user?.pendingAvatar) {
-    return { error: "Нет аватара на проверке" };
+    return actionError("AVATAR_NOT_PENDING_REVIEW");
   }
 
   if (isManagedImageUrl(user.pendingAvatar)) {

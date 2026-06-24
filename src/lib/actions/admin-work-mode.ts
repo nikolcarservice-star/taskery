@@ -1,5 +1,6 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import {
   clearAdminWorkMode,
   setAdminWorkMode,
@@ -11,7 +12,7 @@ export async function chooseAdminWorkMode(mode: AdminWorkMode) {
   const session = await auth();
 
   if (session?.user?.role !== "ADMIN") {
-    return { error: "Доступ запрещён" } as const;
+    return actionError("ACCESS_DENIED");
   }
 
   await setAdminWorkMode(mode);
@@ -22,7 +23,7 @@ export async function resetAdminWorkMode() {
   const session = await auth();
 
   if (session?.user?.role !== "ADMIN") {
-    return { error: "Доступ запрещён" } as const;
+    return actionError("ACCESS_DENIED");
   }
 
   await clearAdminWorkMode();

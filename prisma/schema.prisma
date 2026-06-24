@@ -36,6 +36,24 @@ enum ProjectStatus {
   UNDER_DISPUTE
 }
 
+enum ProjectKind {
+  PROJECT
+  CONTEST
+}
+
+enum ContestEntryStatus {
+  DRAFT
+  SUBMITTED
+  WITHDRAWN
+  WINNER
+  REJECTED
+}
+
+enum MilestoneStatus {
+  PENDING
+  RELEASED
+}
+
 enum BidStatus {
   PENDING
   ACCEPTED
@@ -248,6 +266,7 @@ model User {
   freelancerProfile       FreelancerProfile?
   projectsAsClient        Project[]          @relation("ClientProjects")
   bids                    Bid[]
+  contestEntries          ContestEntry[]
   contractsAsClient       Contract[]         @relation("ClientContracts")
   contractsAsFreelancer   Contract[]         @relation("FreelancerContracts")
   reviewsGiven            Review[]           @relation("ReviewsGiven")
@@ -440,7 +459,9 @@ model Project {
   budget        Decimal?      @db.Decimal(12, 2)
   currency      String        @default("UAH")
   status        ProjectStatus @default(OPEN)
+  kind          ProjectKind   @default(PROJECT)
   deadline      DateTime?
+  submissionDeadline DateTime?  @map("submission_deadline")
   viewsCount    Int           @default(0) @map("views_count")
   isFeatured    Boolean       @default(false) @map("is_featured")
   featuredUntil DateTime?     @map("featured_until")
@@ -460,8 +481,11 @@ model Project {
   contract     Contract?
   conversation Conversation?
   reports      Report[]
+  contestEscrow ContestEscrow?
+  contestEntries ContestEntry[]
 
   @@index([status])
+  @@index([kind, status])
   @@index([categoryId])
   @@index([createdAt])
   @@index([isFeatured])
@@ -496,6 +520,10 @@ model BidMessage {
   violationUserId String?     @map("violation_user_id")
   blockedSnippet  String?     @map("blocked_snippet") @db.Text
   content         String      @db.Text
+  attachmentUrl   String?     @map("attachment_url")
+  attachmentFilename String?  @map("attachment_filename")
+  attachmentMimeType String?  @map("attachment_mime_type")
+  attachmentSizeBytes Int?   @map("attachment_size_bytes")
   createdAt       DateTime    @default(now()) @map("created_at")
 
   bid           Bid   @relation(fields: [bidId], references: [id], onDelete: Cascade)
@@ -528,6 +556,8 @@ model Contract {
   commission     Decimal        @default(0) @db.Decimal(12, 2)
   freelancerPayout Decimal        @default(0) @map("freelancer_payout") @db.Decimal(12, 2)
   status         ContractStatus @default(ESCROWED)
+  useMilestones  Boolean        @default(false) @map("use_milestones")
+  releasedPayout Decimal        @default(0) @map("released_payout") @db.Decimal(12, 2)
   createdAt      DateTime       @default(now()) @map("created_at")
   updatedAt      DateTime       @updatedAt @map("updated_at")
 
@@ -535,8 +565,71 @@ model Contract {
   client     User     @relation("ClientContracts", fields: [clientId], references: [id], onDelete: Cascade)
   freelancer User     @relation("FreelancerContracts", fields: [freelancerId], references: [id], onDelete: Cascade)
   reviews    Review[]
+  milestones ContractMilestone[]
 
   @@map("contracts")
+}
+
+model ContractMilestone {
+  id          String          @id @default(cuid())
+  contractId  String          @map("contract_id")
+  title       String
+  description String?         @db.Text
+  amount      Decimal         @db.Decimal(12, 2)
+  sortOrder   Int             @default(0) @map("sort_order")
+  status      MilestoneStatus @default(PENDING)
+  releasedAt  DateTime?       @map("released_at")
+  createdAt   DateTime        @default(now()) @map("created_at")
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId, sortOrder])
+  @@map("contract_milestones")
+}
+
+model ContestEscrow {
+  id        String   @id @default(cuid())
+  projectId String   @unique @map("project_id")
+  amount    Decimal  @db.Decimal(12, 2)
+  currency  String   @default("UAH")
+  fundedAt  DateTime @default(now()) @map("funded_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("contest_escrows")
+}
+
+model ContestEntry {
+  id           String             @id @default(cuid())
+  projectId    String             @map("project_id")
+  freelancerId String             @map("freelancer_id")
+  title        String?
+  description  String?            @db.Text
+  status       ContestEntryStatus @default(DRAFT)
+  submittedAt  DateTime?          @map("submitted_at")
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+
+  project    Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  freelancer User               @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+  files      ContestEntryFile[]
+
+  @@unique([projectId, freelancerId])
+  @@index([projectId, status])
+  @@map("contest_entries")
+}
+
+model ContestEntryFile {
+  id        String @id @default(cuid())
+  entryId   String @map("entry_id")
+  url       String
+  filename  String
+  mimeType  String? @map("mime_type")
+  sizeBytes Int?    @map("size_bytes")
+
+  entry ContestEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@map("contest_entry_files")
 }
 
 model Review {
@@ -582,6 +675,10 @@ model Message {
   violationUserId String?     @map("violation_user_id")
   blockedSnippet  String?     @map("blocked_snippet") @db.Text
   content         String      @db.Text
+  attachmentUrl   String?     @map("attachment_url")
+  attachmentFilename String?  @map("attachment_filename")
+  attachmentMimeType String?  @map("attachment_mime_type")
+  attachmentSizeBytes Int?   @map("attachment_size_bytes")
   readAt          DateTime?   @map("read_at")
   createdAt       DateTime    @default(now()) @map("created_at")
 

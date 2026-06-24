@@ -4,7 +4,7 @@ import { logAdminAction } from "@/lib/admin-audit";
 import { requireModerationAdmin } from "@/lib/actions/admin-moderation";
 import { actionError } from "@/lib/action-errors";
 import { auth } from "@/lib/auth";
-import { createUserNotification } from "@/lib/create-user-notification";
+import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import type { SupportTicketCategory } from "@/generated/prisma/client";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -30,14 +30,14 @@ function parseCategory(value: string | null): SupportTicketCategory | null {
 async function notifyTicketUser(
   userId: string,
   ticketId: string,
-  title: string,
-  body: string,
+  template: "SUPPORT_REPLY" | "SUPPORT_TICKET_CLOSED" | "SUPPORT_TICKET_RESOLVED",
+  ticketSubject: string,
 ) {
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId,
     type: "SUPPORT_REPLY",
-    title,
-    body,
+    template,
+    variables: { ticketSubject },
     link: `/support/${ticketId}`,
   });
 }
@@ -139,7 +139,7 @@ export async function replySupportTicket(
     await notifyTicketUser(
       ticket.userId,
       ticketId,
-      "Ответ службы поддержки",
+      "SUPPORT_REPLY",
       ticket.subject,
     );
     await logAdminAction(session.user.id, "TICKET_REPLY", {
@@ -164,7 +164,7 @@ export async function closeSupportTicket(
   if ("error" in authResult) return { error: authResult.error };
 
   const ticketId = (formData.get("ticketId") as string | null)?.trim();
-  if (!ticketId) return { error: "Обращение не найдено" };
+  if (!ticketId) return actionError("TICKET_NOT_FOUND");
 
   const ticket = await prisma.supportTicket.update({
     where: { id: ticketId },
@@ -178,7 +178,7 @@ export async function closeSupportTicket(
   await notifyTicketUser(
     ticket.userId,
     ticketId,
-    "Обращение закрыто",
+    "SUPPORT_TICKET_CLOSED",
     ticket.subject,
   );
 
@@ -201,7 +201,7 @@ export async function resolveSupportTicket(
   if ("error" in authResult) return { error: authResult.error };
 
   const ticketId = (formData.get("ticketId") as string | null)?.trim();
-  if (!ticketId) return { error: "Обращение не найдено" };
+  if (!ticketId) return actionError("TICKET_NOT_FOUND");
 
   const ticket = await prisma.supportTicket.update({
     where: { id: ticketId },
@@ -212,7 +212,7 @@ export async function resolveSupportTicket(
   await notifyTicketUser(
     ticket.userId,
     ticketId,
-    "Обращение решено",
+    "SUPPORT_TICKET_RESOLVED",
     ticket.subject,
   );
 
@@ -237,7 +237,7 @@ export async function assignSupportTicket(
   const assigneeId = (formData.get("assigneeId") as string | null)?.trim();
 
   if (!ticketId || !assigneeId) {
-    return { error: "Укажите обращение и администратора" };
+    return actionError("TICKET_ASSIGNMENT_REQUIRED");
   }
 
   const assignee = await prisma.user.findFirst({
@@ -246,7 +246,7 @@ export async function assignSupportTicket(
   });
 
   if (!assignee) {
-    return { error: "Администратор не найден" };
+    return actionError("ADMIN_NOT_FOUND");
   }
 
   await prisma.supportTicket.update({

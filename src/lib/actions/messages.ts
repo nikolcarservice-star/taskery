@@ -1,6 +1,6 @@
 "use server";
 
-import { createUserNotification } from "@/lib/create-user-notification";
+import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { maybeSendMessageNotificationEmail } from "@/lib/message-email-notify";
 import { auth } from "@/lib/auth";
 import { actionError } from "@/lib/action-errors";
@@ -26,10 +26,17 @@ export async function sendMessage(
   if (!session?.user?.id) return actionError("AUTH_REQUIRED");
 
   const conversationId = (formData.get("conversationId") as string | null)?.trim();
-  const content = (formData.get("content") as string | null)?.trim();
+  const content = (formData.get("content") as string | null)?.trim() ?? "";
+  const attachmentUrl = (formData.get("attachmentUrl") as string | null)?.trim() || null;
+  const attachmentFilename =
+    (formData.get("attachmentFilename") as string | null)?.trim() || null;
+  const attachmentMimeType =
+    (formData.get("attachmentMimeType") as string | null)?.trim() || null;
+  const attachmentSizeRaw = (formData.get("attachmentSizeBytes") as string | null)?.trim();
+  const attachmentSizeBytes = attachmentSizeRaw ? Number(attachmentSizeRaw) : null;
 
-  if (!conversationId || !content) {
-    return actionError("MESSAGE_REQUIRED");
+  if (!conversationId || (!content && !attachmentUrl)) {
+    return actionError("MESSAGE_OR_ATTACHMENT_REQUIRED");
   }
 
   const conversation = await prisma.conversation.findUnique({
@@ -58,7 +65,7 @@ export async function sendMessage(
     conversation.project.contract?.status,
   );
 
-  if (session.user.role !== "ADMIN") {
+  if (session.user.role !== "ADMIN" && content) {
     const violation = guardMessages
       ? detectExternalContactAttempt(content)
       : detectOffPlatformContacts(content);
@@ -93,23 +100,36 @@ export async function sendMessage(
     data: {
       conversationId,
       senderId: session.user.id,
-      content,
+      content: content || attachmentFilename || "",
+      attachmentUrl,
+      attachmentFilename,
+      attachmentMimeType,
+      attachmentSizeBytes:
+        attachmentSizeBytes && Number.isFinite(attachmentSizeBytes)
+          ? attachmentSizeBytes
+          : null,
     },
   });
 
-  const senderName =
-    session.user.name ??
-    (session.user.role === "ADMIN" ? "Администратор" : "Участник");
-
+  const senderName = session.user.name ?? "";
+  const previewSource = content || attachmentFilename || "";
   const preview =
-    content.length > 120 ? `${content.slice(0, 117)}…` : content;
+    previewSource.length > 120
+      ? `${previewSource.slice(0, 117)}…`
+      : previewSource;
   const messageLink = `/messages/${conversationId}`;
 
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId: recipientId,
     type: "NEW_MESSAGE",
-    title: "Новое сообщение",
-    body: `${senderName} · ${conversation.project.title}`,
+    template: "NEW_MESSAGE",
+    variables: {
+      senderName,
+      projectTitle: conversation.project.title,
+    },
+    variableFallbacks: {
+      senderName: session.user.role === "ADMIN" ? "admin" : "participant",
+    },
     link: messageLink,
     metadata: {
       conversationId,
@@ -122,7 +142,7 @@ export async function sendMessage(
     kind: "conversation",
     senderName,
     projectTitle: conversation.project.title,
-    preview: content,
+    preview: previewSource,
     link: messageLink,
   });
 

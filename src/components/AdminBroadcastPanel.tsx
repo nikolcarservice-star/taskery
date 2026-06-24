@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import {
   adminSendBroadcast,
   type BroadcastActionState,
@@ -143,7 +144,7 @@ export function AdminBroadcastPanel({
           {pending ? b.sending : b.send}
         </button>
 
-        {state.error && <p className="text-sm text-red-600">{state.error}</p>}
+        <AdminActionError error={state.error} locale={locale} className="text-sm text-red-600" />
         {state.success && (
           <p className="text-sm text-green-700">
             {b.sentSuccess}{" "}

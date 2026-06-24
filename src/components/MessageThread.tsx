@@ -3,6 +3,7 @@
 import { DisputeOpenedMessage } from "@/components/DisputeOpenedMessage";
 import { DisputeReasonMessage } from "@/components/DisputeReasonMessage";
 import { FormActionError } from "@/components/FormActionError";
+import { MessageAttachment } from "@/components/MessageAttachment";
 import { MessageContent } from "@/components/MessageContent";
 import { ModerationWarningMessage } from "@/components/ModerationWarningMessage";
 import { OpenDisputeButton } from "@/components/OpenDisputeButton";
@@ -26,6 +27,10 @@ type Message = {
   id: string;
   kind: MessageKind;
   content: string;
+  attachmentUrl?: string | null;
+  attachmentFilename?: string | null;
+  attachmentMimeType?: string | null;
+  attachmentSizeBytes?: number | null;
   createdAt: Date;
   sender: { id: string; name: string | null; avatar?: string | null } | null;
   violationUser: { id: string; name: string | null } | null;
@@ -97,6 +102,14 @@ export function MessageThread({
   const common = dict.cabinetForms.common;
   const [state, formAction, pending] = useActionState(sendMessage, initialState);
   const [draft, setDraft] = useState("");
+  const [attachment, setAttachment] = useState<{
+    url: string;
+    filename: string;
+    mimeType: string;
+    sizeBytes: number;
+  } | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -107,10 +120,55 @@ export function MessageThread({
   useEffect(() => {
     if (state.success) {
       setDraft("");
+      setAttachment(null);
+      setUploadError(null);
       textareaRef.current?.focus();
       requestInboxRefresh();
     }
   }, [state.success]);
+
+  async function handleAttachmentChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const response = await fetch("/api/messages/attachment", {
+        method: "POST",
+        body,
+      });
+      const data = (await response.json()) as {
+        url?: string;
+        filename?: string;
+        mimeType?: string;
+        sizeBytes?: number;
+        error?: string;
+      };
+
+      if (!response.ok || !data.url || !data.filename) {
+        setUploadError(data.error ?? "UPLOAD_FAILED");
+        return;
+      }
+
+      setAttachment({
+        url: data.url,
+        filename: data.filename,
+        mimeType: data.mimeType ?? file.type,
+        sizeBytes: data.sizeBytes ?? file.size,
+      });
+    } catch {
+      setUploadError("UPLOAD_FAILED");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   function applyTextareaEdit(edit: TextareaEdit) {
     setDraft(edit.value);
@@ -297,6 +355,14 @@ export function MessageThread({
                         warnExternalLinks={warnExternalLinks}
                         inverse={isMine && !isAdminMessage}
                       />
+                      {msg.attachmentUrl && msg.attachmentFilename && (
+                        <MessageAttachment
+                          url={msg.attachmentUrl}
+                          filename={msg.attachmentFilename}
+                          mimeType={msg.attachmentMimeType}
+                          sizeBytes={msg.attachmentSizeBytes}
+                        />
+                      )}
                     </div>
                     <time
                       dateTime={new Date(msg.createdAt).toISOString()}
@@ -388,7 +454,32 @@ export function MessageThread({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
                 </svg>
               </ComposerToolbarButton>
+              <ComposerToolbarButton label={t.attachFile} onClick={() => document.getElementById(`attach-${conversationId}`)?.click()}>
+                <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.122 2.122l7.81-7.81" />
+                </svg>
+              </ComposerToolbarButton>
+              <input
+                id={`attach-${conversationId}`}
+                type="file"
+                className="hidden"
+                accept="image/*,.pdf,.zip,.doc,.docx,.txt"
+                onChange={handleAttachmentChange}
+              />
             </div>
+
+            {attachment && (
+              <div className="flex items-center justify-between gap-2 border-b border-zinc-100 px-4 py-2 text-xs text-zinc-600">
+                <span>{attachment.filename}</span>
+                <button
+                  type="button"
+                  onClick={() => setAttachment(null)}
+                  className="text-red-600 hover:underline"
+                >
+                  {t.removeAttachment}
+                </button>
+              </div>
+            )}
 
             <textarea
               ref={textareaRef}
@@ -396,16 +487,28 @@ export function MessageThread({
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={handleKeyDown}
-              required
               rows={3}
               placeholder={t.placeholder}
               className="w-full resize-none border-0 bg-transparent px-4 py-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400"
             />
 
+            {attachment && (
+              <>
+                <input type="hidden" name="attachmentUrl" value={attachment.url} />
+                <input type="hidden" name="attachmentFilename" value={attachment.filename} />
+                <input type="hidden" name="attachmentMimeType" value={attachment.mimeType} />
+                <input
+                  type="hidden"
+                  name="attachmentSizeBytes"
+                  value={String(attachment.sizeBytes)}
+                />
+              </>
+            )}
+
             <div className="flex items-center justify-end gap-3 border-t border-zinc-100 px-4 py-3">
               <button
                 type="submit"
-                disabled={pending || !draft.trim()}
+                disabled={pending || uploading || (!draft.trim() && !attachment)}
                 className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {pending ? t.sending : t.send}
@@ -418,7 +521,7 @@ export function MessageThread({
             </div>
           </div>
 
-          <FormActionError error={state.error} className="mt-2 text-sm text-red-600" />
+          <FormActionError error={state.error ?? uploadError ?? undefined} className="mt-2 text-sm text-red-600" />
         </form>
       </div>
     </div>

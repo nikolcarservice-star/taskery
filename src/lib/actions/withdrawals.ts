@@ -30,7 +30,7 @@ export async function requestWithdrawal(
   }
 
   if (session.user.role !== "FREELANCER" && session.user.role !== "ADMIN") {
-    return { error: "Вывод доступен только фрилансерам" };
+    return actionError("WITHDRAWAL_FREELANCERS_ONLY");
   }
 
   const amountRaw = (formData.get("amount") as string | null)?.trim();
@@ -40,7 +40,7 @@ export async function requestWithdrawal(
 
   const amount = Number(amountRaw?.replace(",", "."));
   if (!Number.isFinite(amount) || amount < MIN_WITHDRAWAL_UAH) {
-    return { error: `Минимальная сумма вывода — ${MIN_WITHDRAWAL_UAH} ₴` };
+    return actionError("WITHDRAWAL_MIN_AMOUNT");
   }
 
   const validated = validatePayoutDetails(method, destination);
@@ -71,14 +71,22 @@ export async function requestWithdrawal(
 
     await notifyAdminsWithPermission("FINANCE", {
       type: "ADMIN_WITHDRAWAL",
-      title: "Новая заявка на вывод",
-      body: `${amount.toLocaleString("uk-UA")} ₴`,
+      template: "ADMIN_WITHDRAWAL_REQUEST",
+      variables: { amount: `${amount.toLocaleString("uk-UA")} ₴` },
       link: "/admin",
       metadata: { paymentId: payment.id, userId: session.user.id, amount },
     });
   } catch (error) {
     if (error instanceof WithdrawalError) {
-      return { error: error.message };
+      const code =
+        error.code === "PENDING_EXISTS"
+          ? "WITHDRAWAL_PENDING_EXISTS"
+          : error.code === "INSUFFICIENT"
+            ? "WITHDRAWAL_INSUFFICIENT_BALANCE"
+            : error.code === "NOT_FOUND"
+              ? "WITHDRAWAL_NOT_FOUND"
+              : "INVALID_REQUEST";
+      return actionError(code);
     }
     throw error;
   }

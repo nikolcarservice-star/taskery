@@ -160,7 +160,7 @@ export function personJsonLd(freelancer: {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: freelancer.name ?? "Фрилансер",
+    name: freelancer.name ?? "Freelancer",
     description: freelancer.bio ?? undefined,
     url: freelancer.url,
     aggregateRating: freelancer.rating

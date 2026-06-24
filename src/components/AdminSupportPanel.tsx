@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import {
   closeSupportTicket,
   replySupportTicket,
@@ -46,7 +47,7 @@ function TicketReplyForm({
           {pending ? c.sending : c.reply}
         </button>
       </div>
-      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="text-xs text-red-600" />
       {state.success && <p className="text-xs text-green-700">{c.replySent}</p>}
     </form>
   );
@@ -75,7 +76,7 @@ function TicketCloseButton({
       >
         {p.closeTicket}
       </button>
-      {state.error && <p className="mt-1 text-xs text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="mt-1 text-xs text-red-600" />
     </form>
   );
 }
@@ -103,7 +104,7 @@ function TicketResolveButton({
       >
         {p.markResolved}
       </button>
-      {state.error && <p className="mt-1 text-xs text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="mt-1 text-xs text-red-600" />
     </form>
   );
 }

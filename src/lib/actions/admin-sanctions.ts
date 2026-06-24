@@ -1,9 +1,10 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
-import { createUserNotification } from "@/lib/create-user-notification";
+import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -15,7 +16,7 @@ export type SanctionActionState = {
 async function requireSanctionsAdmin() {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
-    return { error: "Доступ запрещён" } as const;
+    return actionError("ACCESS_DENIED");
   }
 
   const admin = await prisma.user.findUnique({
@@ -24,14 +25,14 @@ async function requireSanctionsAdmin() {
   });
 
   if (!admin?.adminActive) {
-    return { error: "Аккаунт деактивирован" } as const;
+    return actionError("ADMIN_ACCOUNT_DEACTIVATED");
   }
 
   if (
     !hasAdminPermission(admin.adminPermissions, "USERS") &&
     !hasAdminPermission(admin.adminPermissions, "MODERATION")
   ) {
-    return { error: "Недостаточно прав" } as const;
+    return actionError("ADMIN_INSUFFICIENT_PERMISSION");
   }
 
   return { session, admin } as const;
@@ -39,15 +40,18 @@ async function requireSanctionsAdmin() {
 
 async function notifyUser(
   userId: string,
-  title: string,
-  body: string,
+  template:
+    | "SANCTION_WARNING"
+    | "SANCTION_TEMP_BAN"
+    | "SANCTION_FINE",
+  variables: Record<string, string>,
   type: "USER_WARNING" | "SUPPORT_REPLY" = "USER_WARNING",
 ) {
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId,
     type,
-    title,
-    body,
+    template,
+    variables,
   });
 }
 
@@ -63,9 +67,9 @@ export async function adminIssueWarning(
     (formData.get("reason") as string | null)?.trim() ||
     "Предупреждение от администратора";
 
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
   if (userId === authResult.admin.id) {
-    return { error: "Нельзя выдать предупреждение себе" };
+    return actionError("CANNOT_TARGET_SELF");
   }
 
   const user = await prisma.user.findUnique({
@@ -73,9 +77,9 @@ export async function adminIssueWarning(
     select: { id: true, role: true, deletedAt: true },
   });
 
-  if (!user || user.deletedAt) return { error: "Пользователь не найден" };
+  if (!user || user.deletedAt) return actionError("USER_NOT_FOUND");
   if (user.role === "ADMIN") {
-    return { error: "Нельзя выдать предупреждение администратору" };
+    return actionError("CANNOT_TARGET_ADMIN");
   }
 
   await prisma.userWarning.create({
@@ -86,12 +90,7 @@ export async function adminIssueWarning(
     },
   });
 
-  await notifyUser(
-    userId,
-    "Предупреждение от администрации",
-    reason,
-    "USER_WARNING",
-  );
+  await notifyUser(userId, "SANCTION_WARNING", { reason }, "USER_WARNING");
 
   await logAdminAction(authResult.admin.id, "USER_WARNING", {
     targetType: "user",
@@ -117,11 +116,11 @@ export async function adminTempBanUser(
     (formData.get("reason") as string | null)?.trim() ||
     "Временная блокировка";
 
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
 
   const days = Number(daysRaw);
   if (!Number.isFinite(days) || days < 1 || days > 365) {
-    return { error: "Укажите срок от 1 до 365 дней" };
+    return actionError("BAN_DAYS_RANGE");
   }
 
   const user = await prisma.user.findUnique({
@@ -129,9 +128,9 @@ export async function adminTempBanUser(
     select: { id: true, role: true, deletedAt: true },
   });
 
-  if (!user || user.deletedAt) return { error: "Пользователь не найден" };
+  if (!user || user.deletedAt) return actionError("USER_NOT_FOUND");
   if (user.role === "ADMIN") {
-    return { error: "Нельзя заблокировать администратора" };
+    return actionError("CANNOT_TARGET_ADMIN");
   }
 
   const bannedUntil = new Date();
@@ -148,8 +147,8 @@ export async function adminTempBanUser(
 
   await notifyUser(
     userId,
-    "Временная блокировка аккаунта",
-    `Аккаунт заблокирован на ${days} дн. Причина: ${reason}`,
+    "SANCTION_TEMP_BAN",
+    { days: String(days), reason },
   );
 
   await logAdminAction(authResult.admin.id, "USER_TEMP_BAN", {
@@ -176,11 +175,11 @@ export async function adminFineUser(
     (formData.get("reason") as string | null)?.trim() ||
     "Штраф от администратора";
 
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
 
   const amount = Number(amountRaw);
   if (!Number.isFinite(amount) || amount <= 0) {
-    return { error: "Укажите положительную сумму штрафа" };
+    return actionError("FINE_AMOUNT_POSITIVE");
   }
 
   const user = await prisma.user.findUnique({
@@ -188,9 +187,9 @@ export async function adminFineUser(
     select: { id: true, role: true, deletedAt: true, balance: true },
   });
 
-  if (!user || user.deletedAt) return { error: "Пользователь не найден" };
+  if (!user || user.deletedAt) return actionError("USER_NOT_FOUND");
   if (user.role === "ADMIN") {
-    return { error: "Нельзя оштрафовать администратора" };
+    return actionError("CANNOT_TARGET_ADMIN");
   }
 
   const currentBalance = Number(user.balance);
@@ -216,11 +215,10 @@ export async function adminFineUser(
     }),
   ]);
 
-  await notifyUser(
-    userId,
-    "Штраф от администрации",
-    `С баланса списано ${amount.toLocaleString("uk-UA")} ₴. Причина: ${reason}`,
-  );
+  await notifyUser(userId, "SANCTION_FINE", {
+    amount: `${amount.toLocaleString("uk-UA")} ₴`,
+    reason,
+  });
 
   await logAdminAction(authResult.admin.id, "USER_FINE", {
     targetType: "user",

@@ -8,6 +8,7 @@ import {
   type ActionState,
 } from "@/lib/actions/admin";
 import { adminBlockProject } from "@/lib/actions/admin-moderation";
+import { AdminActionError } from "@/components/AdminActionError";
 import { AdminAttentionPanel } from "@/components/AdminAttentionPanel";
 import { AdminContentModerationPanel } from "@/components/AdminContentModerationPanel";
 import { AdminPendingProjectsPanel } from "@/components/AdminPendingProjectsPanel";
@@ -148,20 +149,22 @@ function DisputeActions({
               {splitPending ? p.splitApplying : p.splitApply}
             </button>
           </div>
-          {splitState.error && (
-            <p className="mt-2 text-xs text-red-600">{splitState.error}</p>
-          )}
+          <AdminActionError
+            error={splitState.error}
+            locale={locale}
+            className="mt-2 text-xs text-red-600"
+          />
           {splitState.success && (
             <p className="mt-2 text-xs text-green-700">{p.splitResolved}</p>
           )}
         </form>
       )}
 
-      {(releaseState.error || refundState.error) && (
-        <p className="w-full text-xs text-red-600">
-          {releaseState.error || refundState.error}
-        </p>
-      )}
+      <AdminActionError
+        error={releaseState.error || refundState.error}
+        locale={locale}
+        className="w-full text-xs text-red-600"
+      />
       {(releaseState.success || refundState.success) && (
         <p className="w-full text-xs text-green-700">{p.resolved}</p>
       )}
@@ -198,7 +201,11 @@ function BlockProjectButton({
       >
         {pending ? "…" : c.block}
       </button>
-      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
+      <AdminActionError
+        error={state.error}
+        locale={locale}
+        className="text-xs text-red-600"
+      />
       {state.success && <p className="text-xs text-green-700">{c.blocked}</p>}
     </form>
   );

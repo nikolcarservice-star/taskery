@@ -158,6 +158,14 @@ export function GuestHeaderMobileNav({ locale, dict }: GuestHeaderMobileNavProps
           </Link>
 
           <Link
+            href={localizedPath(locale, "/contests")}
+            onClick={close}
+            className="rounded-2xl px-4 py-3.5 text-[15px] font-medium text-zinc-800 transition-colors hover:bg-violet-50/70 hover:text-violet-700"
+          >
+            {dict.contests.h1}
+          </Link>
+
+          <Link
             href={localizedPath(locale, "/pricing")}
             onClick={close}
             className="rounded-2xl px-4 py-3.5 text-[15px] font-medium text-zinc-800 transition-colors hover:bg-indigo-50/70 hover:text-indigo-700"

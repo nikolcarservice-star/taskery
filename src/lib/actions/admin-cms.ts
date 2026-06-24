@@ -1,5 +1,6 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
@@ -13,7 +14,7 @@ const LOCALES = ["ru", "uk", "en", "pl"] as const;
 async function requireCmsAdmin() {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
-    return { error: "Доступ запрещён" } as const;
+    return actionError("ACCESS_DENIED");
   }
 
   const admin = await prisma.user.findUnique({
@@ -22,11 +23,11 @@ async function requireCmsAdmin() {
   });
 
   if (!admin?.adminActive) {
-    return { error: "Аккаунт деактивирован" } as const;
+    return actionError("ADMIN_ACCOUNT_DEACTIVATED");
   }
 
   if (!hasAdminPermission(admin.adminPermissions, "STAFF_MANAGE")) {
-    return { error: "Недостаточно прав" } as const;
+    return actionError("ADMIN_INSUFFICIENT_PERMISSION");
   }
 
   return { admin } as const;
@@ -45,15 +46,15 @@ export async function adminSaveCmsPage(
   const body = (formData.get("body") as string | null)?.trim() ?? "";
 
   if (!slug || !title) {
-    return { error: "Укажите slug и заголовок" };
+    return actionError("CMS_SLUG_TITLE_REQUIRED");
   }
 
   if (!locale || !LOCALES.includes(locale as (typeof LOCALES)[number])) {
-    return { error: "Некорректная локаль" };
+    return actionError("CMS_INVALID_LOCALE");
   }
 
   if (body.length < 10) {
-    return { error: "Текст страницы слишком короткий" };
+    return actionError("CMS_CONTENT_TOO_SHORT");
   }
 
   const page = await prisma.cmsPage.upsert({

@@ -1,5 +1,6 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
@@ -19,7 +20,7 @@ export type CatalogActionState = {
 async function requireCatalogAdmin() {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
-    return { error: "Доступ запрещён" } as const;
+    return actionError("ACCESS_DENIED");
   }
 
   const admin = await prisma.user.findUnique({
@@ -28,11 +29,11 @@ async function requireCatalogAdmin() {
   });
 
   if (!admin?.adminActive) {
-    return { error: "Аккаунт деактивирован" } as const;
+    return actionError("ADMIN_ACCOUNT_DEACTIVATED");
   }
 
   if (!hasAdminPermission(admin.adminPermissions, "STAFF_MANAGE")) {
-    return { error: "Недостаточно прав" } as const;
+    return actionError("ADMIN_INSUFFICIENT_PERMISSION");
   }
 
   return { admin } as const;
@@ -85,7 +86,7 @@ export async function adminSaveCategory(
     (formData.get("description") as string | null)?.trim() || null;
 
   if (!name || name.length < 2) {
-    return { error: "Укажите название категории" };
+    return actionError("CATEGORY_NAME_REQUIRED");
   }
 
   if (categoryId) {
@@ -129,7 +130,7 @@ export async function adminSaveSkill(
   const categoryId = (formData.get("categoryId") as string | null)?.trim() || null;
 
   if (!name || name.length < 2) {
-    return { error: "Укажите название навыка" };
+    return actionError("SKILL_NAME_REQUIRED");
   }
 
   if (categoryId) {
@@ -137,7 +138,7 @@ export async function adminSaveSkill(
       where: { id: categoryId },
       select: { id: true },
     });
-    if (!category) return { error: "Категория не найдена" };
+    if (!category) return actionError("CATEGORY_NOT_FOUND");
   }
 
   if (skillId) {
@@ -161,7 +162,7 @@ export async function adminSaveSkill(
       select: { id: true },
     });
     if (existingByName) {
-      return { error: "Навык с таким названием уже существует" };
+      return actionError("SKILL_DUPLICATE");
     }
 
     const slug = await uniqueSkillSlug(name);
@@ -192,16 +193,16 @@ export async function adminSaveCategoryMinBudget(
   const currency = (formData.get("currency") as string | null)?.trim();
   const minAmountRaw = (formData.get("minAmount") as string | null)?.trim();
 
-  if (!categoryId) return { error: "Категория не найдена" };
+  if (!categoryId) return actionError("CATEGORY_NOT_FOUND");
   if (!currency || !isSupportedCurrency(currency)) {
-    return { error: "Выберите валюту" };
+    return actionError("INVALID_CURRENCY");
   }
 
   const category = await prisma.category.findUnique({
     where: { id: categoryId },
     select: { id: true },
   });
-  if (!category) return { error: "Категория не найдена" };
+  if (!category) return actionError("CATEGORY_NOT_FOUND");
 
   if (!minAmountRaw) {
     await prisma.categoryMinBudget.deleteMany({
@@ -210,7 +211,7 @@ export async function adminSaveCategoryMinBudget(
   } else {
     const minAmount = Number(minAmountRaw.replace(",", "."));
     if (!Number.isFinite(minAmount) || minAmount <= 0) {
-      return { error: "Укажите положительную сумму" };
+      return actionError("MIN_BUDGET_POSITIVE_REQUIRED");
     }
 
     await prisma.categoryMinBudget.upsert({
@@ -240,13 +241,13 @@ export async function adminDeleteCategory(
   if ("error" in authResult) return { error: authResult.error };
 
   const categoryId = (formData.get("categoryId") as string | null)?.trim();
-  if (!categoryId) return { error: "Категория не найдена" };
+  if (!categoryId) return actionError("CATEGORY_NOT_FOUND");
 
   const projectsCount = await prisma.project.count({
     where: { categoryId },
   });
   if (projectsCount > 0) {
-    return { error: "Нельзя удалить категорию с проектами" };
+    return actionError("CATEGORY_HAS_PROJECTS");
   }
 
   await prisma.categoryMinBudget.deleteMany({ where: { categoryId } });
@@ -270,7 +271,7 @@ export async function adminDeleteSkill(
   if ("error" in authResult) return { error: authResult.error };
 
   const skillId = (formData.get("skillId") as string | null)?.trim();
-  if (!skillId) return { error: "Навык не найден" };
+  if (!skillId) return actionError("SKILL_NOT_FOUND");
 
   await prisma.skill.delete({ where: { id: skillId } });
 

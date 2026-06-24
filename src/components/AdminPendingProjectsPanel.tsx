@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import {
   adminApproveProject,
   adminRejectProject,
@@ -72,9 +73,11 @@ function PendingProjectRow({
           </form>
         </div>
       </div>
-      {(approveState.error || rejectState.error) && (
-        <p className="mt-2 text-sm text-red-600">{approveState.error ?? rejectState.error}</p>
-      )}
+      <AdminActionError
+        error={approveState.error ?? rejectState.error}
+        locale={locale}
+        className="mt-2 text-sm text-red-600"
+      />
       {(approveState.success || rejectState.success) && (
         <p className="mt-2 text-sm text-emerald-700">{c.done}</p>
       )}

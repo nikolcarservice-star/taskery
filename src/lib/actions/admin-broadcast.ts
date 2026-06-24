@@ -1,5 +1,6 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
@@ -21,7 +22,7 @@ export type BroadcastActionState = {
 async function requireBroadcastAdmin() {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
-    return { error: "Доступ запрещён" } as const;
+    return actionError("ACCESS_DENIED");
   }
 
   const admin = await prisma.user.findUnique({
@@ -30,11 +31,11 @@ async function requireBroadcastAdmin() {
   });
 
   if (!admin?.adminActive) {
-    return { error: "Аккаунт деактивирован" } as const;
+    return actionError("ADMIN_ACCOUNT_DEACTIVATED");
   }
 
   if (!hasAdminPermission(admin.adminPermissions, "STAFF_MANAGE")) {
-    return { error: "Недостаточно прав" } as const;
+    return actionError("ADMIN_INSUFFICIENT_PERMISSION");
   }
 
   return { admin } as const;
@@ -68,31 +69,31 @@ export async function adminSendBroadcast(
   const confirm = formData.get("confirm") === "on";
 
   if (!title || title.length < 3) {
-    return { error: "Заголовок должен быть не короче 3 символов" };
+    return actionError("BROADCAST_TITLE_TOO_SHORT");
   }
 
   if (!body || body.length < 5) {
-    return { error: "Текст уведомления слишком короткий" };
+    return actionError("BROADCAST_BODY_TOO_SHORT");
   }
 
   if (title.length > 120) {
-    return { error: "Заголовок не длиннее 120 символов" };
+    return actionError("BROADCAST_TITLE_TOO_LONG");
   }
 
   if (body.length > 2000) {
-    return { error: "Текст не длиннее 2000 символов" };
+    return actionError("BROADCAST_BODY_TOO_LONG");
   }
 
   if (!audience) {
-    return { error: "Выберите аудиторию" };
+    return actionError("BROADCAST_AUDIENCE_REQUIRED");
   }
 
   if (formData.get("link") && !link) {
-    return { error: "Ссылка должна начинаться с /" };
+    return actionError("BROADCAST_LINK_INVALID");
   }
 
   if (!confirm) {
-    return { error: "Подтвердите отправку рассылки" };
+    return actionError("BROADCAST_CONFIRM_REQUIRED");
   }
 
   const roleFilter =
@@ -120,7 +121,7 @@ export async function adminSendBroadcast(
     .map((user) => user.id);
 
   if (userIds.length === 0) {
-    return { error: "Нет получателей для выбранной аудитории" };
+    return actionError("BROADCAST_NO_RECIPIENTS");
   }
 
   const broadcastId = randomUUID();

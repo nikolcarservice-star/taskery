@@ -1,15 +1,20 @@
 import type { AdminPermission, NotificationType, Prisma } from "@/generated/prisma/client";
 import { sendAdminAlertEmail } from "@/lib/admin-email";
 import { hasAdminPermission } from "@/lib/admin-permissions";
+import { createLocalizedUserNotificationsBatch } from "@/lib/create-user-notification";
+import { getEmailLocaleForUser } from "@/lib/i18n/user-locale";
+import {
+  buildNotification,
+  type NotificationTemplateKey,
+} from "@/lib/notification-i18n";
 import { prisma } from "@/lib/prisma";
 
 type AdminNotifyPayload = {
   type: NotificationType;
-  title: string;
-  body: string;
+  template: NotificationTemplateKey;
+  variables?: Record<string, string>;
   link: string;
   metadata?: Prisma.InputJsonValue;
-  emailSubject?: string;
 };
 
 export async function notifyAdminsWithPermission(
@@ -29,29 +34,36 @@ export async function notifyAdminsWithPermission(
     return 0;
   }
 
-  await prisma.notification.createMany({
-    data: recipients.map((admin) => ({
+  await createLocalizedUserNotificationsBatch(
+    recipients.map((admin) => ({
       userId: admin.id,
       type: payload.type,
-      title: payload.title,
-      body: payload.body,
+      template: payload.template,
+      variables: payload.variables,
       link: payload.link,
       metadata: payload.metadata,
     })),
-  });
+    { push: false, telegram: false },
+  );
 
-  const emailSubject = payload.emailSubject ?? payload.title;
   await Promise.all(
-    recipients.map((admin) =>
-      sendAdminAlertEmail({
+    recipients.map(async (admin) => {
+      const locale = await getEmailLocaleForUser(admin.id);
+      const { title, body } = buildNotification(
+        locale,
+        payload.template,
+        payload.variables ?? {},
+      );
+
+      await sendAdminAlertEmail({
         to: admin.email,
-        subject: emailSubject,
-        body: payload.body,
+        subject: title,
+        body,
         link: payload.link,
       }).catch((error) => {
         console.error("[admin-email]", admin.email, error);
-      }),
-    ),
+      });
+    }),
   );
 
   return recipients.length;

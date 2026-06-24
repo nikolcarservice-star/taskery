@@ -1,7 +1,7 @@
 "use client";
 
 import { translateActionError } from "@/lib/i18n/translate-action-error";
-import { useOptionalDictionary } from "@/lib/i18n/dictionary-context";
+import { useDictionaryLocale } from "@/lib/i18n/dictionary-context";
 
 type FormActionErrorProps = {
   error?: string;
@@ -14,10 +14,10 @@ export function FormActionError({
   error,
   className = defaultClassName,
 }: FormActionErrorProps) {
-  const dict = useOptionalDictionary();
+  const locale = useDictionaryLocale();
   if (!error) return null;
 
-  const message = dict ? translateActionError(error, dict) : error;
+  const message = translateActionError(error, locale);
 
   return (
     <p className={className} role="alert">

@@ -1,9 +1,10 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { logAdminAction } from "@/lib/admin-audit";
 import { notifyAdminsWithPermission } from "@/lib/admin-notify";
 import { requireModerationAdmin } from "@/lib/actions/admin-moderation";
-import { createUserNotification } from "@/lib/create-user-notification";
+import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { notifyFreelancersAboutNewProject } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
@@ -31,13 +32,11 @@ export async function publishProjectAfterApproval(
 
   await notifyFreelancersAboutNewProject(project.id);
 
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId: project.clientId,
     type: "USER_WARNING",
-    title: "Проект опубликован",
-    body: options?.adminId
-      ? `«${project.title}» прошёл модерацию и доступен в каталоге.`
-      : `«${project.title}» опубликован и доступен в каталоге.`,
+    template: options?.adminId ? "PROJECT_PUBLISHED_MODERATED" : "PROJECT_PUBLISHED",
+    variables: { projectTitle: project.title },
     link: `/projects/${project.slug}`,
   });
 
@@ -51,6 +50,7 @@ export async function publishProjectAfterApproval(
   revalidatePath("/admin/moderation");
   revalidatePath("/admin/mobile/moderation");
   revalidatePath("/projects");
+  revalidatePath("/contests");
   revalidatePath("/client/projects");
   revalidatePath(`/projects/${project.slug}`);
 }
@@ -63,7 +63,7 @@ export async function adminApproveProject(
   if ("error" in authResult) return { error: authResult.error };
 
   const projectId = (formData.get("projectId") as string | null)?.trim();
-  if (!projectId) return { error: "Проект не найден" };
+  if (!projectId) return actionError("PROJECT_NOT_FOUND");
 
   const project = await prisma.project.findUnique({
     where: { id: projectId },
@@ -71,7 +71,7 @@ export async function adminApproveProject(
   });
 
   if (!project || project.status !== "PENDING_MODERATION") {
-    return { error: "Проект не в очереди модерации" };
+    return actionError("PROJECT_NOT_IN_MODERATION");
   }
 
   await publishProjectAfterApproval(project, { adminId: authResult.admin.id });
@@ -90,7 +90,7 @@ export async function adminRejectProject(
     (formData.get("reason") as string | null)?.trim() ||
     "Проект не прошёл модерацию";
 
-  if (!projectId) return { error: "Проект не найден" };
+  if (!projectId) return actionError("PROJECT_NOT_FOUND");
 
   const project = await prisma.project.findUnique({
     where: { id: projectId },
@@ -98,7 +98,7 @@ export async function adminRejectProject(
   });
 
   if (!project || project.status !== "PENDING_MODERATION") {
-    return { error: "Проект не в очереди модерации" };
+    return actionError("PROJECT_NOT_IN_MODERATION");
   }
 
   await prisma.project.update({
@@ -109,11 +109,11 @@ export async function adminRejectProject(
     },
   });
 
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId: project.clientId,
     type: "USER_WARNING",
-    title: "Проект отклонён",
-    body: `«${project.title}»: ${reason}`,
+    template: "PROJECT_REJECTED",
+    variables: { projectTitle: project.title, reason },
     link: `/client/projects`,
   });
 
@@ -135,10 +135,9 @@ export async function notifyAdminsNewProjectPending(
 ) {
   await notifyAdminsWithPermission("MODERATION", {
     type: "ADMIN_PROJECT_PENDING",
-    title: "Проект на модерации",
-    body: title,
+    template: "ADMIN_PROJECT_PENDING",
+    variables: { projectTitle: title },
     link: "/admin/moderation",
     metadata: { projectId },
-    emailSubject: "Новый проект на модерации",
   });
 }

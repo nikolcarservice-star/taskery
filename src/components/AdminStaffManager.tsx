@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import {
   createAdminStaff,
   deactivateAdminStaff,
@@ -171,9 +172,7 @@ function CreateAdminForm({ locale }: { locale: AppLocale }) {
         </div>
       </div>
 
-      {state.error && (
-        <p className="mt-3 text-sm text-red-600">{state.error}</p>
-      )}
+      <AdminActionError error={state.error} locale={locale} className="mt-3 text-sm text-red-600" />
       {state.success && (
         <p className="mt-3 text-sm text-green-700">{s.adminAdded}</p>
       )}
@@ -276,11 +275,7 @@ function EditAdminForm({
         </div>
       </div>
 
-      {(state.error) && (
-        <p className="mt-3 text-sm text-red-600">
-          {state.error}
-        </p>
-      )}
+      <AdminActionError error={state.error} locale={locale} className="mt-3 text-sm text-red-600" />
       {state.success && (
         <p className="mt-3 text-sm text-green-700">{s.changesSaved}</p>
       )}
@@ -325,7 +320,7 @@ function DeactivateAdminButton({
   return (
     <form action={formAction} className="mt-2">
       <input type="hidden" name="adminId" value={adminId} />
-      {state.error && <p className="mb-2 text-sm text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="mb-2 text-sm text-red-600" />
       {state.success && (
         <p className="mb-2 text-sm text-green-700">{s.deactivated}</p>
       )}
@@ -356,7 +351,7 @@ function ReactivateAdminButton({
   return (
     <form action={formAction}>
       <input type="hidden" name="adminId" value={adminId} />
-      {state.error && <p className="mb-2 text-sm text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="mb-2 text-sm text-red-600" />
       {state.success && (
         <p className="mb-2 text-sm text-green-700">{s.restored}</p>
       )}
@@ -398,7 +393,7 @@ function DeleteAdminButton({
       }}
     >
       <input type="hidden" name="adminId" value={adminId} />
-      {state.error && <p className="mb-2 text-sm text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="mb-2 text-sm text-red-600" />
       {state.success && (
         <p className="mb-2 text-sm text-green-700">{s.deleted}</p>
       )}

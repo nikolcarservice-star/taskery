@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import {
   adminApproveAvatar,
   adminApprovePortfolioItem,
@@ -149,11 +150,11 @@ function AvatarRow({
         </form>
       </div>
 
-      {(approveState.error || rejectState.error) && (
-        <p className="mt-2 text-xs text-red-600">
-          {approveState.error ?? rejectState.error}
-        </p>
-      )}
+      <AdminActionError
+        error={approveState.error ?? rejectState.error}
+        locale={locale}
+        className="mt-2 text-xs text-red-600"
+      />
     </li>
   );
 }
@@ -211,11 +212,11 @@ function PortfolioRow({
         </form>
       </div>
 
-      {(approveState.error || rejectState.error) && (
-        <p className="mt-2 text-xs text-red-600">
-          {approveState.error ?? rejectState.error}
-        </p>
-      )}
+      <AdminActionError
+        error={approveState.error ?? rejectState.error}
+        locale={locale}
+        className="mt-2 text-xs text-red-600"
+      />
     </li>
   );
 }

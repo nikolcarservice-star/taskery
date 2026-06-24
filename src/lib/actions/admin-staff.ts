@@ -1,5 +1,6 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import type { AdminPermission } from "@/generated/prisma/client";
 import {
   hasAdminPermission,
@@ -11,6 +12,7 @@ import { deleteUserAccount } from "@/lib/delete-user";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+import { validatePassword } from "@/lib/password-policy";
 
 export type StaffActionState = {
   error?: string;
@@ -27,7 +29,7 @@ async function requireStaffManager(): Promise<
 > {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
-    return { error: "Доступ запрещён" };
+    return actionError("ACCESS_DENIED");
   }
 
   const actor = await prisma.user.findUnique({
@@ -36,21 +38,14 @@ async function requireStaffManager(): Promise<
   });
 
   if (!actor?.adminActive) {
-    return { error: "Аккаунт деактивирован" };
+    return actionError("ADMIN_ACCOUNT_DEACTIVATED");
   }
 
   if (!hasAdminPermission(actor.adminPermissions, "STAFF_MANAGE")) {
-    return { error: "Недостаточно прав для управления админами" };
+    return actionError("ADMIN_STAFF_MANAGE_REQUIRED");
   }
 
   return { actor };
-}
-
-function validatePassword(password: string): string | null {
-  if (password.length < 8) {
-    return "Пароль должен быть не короче 8 символов";
-  }
-  return null;
 }
 
 async function countActiveSuperAdmins(excludeId?: string): Promise<number> {
@@ -81,23 +76,23 @@ export async function createAdminStaff(
   );
 
   if (!email || !email.includes("@")) {
-    return { error: "Укажите корректный email" };
+    return actionError("ADMIN_EMAIL_INVALID");
   }
 
   if (!name) {
-    return { error: "Укажите имя администратора" };
+    return actionError("ADMIN_NAME_REQUIRED");
   }
 
   const passwordError = validatePassword(password);
-  if (passwordError) return { error: passwordError };
+  if (passwordError) return actionError(passwordError);
 
   if (permissions.length === 0) {
-    return { error: "Выберите хотя бы одну функцию" };
+    return actionError("ADMIN_PERMISSIONS_REQUIRED");
   }
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    return { error: "Пользователь с таким email уже существует" };
+    return actionError("ADMIN_EMAIL_EXISTS");
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
@@ -132,10 +127,10 @@ export async function updateAdminStaff(
     formData.getAll("permissions"),
   );
 
-  if (!adminId) return { error: "Администратор не найден" };
-  if (!name) return { error: "Укажите имя администратора" };
+  if (!adminId) return actionError("ADMIN_NOT_FOUND");
+  if (!name) return actionError("ADMIN_NAME_REQUIRED");
   if (permissions.length === 0) {
-    return { error: "Выберите хотя бы одну функцию" };
+    return actionError("ADMIN_PERMISSIONS_REQUIRED");
   }
 
   const target = await prisma.user.findUnique({
@@ -149,26 +144,24 @@ export async function updateAdminStaff(
   });
 
   if (!target || target.role !== "ADMIN") {
-    return { error: "Администратор не найден" };
+    return actionError("ADMIN_NOT_FOUND");
   }
 
   const targetWasSuper = isSuperAdmin(target.adminPermissions);
   const targetWillBeSuper = isSuperAdmin(permissions);
 
   if (adminId === authResult.actor.id && !adminActive) {
-    return { error: "Нельзя деактивировать свой аккаунт" };
+    return actionError("ADMIN_CANNOT_DEACTIVATE_SELF");
   }
 
   if (adminId === authResult.actor.id && !targetWillBeSuper) {
-    return { error: "Нельзя снять с себя полный доступ" };
+    return actionError("ADMIN_CANNOT_REVOKE_OWN_ACCESS");
   }
 
   if (targetWasSuper && (!targetWillBeSuper || !adminActive)) {
     const remaining = await countActiveSuperAdmins(adminId);
     if (remaining === 0) {
-      return {
-        error: "Нельзя оставить систему без активного супер-админа",
-      };
+      return actionError("ADMIN_LAST_SUPERADMIN_REQUIRED");
     }
   }
 
@@ -185,7 +178,7 @@ export async function updateAdminStaff(
 
   if (password) {
     const passwordError = validatePassword(password);
-    if (passwordError) return { error: passwordError };
+    if (passwordError) return actionError(passwordError);
     data.passwordHash = await bcrypt.hash(password, 12);
   }
 
@@ -206,10 +199,10 @@ export async function deactivateAdminStaff(
   if ("error" in authResult) return { error: authResult.error };
 
   const adminId = (formData.get("adminId") as string | null)?.trim();
-  if (!adminId) return { error: "Администратор не найден" };
+  if (!adminId) return actionError("ADMIN_NOT_FOUND");
 
   if (adminId === authResult.actor.id) {
-    return { error: "Нельзя деактивировать свой аккаунт" };
+    return actionError("ADMIN_CANNOT_DEACTIVATE_SELF");
   }
 
   const target = await prisma.user.findUnique({
@@ -218,15 +211,13 @@ export async function deactivateAdminStaff(
   });
 
   if (!target || target.role !== "ADMIN") {
-    return { error: "Администратор не найден" };
+    return actionError("ADMIN_NOT_FOUND");
   }
 
   if (target.adminActive && isSuperAdmin(target.adminPermissions)) {
     const remaining = await countActiveSuperAdmins(adminId);
     if (remaining === 0) {
-      return {
-        error: "Нельзя деактивировать последнего супер-админа",
-      };
+      return actionError("ADMIN_LAST_SUPERADMIN_REQUIRED");
     }
   }
 
@@ -247,7 +238,7 @@ export async function reactivateAdminStaff(
   if ("error" in authResult) return { error: authResult.error };
 
   const adminId = (formData.get("adminId") as string | null)?.trim();
-  if (!adminId) return { error: "Администратор не найден" };
+  if (!adminId) return actionError("ADMIN_NOT_FOUND");
 
   const target = await prisma.user.findUnique({
     where: { id: adminId },
@@ -255,11 +246,11 @@ export async function reactivateAdminStaff(
   });
 
   if (!target || target.role !== "ADMIN") {
-    return { error: "Администратор не найден" };
+    return actionError("ADMIN_NOT_FOUND");
   }
 
   if (target.adminActive) {
-    return { error: "Администратор уже активен" };
+    return actionError("ADMIN_ALREADY_ACTIVE");
   }
 
   await prisma.user.update({
@@ -279,10 +270,10 @@ export async function deleteAdminStaff(
   if ("error" in authResult) return { error: authResult.error };
 
   const adminId = (formData.get("adminId") as string | null)?.trim();
-  if (!adminId) return { error: "Администратор не найден" };
+  if (!adminId) return actionError("ADMIN_NOT_FOUND");
 
   if (adminId === authResult.actor.id) {
-    return { error: "Нельзя удалить свой аккаунт" };
+    return actionError("ADMIN_CANNOT_DELETE_SELF");
   }
 
   const target = await prisma.user.findUnique({
@@ -291,11 +282,11 @@ export async function deleteAdminStaff(
   });
 
   if (!target || target.role !== "ADMIN") {
-    return { error: "Администратор не найден" };
+    return actionError("ADMIN_NOT_FOUND");
   }
 
   if (target.adminActive) {
-    return { error: "Сначала деактивируйте администратора" };
+    return actionError("ADMIN_DEACTIVATE_BEFORE_DELETE");
   }
 
   await deleteUserAccount(adminId);

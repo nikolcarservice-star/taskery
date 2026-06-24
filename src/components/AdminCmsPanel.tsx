@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import { adminSaveCmsPage, type CmsActionState } from "@/lib/actions/admin-cms";
 import { getAdminCopy } from "@/lib/admin-i18n";
 import type { CmsPageItem } from "@/lib/queries/admin-cms";
@@ -95,7 +96,7 @@ export function AdminCmsPanel({
         >
           {pending ? c.saving : c.save}
         </button>
-        {state.error && <p className="text-sm text-red-600">{state.error}</p>}
+        <AdminActionError error={state.error} locale={locale} className="text-sm text-red-600" />
         {state.success && <p className="text-sm text-emerald-700">{c.saved}</p>}
       </form>
 

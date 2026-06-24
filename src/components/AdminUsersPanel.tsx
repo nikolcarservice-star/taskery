@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import { AdminUserSanctions } from "@/components/AdminUserSanctions";
 import {
   adminUsersBan,
@@ -92,7 +93,7 @@ function UserActions({
         </button>
       </form>
 
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      <AdminActionError error={error} locale={locale} className="text-xs text-red-600" />
       {success && <p className="text-xs text-green-700">{c.done}</p>}
       <AdminUserSanctions user={user} locale={locale} />
     </div>

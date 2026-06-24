@@ -161,7 +161,7 @@ export async function getFreelancerFinanceData(
         id: payment.id,
         amount,
         createdAt,
-        method: withdrawalMethodLabel(meta.method),
+        method: withdrawalMethodLabel(meta.method, locale),
         destination: meta.destination,
       };
       withdrawalLedger.push({

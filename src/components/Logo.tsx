@@ -35,8 +35,8 @@ export function Logo({
   href = "/",
   showTagline = false,
   hideTaglineOnMobile = false,
-  tagline = "фриланс без риска",
-  homeAriaLabel = "Taskery — на главную",
+  tagline = "freelance without risk",
+  homeAriaLabel = "Taskery — home",
 }: LogoProps) {
   const useTagline = showTagline || size === "header";
   const inverted = variant === "inverted";

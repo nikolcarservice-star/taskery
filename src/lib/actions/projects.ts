@@ -1,6 +1,6 @@
 "use server";
 
-import { createUserNotification } from "@/lib/create-user-notification";
+import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { generateUniqueProjectSlug } from "@/lib/slug";
 import { revalidatePath } from "next/cache";
@@ -138,11 +138,11 @@ export async function createProject(
   if (projectPreModerationEnabled) {
     await notifyAdminsNewProjectPending(project.id, project.title);
 
-    await createUserNotification({
+    await createLocalizedUserNotification({
       userId: session.user.id,
       type: "USER_WARNING",
-      title: "Проект на модерации",
-      body: `«${project.title}» отправлен на проверку. Мы уведомим вас после публикации.`,
+      template: "PROJECT_MODERATION_PENDING",
+      variables: { projectTitle: project.title },
       link: "/client/projects",
     });
   } else {

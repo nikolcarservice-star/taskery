@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import {
   adminDismissContactWarning,
   type ModerationActionState,
@@ -36,11 +37,11 @@ export function AdminAttentionDismissButton({
       >
         {pending ? "…" : copy.dismiss}
       </button>
-      {state.error && (
-        <span className="sr-only" role="alert">
-          {state.error}
-        </span>
-      )}
+      <AdminActionError
+        error={state.error}
+        locale={locale}
+        className="sr-only"
+      />
     </form>
   );
 }

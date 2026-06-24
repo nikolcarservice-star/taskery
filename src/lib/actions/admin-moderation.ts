@@ -1,5 +1,6 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { logAdminAction } from "@/lib/admin-audit";
 import { auth } from "@/lib/auth";
 import { hasAdminPermission } from "@/lib/admin-permissions";
@@ -16,7 +17,7 @@ export type ModerationActionState = {
 export async function requireModerationAdmin() {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
-    return { error: "Доступ запрещён" } as const;
+    return actionError("ACCESS_DENIED");
   }
 
   const admin = await prisma.user.findUnique({
@@ -25,11 +26,11 @@ export async function requireModerationAdmin() {
   });
 
   if (!admin?.adminActive) {
-    return { error: "Аккаунт деактивирован" } as const;
+    return actionError("ADMIN_ACCOUNT_DEACTIVATED");
   }
 
   if (!hasAdminPermission(admin.adminPermissions, "MODERATION")) {
-    return { error: "Недостаточно прав" } as const;
+    return actionError("ADMIN_INSUFFICIENT_PERMISSION");
   }
 
   return { session, admin } as const;
@@ -65,14 +66,14 @@ export async function adminDismissReport(
   if ("error" in authResult) return { error: authResult.error };
 
   const reportId = (formData.get("reportId") as string | null)?.trim();
-  if (!reportId) return { error: "Жалоба не найдена" };
+  if (!reportId) return actionError("REPORT_NOT_FOUND");
 
   const note = (formData.get("adminNote") as string | null)?.trim() || undefined;
 
   try {
     await resolveReportById(reportId, authResult.admin.id, "DISMISSED", note);
   } catch {
-    return { error: "Жалоба не найдена" };
+    return actionError("REPORT_NOT_FOUND");
   }
 
   await logAdminAction(authResult.admin.id, "REPORT_DISMISS", {
@@ -92,7 +93,7 @@ export async function adminResolveReportNoAction(
   if ("error" in authResult) return { error: authResult.error };
 
   const reportId = (formData.get("reportId") as string | null)?.trim();
-  if (!reportId) return { error: "Жалоба не найдена" };
+  if (!reportId) return actionError("REPORT_NOT_FOUND");
 
   const note =
     (formData.get("adminNote") as string | null)?.trim() ||
@@ -101,7 +102,7 @@ export async function adminResolveReportNoAction(
   try {
     await resolveReportById(reportId, authResult.admin.id, "RESOLVED", note);
   } catch {
-    return { error: "Жалоба не найдена" };
+    return actionError("REPORT_NOT_FOUND");
   }
 
   await logAdminAction(authResult.admin.id, "REPORT_RESOLVE_NO_ACTION", {
@@ -123,7 +124,7 @@ export async function adminTakeReportReview(
   if ("error" in authResult) return { error: authResult.error };
 
   const reportId = (formData.get("reportId") as string | null)?.trim();
-  if (!reportId) return { error: "Жалоба не найдена" };
+  if (!reportId) return actionError("REPORT_NOT_FOUND");
 
   try {
     await prisma.report.update({
@@ -134,7 +135,7 @@ export async function adminTakeReportReview(
       },
     });
   } catch {
-    return { error: "Жалоба не найдена или уже в работе" };
+    return actionError("REPORT_NOT_FOUND_OR_IN_PROGRESS");
   }
 
   await logAdminAction(authResult.admin.id, "REPORT_IN_REVIEW", {
@@ -157,7 +158,7 @@ export async function adminDismissContactWarning(
   const attentionItemId = (
     formData.get("attentionItemId") as string | null
   )?.trim();
-  if (!attentionItemId) return { error: "Уведомление не найдено" };
+  if (!attentionItemId) return actionError("ATTENTION_ITEM_NOT_FOUND");
 
   await prisma.adminContactWarningDismissal.upsert({
     where: {
@@ -185,7 +186,7 @@ export async function adminDismissProjectReports(
   if ("error" in authResult) return { error: authResult.error };
 
   const projectId = (formData.get("projectId") as string | null)?.trim();
-  if (!projectId) return { error: "Проект не найден" };
+  if (!projectId) return actionError("PROJECT_NOT_FOUND");
 
   const note = (formData.get("adminNote") as string | null)?.trim() || undefined;
 
@@ -222,7 +223,7 @@ export async function adminDismissUserReports(
   if ("error" in authResult) return { error: authResult.error };
 
   const userId = (formData.get("userId") as string | null)?.trim();
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
 
   const note = (formData.get("adminNote") as string | null)?.trim() || undefined;
 
@@ -262,14 +263,14 @@ export async function adminBlockProject(
     (formData.get("adminNote") as string | null)?.trim() ||
     "Заблокировано модератором";
 
-  if (!projectId) return { error: "Проект не найден" };
+  if (!projectId) return actionError("PROJECT_NOT_FOUND");
 
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     include: { contract: true },
   });
 
-  if (!project) return { error: "Проект не найден" };
+  if (!project) return actionError("PROJECT_NOT_FOUND");
 
   if (
     project.contract &&
@@ -343,9 +344,9 @@ export async function adminBanUser(
     (formData.get("adminNote") as string | null)?.trim() ||
     "Заблокирован модератором";
 
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
   if (userId === authResult.admin.id) {
-    return { error: "Нельзя заблокировать свой аккаунт" };
+    return actionError("CANNOT_TARGET_SELF");
   }
 
   const user = await prisma.user.findUnique({
@@ -353,9 +354,9 @@ export async function adminBanUser(
     select: { id: true, role: true },
   });
 
-  if (!user) return { error: "Пользователь не найден" };
+  if (!user) return actionError("USER_NOT_FOUND");
   if (user.role === "ADMIN") {
-    return { error: "Нельзя заблокировать администратора" };
+    return actionError("CANNOT_TARGET_ADMIN");
   }
 
   await prisma.$transaction([
@@ -421,9 +422,9 @@ export async function adminDeleteUser(
     (formData.get("adminNote") as string | null)?.trim() ||
     "Удалён модератором";
 
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
   if (userId === authResult.admin.id) {
-    return { error: "Нельзя удалить свой аккаунт" };
+    return actionError("CANNOT_TARGET_SELF");
   }
 
   const user = await prisma.user.findUnique({
@@ -443,9 +444,9 @@ export async function adminDeleteUser(
     },
   });
 
-  if (!user) return { error: "Пользователь не найден" };
+  if (!user) return actionError("USER_NOT_FOUND");
   if (user.role === "ADMIN") {
-    return { error: "Нельзя удалить администратора" };
+    return actionError("CANNOT_TARGET_ADMIN");
   }
 
   const activeContracts =

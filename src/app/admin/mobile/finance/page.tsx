@@ -21,7 +21,7 @@ export default async function AdminMobileFinancePage() {
 
   const [finance, pendingWithdrawals] = await Promise.all([
     getAdminFinanceOverview(),
-    getPendingWithdrawals(),
+    getPendingWithdrawals(locale),
   ]);
 
   if (!finance) {

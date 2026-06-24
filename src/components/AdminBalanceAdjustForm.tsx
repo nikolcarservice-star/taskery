@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import {
   adminAdjustBalance,
   type FinanceOpsState,
@@ -65,7 +66,7 @@ export function AdminBalanceAdjustForm({ locale }: AdminBalanceAdjustFormProps) 
         </button>
       </form>
 
-      {state.error && <p className="mt-3 text-sm text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="mt-3 text-sm text-red-600" />
       {state.success && (
         <p className="mt-3 text-sm text-green-700">{b.success}</p>
       )}

@@ -1,3 +1,4 @@
+import type { AppLocale } from "@/lib/i18n/types";
 import { prisma } from "@/lib/prisma";
 import {
   parseWithdrawalMetadata,
@@ -19,7 +20,9 @@ export type AdminWithdrawalItem = {
   };
 };
 
-export async function getPendingWithdrawals(): Promise<AdminWithdrawalItem[]> {
+export async function getPendingWithdrawals(
+  locale: AppLocale = "en",
+): Promise<AdminWithdrawalItem[]> {
   const payments = await prisma.payment.findMany({
     where: { type: "WITHDRAWAL", status: "PENDING" },
     orderBy: { createdAt: "asc" },
@@ -45,7 +48,7 @@ export async function getPendingWithdrawals(): Promise<AdminWithdrawalItem[]> {
         amount: payment.amount.toString(),
         currency: payment.currency,
         createdAt: payment.createdAt.toISOString(),
-        method: withdrawalMethodLabel(meta.method),
+        method: withdrawalMethodLabel(meta.method, locale),
         destination: meta.destination,
         user: {
           id: payment.user.id,

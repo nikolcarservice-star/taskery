@@ -71,7 +71,7 @@ export async function POST(request: Request) {
     }
 
     if (!["FREELANCER", "CLIENT"].includes(role)) {
-      return NextResponse.json({ error: "Некорректная роль" }, { status: 400 });
+      return NextResponse.json({ error: "INVALID_ROLE" }, { status: 400 });
     }
 
     const passwordError = validatePassword(password);

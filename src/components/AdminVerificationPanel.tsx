@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import {
   adminApproveVerification,
   adminRejectVerification,
@@ -43,7 +44,7 @@ function RejectForm({
       >
         {pending ? "…" : c.reject}
       </button>
-      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="text-xs text-red-600" />
     </form>
   );
 }
@@ -71,7 +72,7 @@ function ApproveButton({
       >
         {pending ? "…" : v.approve}
       </button>
-      {state.error && <p className="mt-1 text-xs text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="mt-1 text-xs text-red-600" />
       {state.success && (
         <p className="mt-1 text-xs text-green-700">{v.approved}</p>
       )}

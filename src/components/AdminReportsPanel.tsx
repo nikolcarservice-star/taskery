@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import {
   adminBanUser,
   adminBlockProject,
@@ -81,9 +82,7 @@ function ReportRow({
       {report.status === "IN_REVIEW" && (
         <ResolveReportForm reportId={report.id} locale={locale} />
       )}
-      {reviewState.error && (
-        <p className="mt-1 text-xs text-red-600">{reviewState.error}</p>
-      )}
+      <AdminActionError error={reviewState.error} locale={locale} className="mt-1 text-xs text-red-600" />
     </li>
   );
 }
@@ -116,7 +115,7 @@ function ResolveReportForm({
       >
         {r.resolveNoSanctions}
       </button>
-      {state.error && <p className="w-full text-xs text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="w-full text-xs text-red-600" />
     </form>
   );
 }
@@ -225,7 +224,7 @@ function ProjectGroupActions({
         </button>
       </form>
 
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      <AdminActionError error={error} locale={locale} className="text-xs text-red-600" />
       {success && <p className="text-xs text-green-700">{c.done}</p>}
     </div>
   );
@@ -308,7 +307,7 @@ function UserGroupActions({
         </button>
       </form>
 
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      <AdminActionError error={error} locale={locale} className="text-xs text-red-600" />
       {success && <p className="text-xs text-green-700">{c.done}</p>}
     </div>
   );

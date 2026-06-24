@@ -1,9 +1,10 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
-import { createUserNotification } from "@/lib/create-user-notification";
+import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { formatMoney } from "@/lib/i18n/currencies";
 import { prisma } from "@/lib/prisma";
 import { transferWithdrawalToConnect } from "@/lib/stripe-connect";
@@ -22,7 +23,7 @@ export type FinanceOpsState = {
 async function requireFinanceAdmin() {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
-    return { error: "Доступ запрещён" } as const;
+    return actionError("ACCESS_DENIED");
   }
 
   const admin = await prisma.user.findUnique({
@@ -31,11 +32,11 @@ async function requireFinanceAdmin() {
   });
 
   if (!admin?.adminActive) {
-    return { error: "Аккаунт деактивирован" } as const;
+    return actionError("ADMIN_ACCOUNT_DEACTIVATED");
   }
 
   if (!hasAdminPermission(admin.adminPermissions, "FINANCE")) {
-    return { error: "Недостаточно прав" } as const;
+    return actionError("ADMIN_INSUFFICIENT_PERMISSION");
   }
 
   return { admin } as const;
@@ -54,11 +55,11 @@ export async function adminAdjustBalance(
     (formData.get("reason") as string | null)?.trim() ||
     "Корректировка баланса администратором";
 
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
 
   const amount = Number(amountRaw);
   if (!Number.isFinite(amount) || amount === 0) {
-    return { error: "Укажите ненулевую сумму (+ пополнение, − списание)" };
+    return actionError("BALANCE_ADJUSTMENT_NONZERO");
   }
 
   const user = await prisma.user.findUnique({
@@ -66,11 +67,11 @@ export async function adminAdjustBalance(
     select: { id: true, role: true, deletedAt: true, balance: true },
   });
 
-  if (!user || user.deletedAt) return { error: "Пользователь не найден" };
+  if (!user || user.deletedAt) return actionError("USER_NOT_FOUND");
 
   const currentBalance = Number(user.balance);
   if (amount < 0 && currentBalance + amount < 0) {
-    return { error: "Баланс не может стать отрицательным" };
+    return actionError("BALANCE_CANNOT_GO_NEGATIVE");
   }
 
   await prisma.$transaction([
@@ -100,14 +101,11 @@ export async function adminAdjustBalance(
   });
 
   const formattedAmount = formatMoney(Math.abs(amount), "UAH");
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId,
     type: "USER_WARNING",
-    title: amount > 0 ? "Баланс пополнен" : "Списание с баланса",
-    body:
-      amount > 0
-        ? `Администратор зачислил ${formattedAmount}. ${reason}`
-        : `Администратор списал ${formattedAmount}. ${reason}`,
+    template: amount > 0 ? "BALANCE_ADJUSTED_CREDIT" : "BALANCE_ADJUSTED_DEBIT",
+    variables: { amount: formattedAmount, reason },
     link: user.role === "CLIENT" ? "/client/finances" : "/dashboard/finances",
   });
 
@@ -125,7 +123,7 @@ export async function adminApproveWithdrawal(
   if ("error" in authResult) return { error: authResult.error };
 
   const paymentId = (formData.get("paymentId") as string | null)?.trim();
-  if (!paymentId) return { error: "Заявка не найдена" };
+  if (!paymentId) return actionError("WITHDRAWAL_NOT_FOUND");
 
   try {
     const payment = await atomicApproveWithdrawal(
@@ -167,13 +165,13 @@ export async function adminApproveWithdrawal(
       payment.currency,
     );
 
-    await createUserNotification({
+    await createLocalizedUserNotification({
       userId: payment.userId,
       type: "USER_WARNING",
-      title: "Вывод одобрен",
-      body: stripeTransferId
-        ? `Заявка на ${formattedAmount} одобрена. Средства отправлены через Stripe Connect.`
-        : `Заявка на ${formattedAmount} одобрена. Средства будут переведены на указанные реквизиты в течение 1–3 рабочих дней.`,
+      template: stripeTransferId
+        ? "WITHDRAWAL_APPROVED_STRIPE"
+        : "WITHDRAWAL_APPROVED_MANUAL",
+      variables: { amount: formattedAmount },
       link: "/dashboard/finances?tab=withdrawals",
     });
 
@@ -207,7 +205,7 @@ export async function adminRejectWithdrawal(
     (formData.get("reason") as string | null)?.trim() ||
     "Заявка отклонена администратором";
 
-  if (!paymentId) return { error: "Заявка не найдена" };
+  if (!paymentId) return actionError("WITHDRAWAL_NOT_FOUND");
 
   try {
     const payment = await atomicRejectWithdrawal(
@@ -216,11 +214,11 @@ export async function adminRejectWithdrawal(
       reason,
     );
 
-    await createUserNotification({
+    await createLocalizedUserNotification({
       userId: payment.userId,
       type: "USER_WARNING",
-      title: "Вывод отклонён",
-      body: `${reason}. Сумма возвращена на баланс.`,
+      template: "WITHDRAWAL_REJECTED",
+      variables: { reason },
       link: "/dashboard/finances?tab=withdrawals",
     });
 

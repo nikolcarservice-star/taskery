@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionError } from "@/components/AdminActionError";
 import {
   adminSaveCategory,
   adminSaveCategoryMinBudget,
@@ -58,7 +59,7 @@ function CategoryForm({
       >
         {pending ? c.saving : category ? c.save : c.addCategory}
       </button>
-      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="text-xs text-red-600" />
       {state.success && <p className="text-xs text-green-700">{c.saved}</p>}
     </form>
   );
@@ -112,7 +113,7 @@ function CategoryMinBudgetForm({
           </button>
         </form>
       ))}
-      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="text-xs text-red-600" />
       {state.success && <p className="text-xs text-green-700">{c.saved}</p>}
     </div>
   );
@@ -167,7 +168,7 @@ function SkillForm({
       >
         {pending ? c.saving : skill ? c.save : c.addSkill}
       </button>
-      {state.error && <p className="text-xs text-red-600">{state.error}</p>}
+      <AdminActionError error={state.error} locale={locale} className="text-xs text-red-600" />
       {state.success && <p className="text-xs text-green-700">{c.saved}</p>}
     </form>
   );

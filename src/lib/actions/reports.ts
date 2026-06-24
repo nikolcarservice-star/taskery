@@ -115,8 +115,8 @@ export async function submitReport(
 
     await notifyAdminsWithPermission("MODERATION", {
       type: "ADMIN_REPORT",
-      title: "Новая жалоба на проект",
-      body: reason,
+      template: "ADMIN_REPORT_PROJECT",
+      variables: { reason },
       link: "/admin",
       metadata: { reportTarget: "PROJECT", projectId: project.id },
     });
@@ -161,8 +161,8 @@ export async function submitReport(
 
   await notifyAdminsWithPermission("MODERATION", {
     type: "ADMIN_REPORT",
-    title: "Новая жалоба на пользователя",
-    body: reason,
+    template: "ADMIN_REPORT_USER",
+    variables: { reason },
     link: "/admin",
     metadata: { reportTarget: "USER", targetUserId },
   });

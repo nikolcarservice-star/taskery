@@ -126,6 +126,7 @@ export function SiteFooter({
               title={footer.platform}
               links={[
                 { href: link("/projects"), label: footer.links.projects },
+                { href: link("/contests"), label: dict.contests.h1 },
                 { href: link("/freelancers"), label: footer.links.freelancers },
                 { href: link("/pricing"), label: footer.links.pricing },
               ]}

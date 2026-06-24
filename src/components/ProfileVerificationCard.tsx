@@ -5,11 +5,12 @@ import {
   requestProfileVerification,
   type VerificationRequestState,
 } from "@/lib/actions/freelancer-verification";
+import { FormActionError } from "@/components/FormActionError";
+import type { ProfileVerificationStatus } from "@/lib/freelancer-profile-shared";
 import {
   useDictionary,
   useDictionaryLocale,
 } from "@/lib/i18n/dictionary-context";
-import type { ProfileVerificationStatus } from "@/lib/freelancer-profile-shared";
 import { useActionState } from "react";
 
 const initialState: VerificationRequestState = {};
@@ -90,9 +91,7 @@ export function ProfileVerificationCard({
           >
             {pending ? v.submitting : v.submit}
           </button>
-          {state.error && (
-            <p className="mt-2 text-sm text-red-600">{state.error}</p>
-          )}
+          <FormActionError error={state.error} className="mt-2" />
           {state.success && (
             <p className="mt-2 text-sm text-green-700">{v.successMessage}</p>
           )}

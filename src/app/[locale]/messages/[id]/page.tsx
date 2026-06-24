@@ -10,6 +10,7 @@ import { localizedPath } from "@/lib/i18n/routing";
 import { markConversationMessagesRead } from "@/lib/messages-inbox";
 import { markBidMessageNotificationsReadForProject } from "@/lib/notifications";
 import { ConversationInboxSync } from "@/components/inbox/ConversationInboxSync";
+import { ConversationLiveSync } from "@/components/inbox/ConversationLiveSync";
 import { participantMessagesWhere } from "@/lib/messages-visibility";
 import { shouldWarnExternalLinks } from "@/lib/moderation/message-guard";
 import { createMetadata } from "@/lib/metadata";
@@ -100,6 +101,7 @@ export default async function ConversationPage({ params }: ConversationPageProps
   const content = (
     <>
       <ConversationInboxSync />
+      <ConversationLiveSync conversationId={conversation.id} />
       <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
       <ConversationHeader
         conversationId={conversation.id}

@@ -59,7 +59,7 @@ export async function resetPassword(
 
   const passwordError = validatePassword(password);
   if (!token || passwordError) {
-    return { error: passwordError ?? "Некорректный запрос" };
+    return { error: passwordError ?? "INVALID_REQUEST" };
   }
 
   const resetToken = await prisma.passwordResetToken.findUnique({

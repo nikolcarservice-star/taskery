@@ -1,5 +1,6 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -19,7 +20,7 @@ export async function requestProfileVerification(
   }
 
   if (session.user.role !== "FREELANCER" && session.user.role !== "ADMIN") {
-    return { error: "Только для фрилансеров" };
+    return actionError("FREELANCERS_ONLY");
   }
 
   const profile = await prisma.freelancerProfile.findUnique({
@@ -31,27 +32,27 @@ export async function requestProfileVerification(
   });
 
   if (!profile) {
-    return { error: "Сначала заполните профиль фрилансера" };
+    return actionError("FREELANCER_PROFILE_REQUIRED");
   }
 
   if (profile.verificationStatus === "PENDING") {
-    return { error: "Заявка уже на рассмотрении" };
+    return actionError("VERIFICATION_ALREADY_PENDING");
   }
 
   if (profile.verificationStatus === "APPROVED") {
-    return { error: "Профиль уже верифицирован" };
+    return actionError("VERIFICATION_ALREADY_APPROVED");
   }
 
   if (!profile.title?.trim()) {
-    return { error: "Укажите специализацию в профиле" };
+    return actionError("SPECIALIZATION_REQUIRED");
   }
 
   if (!profile.user.bio?.trim() || profile.user.bio.trim().length < 20) {
-    return { error: "Заполните описание профиля (минимум 20 символов)" };
+    return actionError("PROFILE_BIO_TOO_SHORT");
   }
 
   if (profile.skills.length === 0) {
-    return { error: "Добавьте хотя бы один навык" };
+    return actionError("SKILL_REQUIRED");
   }
 
   await prisma.freelancerProfile.update({

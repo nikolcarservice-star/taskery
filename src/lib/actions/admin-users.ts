@@ -1,5 +1,6 @@
 "use server";
 
+import { actionError } from "@/lib/action-errors";
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
@@ -14,7 +15,7 @@ export type UserActionState = {
 async function requireUsersAdmin() {
   const session = await auth();
   if (!session?.user?.id || session.user.role !== "ADMIN") {
-    return { error: "Доступ запрещён" } as const;
+    return actionError("ACCESS_DENIED");
   }
 
   const admin = await prisma.user.findUnique({
@@ -23,11 +24,11 @@ async function requireUsersAdmin() {
   });
 
   if (!admin?.adminActive) {
-    return { error: "Аккаунт деактивирован" } as const;
+    return actionError("ADMIN_ACCOUNT_DEACTIVATED");
   }
 
   if (!hasAdminPermission(admin.adminPermissions, "USERS")) {
-    return { error: "Недостаточно прав" } as const;
+    return actionError("ADMIN_INSUFFICIENT_PERMISSION");
   }
 
   return { session, admin } as const;
@@ -45,9 +46,9 @@ export async function adminUsersBan(
     (formData.get("reason") as string | null)?.trim() ||
     "Заблокирован администратором";
 
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
   if (userId === authResult.admin.id) {
-    return { error: "Нельзя заблокировать свой аккаунт" };
+    return actionError("CANNOT_TARGET_SELF");
   }
 
   const user = await prisma.user.findUnique({
@@ -55,9 +56,9 @@ export async function adminUsersBan(
     select: { id: true, role: true, deletedAt: true },
   });
 
-  if (!user || user.deletedAt) return { error: "Пользователь не найден" };
+  if (!user || user.deletedAt) return actionError("USER_NOT_FOUND");
   if (user.role === "ADMIN") {
-    return { error: "Нельзя заблокировать администратора" };
+    return actionError("CANNOT_TARGET_ADMIN");
   }
 
   await prisma.$transaction([
@@ -94,15 +95,15 @@ export async function adminUsersUnban(
   if ("error" in authResult) return { error: authResult.error };
 
   const userId = (formData.get("userId") as string | null)?.trim();
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, deletedAt: true, bannedAt: true },
   });
 
-  if (!user || user.deletedAt) return { error: "Пользователь не найден" };
-  if (!user.bannedAt) return { error: "Пользователь не заблокирован" };
+  if (!user || user.deletedAt) return actionError("USER_NOT_FOUND");
+  if (!user.bannedAt) return actionError("USER_NOT_BANNED");
 
   await prisma.user.update({
     where: { id: userId },
@@ -130,9 +131,9 @@ export async function adminUsersDelete(
     (formData.get("reason") as string | null)?.trim() ||
     "Удалён администратором";
 
-  if (!userId) return { error: "Пользователь не найден" };
+  if (!userId) return actionError("USER_NOT_FOUND");
   if (userId === authResult.admin.id) {
-    return { error: "Нельзя удалить свой аккаунт" };
+    return actionError("CANNOT_TARGET_SELF");
   }
 
   const user = await prisma.user.findUnique({
@@ -152,9 +153,9 @@ export async function adminUsersDelete(
     },
   });
 
-  if (!user) return { error: "Пользователь не найден" };
+  if (!user) return actionError("USER_NOT_FOUND");
   if (user.role === "ADMIN") {
-    return { error: "Нельзя удалить администратора" };
+    return actionError("CANNOT_TARGET_ADMIN");
   }
 
   const activeContracts =

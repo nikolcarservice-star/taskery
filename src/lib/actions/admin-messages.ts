@@ -2,7 +2,7 @@
 
 import { actionError } from "@/lib/action-errors";
 import { requireModerationAdmin } from "@/lib/actions/admin-moderation";
-import { createUserNotification } from "@/lib/create-user-notification";
+import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -28,11 +28,15 @@ async function notifyAdminConversationMessage({
   const preview =
     content.length > 120 ? `${content.slice(0, 117)}…` : content;
 
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId: recipientId,
     type: "NEW_MESSAGE",
-    title: "Сообщение от администратора",
-    body: `${adminName} · ${projectTitle}`,
+    template: "ADMIN_MESSAGE",
+    variables: {
+      senderName: adminName,
+      projectTitle,
+    },
+    variableFallbacks: { senderName: "admin" },
     link: `/messages/${conversationId}`,
     metadata: {
       conversationId,
@@ -67,11 +71,15 @@ async function notifyAdminBidMessage({
   const preview =
     content.length > 120 ? `${content.slice(0, 117)}…` : content;
 
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId: recipientId,
     type: "BID_MESSAGE",
-    title: "Сообщение от администратора",
-    body: `${adminName} · ${projectTitle}`,
+    template: "ADMIN_BID_MESSAGE",
+    variables: {
+      senderName: adminName,
+      projectTitle,
+    },
+    variableFallbacks: { senderName: "admin" },
     link: `/projects/${projectSlug}`,
     metadata: {
       projectId,
@@ -111,7 +119,7 @@ export async function sendAdminConversationMessage(
     select: { name: true, email: true },
   });
 
-  const adminName = adminProfile?.name ?? adminProfile?.email ?? "Администратор";
+  const adminName = adminProfile?.name ?? adminProfile?.email ?? "";
 
   await prisma.message.create({
     data: {
@@ -194,7 +202,7 @@ export async function sendAdminBidMessage(
     select: { name: true, email: true },
   });
 
-  const adminName = adminProfile?.name ?? adminProfile?.email ?? "Администратор";
+  const adminName = adminProfile?.name ?? adminProfile?.email ?? "";
 
   await prisma.bidMessage.create({
     data: {

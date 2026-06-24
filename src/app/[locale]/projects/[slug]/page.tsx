@@ -8,12 +8,11 @@ import { JsonLd, breadcrumbJsonLd, jobPostingJsonLd } from "@/components/JsonLd"
 
 import { ProjectReviewsSection } from "@/components/ProjectReviewsSection";
 
+import { ContestPanel } from "@/components/ContestPanel";
+import { ContractMilestonesPanel } from "@/components/ContractMilestonesPanel";
 import {
-
   ContractPanel,
-
   FreelancerContractPanel,
-
 } from "@/components/ContractPanel";
 
 import { MarkdownContent } from "@/components/MarkdownContent";
@@ -219,9 +218,14 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
     !canManage && !isAssignedFreelancer && project.status === "OPEN";
 
-  const showBidCta =
+  const isContest = project.kind === "CONTEST";
 
-    showPublicBidFlow && session?.user && isFreelancer && !existingBid;
+  const showBidCta =
+    showPublicBidFlow &&
+    session?.user &&
+    isFreelancer &&
+    !existingBid &&
+    !isContest;
 
   const clientOrderStats =
     session?.user && isFreelancer && !canManage
@@ -604,7 +608,26 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
               </section>
 
-
+              {isContest && project.status === "OPEN" && session?.user && (
+                <ContestPanel
+                  projectId={project.id}
+                  projectSlug={project.slug}
+                  currency={project.currency}
+                  prizeAmount={Number(project.budget ?? 0)}
+                  prizeFunded={Boolean(project.contestEscrow)}
+                  submissionDeadline={project.submissionDeadline}
+                  isClient={canManage}
+                  isFreelancer={isFreelancer && !canManage}
+                  winnerSelected={Boolean(project.contract)}
+                  clientBalance={Number(project.client.balance)}
+                  entries={project.contestEntries.filter(
+                    (entry) =>
+                      canManage ||
+                      entry.freelancerId === session.user.id ||
+                      entry.status === "WINNER",
+                  )}
+                />
+              )}
 
               {canManage && project.contract && (
 
@@ -624,6 +647,17 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
                 />
 
+              )}
+
+              {project.contract && (canManage || isAssignedFreelancer) && (
+                <ContractMilestonesPanel
+                  projectId={project.id}
+                  contractStatus={project.contract.status}
+                  currency={project.currency}
+                  contractAmount={Number(project.contract.amount)}
+                  milestones={project.contract.milestones}
+                  isClient={canManage}
+                />
               )}
 
 

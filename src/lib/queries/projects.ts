@@ -13,6 +13,7 @@ export function buildOpenProjectsWhere(
 ): Prisma.ProjectWhereInput {
   const conditions: Prisma.ProjectWhereInput[] = [
     { status: "OPEN" },
+    { kind: "PROJECT" },
     { hiddenFromCatalog: false },
     { blockedAt: null },
   ];
@@ -44,6 +45,33 @@ export function buildOpenProjectsWhere(
     conditions.push({
       OR: [{ budget: { lte: maxBudget } }, { budget: null }],
     });
+  }
+
+  return conditions.length === 1 ? conditions[0]! : { AND: conditions };
+}
+
+export function buildOpenContestsWhere(
+  params: ProjectSearchParams,
+): Prisma.ProjectWhereInput {
+  const conditions: Prisma.ProjectWhereInput[] = [
+    { status: "OPEN" },
+    { kind: "CONTEST" },
+    { hiddenFromCatalog: false },
+    { blockedAt: null },
+  ];
+
+  const query = params.q?.trim();
+  if (query) {
+    conditions.push({
+      OR: [
+        { title: { contains: query, mode: "insensitive" } },
+        { description: { contains: query, mode: "insensitive" } },
+      ],
+    });
+  }
+
+  if (params.category) {
+    conditions.push({ categoryId: params.category });
   }
 
   return conditions.length === 1 ? conditions[0]! : { AND: conditions };

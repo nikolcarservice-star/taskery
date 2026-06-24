@@ -1,4 +1,7 @@
-import { createUserNotification, createUserNotificationsBatch } from "@/lib/create-user-notification";
+import {
+  createLocalizedUserNotification,
+  createLocalizedUserNotificationsBatch,
+} from "@/lib/create-user-notification";
 import {
   maybeSendMessageNotificationEmail,
   maybeSendProjectMatchEmail,
@@ -65,14 +68,17 @@ export async function notifyFreelancersAboutNewProject(projectId: string) {
   }
 
   const link = getProjectPath({ id: project.id, slug: project.slug });
-  const categoryName = project.category?.name ?? "Проект";
-  const body = `${categoryName} · ${project.title}`;
+  const categoryName = project.category?.name;
 
   const data = freelancers.map((freelancer) => ({
     userId: freelancer.id,
     type: "PROJECT_MATCH" as const,
-    title: "Новый проект в вашей категории",
-    body,
+    template: "PROJECT_MATCH" as const,
+    variables: {
+      categoryName: categoryName ?? "",
+      projectTitle: project.title,
+    },
+    variableFallbacks: { categoryName: "project" as const },
     link,
     metadata: {
       projectId: project.id,
@@ -80,7 +86,7 @@ export async function notifyFreelancersAboutNewProject(projectId: string) {
     },
   }));
 
-  await createUserNotificationsBatch(data);
+  await createLocalizedUserNotificationsBatch(data);
 
   const digestFreelancers = freelancers.filter(
     (freelancer) => freelancer.settings?.emailProjectDigest,
@@ -91,7 +97,7 @@ export async function notifyFreelancersAboutNewProject(projectId: string) {
       maybeSendProjectMatchEmail({
         recipientId: freelancer.id,
         projectTitle: project.title,
-        categoryName,
+        categoryName: categoryName ?? "",
         link,
       }),
     ),
@@ -120,13 +126,17 @@ export async function notifyFreelancerBidAccepted(
     ? `/messages/${project.conversation.id}`
     : getProjectPath({ id: project.id, slug: project.slug });
 
-  const clientName = project.client.name ?? "Заказчик";
+  const clientName = project.client.name ?? "";
 
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId: freelancerId,
     type: "BID_ACCEPTED",
-    title: "Вас выбрали исполнителем",
-    body: `${clientName} · ${project.title}`,
+    template: "BID_ACCEPTED",
+    variables: {
+      clientName,
+      projectTitle: project.title,
+    },
+    variableFallbacks: { clientName: "client" },
     link,
     metadata: {
       projectId: project.id,
@@ -155,13 +165,17 @@ export async function notifyClientNewBid({
     select: { name: true },
   });
 
-  const freelancerName = freelancer?.name ?? "Фрилансер";
+  const freelancerName = freelancer?.name ?? "";
 
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId: clientId,
     type: "NEW_BID",
-    title: "Новый отклик на проект",
-    body: `${freelancerName} · ${projectTitle}`,
+    template: "NEW_BID",
+    variables: {
+      freelancerName,
+      projectTitle,
+    },
+    variableFallbacks: { freelancerName: "freelancer" },
     link: getProjectPath({ id: projectId, slug: projectSlug }),
     metadata: {
       projectId,
@@ -197,17 +211,22 @@ export async function notifyBidMessage({
     select: { name: true },
   });
 
-  const senderName = sender?.name ?? "Участник";
+  const senderName = sender?.name ?? "";
+
   const preview =
     content.length > 120 ? `${content.slice(0, 117)}…` : content;
 
   const messageLink = getProjectPath({ id: projectId, slug: projectSlug });
 
-  await createUserNotification({
+  await createLocalizedUserNotification({
     userId: recipientId,
     type: "BID_MESSAGE",
-    title: "Новое сообщение по отклику",
-    body: `${senderName} · ${projectTitle}`,
+    template: "BID_MESSAGE",
+    variables: {
+      senderName,
+      projectTitle,
+    },
+    variableFallbacks: { senderName: "participant" },
     link: messageLink,
     metadata: {
       projectId,

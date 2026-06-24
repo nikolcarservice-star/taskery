@@ -4,6 +4,7 @@
 
 import { notifyAdminsWithPermission } from "@/lib/admin-notify";
 import { auth } from "@/lib/auth";
+import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 
 import { notifyFreelancerBidAccepted } from "@/lib/notifications";
 
@@ -504,6 +505,12 @@ export async function releaseContract(
 
   }
 
+  if (project.contract.useMilestones) {
+
+    return { error: "CONTRACT_USE_MILESTONES" };
+
+  }
+
 
 
   const payout = Number(project.contract.freelancerPayout);
@@ -647,6 +654,29 @@ export async function openDispute(
 
   }
 
+  const disputeLink = project.conversation
+    ? `/messages/${project.conversation.id}`
+    : `/projects/${project.slug}`;
+
+  const disputeCounterpartIds = isAdmin
+    ? [project.clientId, project.contract.freelancerId]
+    : isClient
+      ? [project.contract.freelancerId]
+      : [project.clientId];
+
+  await Promise.all(
+    disputeCounterpartIds.map((userId) =>
+      createLocalizedUserNotification({
+        userId,
+        type: "USER_WARNING",
+        template: "DISPUTE_OPENED",
+        variables: { projectTitle: project.title },
+        link: disputeLink,
+        metadata: { projectId: project.id },
+      }),
+    ),
+  );
+
 
 
   revalidatePath(`/projects/${project.slug}`);
@@ -675,8 +705,8 @@ export async function openDispute(
 
   await notifyAdminsWithPermission("MODERATION", {
     type: "ADMIN_DISPUTE",
-    title: "Открыт спор",
-    body: project.title,
+    template: "ADMIN_DISPUTE_OPENED",
+    variables: { projectTitle: project.title },
     link: project.conversation
       ? `/admin/review/conversation/${project.conversation.id}`
       : "/admin",

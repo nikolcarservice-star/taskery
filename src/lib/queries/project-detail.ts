@@ -19,6 +19,7 @@ const projectDetailInclude = {
     include: {
       freelancer: { select: { id: true, name: true, avatar: true } },
       client: { select: { name: true } },
+      milestones: { orderBy: { sortOrder: "asc" } },
       reviews: {
         include: {
           fromUser: { select: { id: true, name: true, role: true } },
@@ -35,6 +36,14 @@ const projectDetailInclude = {
           violationUser: { select: { id: true, name: true } },
         },
       },
+    },
+  },
+  contestEscrow: true,
+  contestEntries: {
+    orderBy: { submittedAt: "desc" },
+    include: {
+      freelancer: { select: { id: true, name: true } },
+      files: true,
     },
   },
   bids: {
