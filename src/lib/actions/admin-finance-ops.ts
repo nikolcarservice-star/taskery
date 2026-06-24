@@ -3,6 +3,8 @@
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
+import { createUserNotification } from "@/lib/create-user-notification";
+import { formatMoney } from "@/lib/i18n/currencies";
 import { prisma } from "@/lib/prisma";
 import { transferWithdrawalToConnect } from "@/lib/stripe-connect";
 import {
@@ -97,6 +99,18 @@ export async function adminAdjustBalance(
     details: { amount, reason },
   });
 
+  const formattedAmount = formatMoney(Math.abs(amount), "UAH");
+  await createUserNotification({
+    userId,
+    type: "USER_WARNING",
+    title: amount > 0 ? "Баланс пополнен" : "Списание с баланса",
+    body:
+      amount > 0
+        ? `Администратор зачислил ${formattedAmount}. ${reason}`
+        : `Администратор списал ${formattedAmount}. ${reason}`,
+    link: user.role === "CLIENT" ? "/client/finances" : "/dashboard/finances",
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/mobile/finance");
   revalidatePath("/admin/mobile/users");
@@ -148,16 +162,19 @@ export async function adminApproveWithdrawal(
       });
     }
 
-    await prisma.notification.create({
-      data: {
-        userId: payment.userId,
-        type: "USER_WARNING",
-        title: "Вывод одобрен",
-        body: stripeTransferId
-          ? `Заявка на ${Number(payment.amount).toLocaleString("uk-UA")} ₴ одобрена. Средства отправлены через Stripe Connect.`
-          : `Заявка на ${Number(payment.amount).toLocaleString("uk-UA")} ₴ одобрена. Средства будут переведены на указанные реквизиты в течение 1–3 рабочих дней.`,
-        link: "/dashboard/finances?tab=withdrawals",
-      },
+    const formattedAmount = formatMoney(
+      Number(payment.amount),
+      payment.currency,
+    );
+
+    await createUserNotification({
+      userId: payment.userId,
+      type: "USER_WARNING",
+      title: "Вывод одобрен",
+      body: stripeTransferId
+        ? `Заявка на ${formattedAmount} одобрена. Средства отправлены через Stripe Connect.`
+        : `Заявка на ${formattedAmount} одобрена. Средства будут переведены на указанные реквизиты в течение 1–3 рабочих дней.`,
+      link: "/dashboard/finances?tab=withdrawals",
     });
 
     await logAdminAction(authResult.admin.id, "WITHDRAWAL_APPROVE", {
@@ -199,14 +216,12 @@ export async function adminRejectWithdrawal(
       reason,
     );
 
-    await prisma.notification.create({
-      data: {
-        userId: payment.userId,
-        type: "USER_WARNING",
-        title: "Вывод отклонён",
-        body: `${reason}. Сумма возвращена на баланс.`,
-        link: "/dashboard/finances?tab=withdrawals",
-      },
+    await createUserNotification({
+      userId: payment.userId,
+      type: "USER_WARNING",
+      title: "Вывод отклонён",
+      body: `${reason}. Сумма возвращена на баланс.`,
+      link: "/dashboard/finances?tab=withdrawals",
     });
 
     await logAdminAction(authResult.admin.id, "WITHDRAWAL_REJECT", {

@@ -3,6 +3,7 @@
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
+import { createUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -64,14 +65,12 @@ export async function adminApproveVerification(
     },
   });
 
-  await prisma.notification.create({
-    data: {
-      userId,
-      type: "USER_WARNING",
-      title: "Профиль верифицирован",
-      body: "Администрация подтвердила ваш профиль. Значок верификации отображается на странице профиля.",
-      link: `/freelancers/${userId}`,
-    },
+  await createUserNotification({
+    userId,
+    type: "USER_WARNING",
+    title: "Профиль верифицирован",
+    body: "Администрация подтвердила ваш профиль. Значок верификации отображается на странице профиля.",
+    link: `/freelancers/${userId}`,
   });
 
   await logAdminAction(authResult.admin.id, "VERIFICATION_APPROVE", {
@@ -118,14 +117,12 @@ export async function adminRejectVerification(
     },
   });
 
-  await prisma.notification.create({
-    data: {
-      userId,
-      type: "USER_WARNING",
-      title: "Верификация отклонена",
-      body: note,
-      link: "/dashboard/profile",
-    },
+  await createUserNotification({
+    userId,
+    type: "USER_WARNING",
+    title: "Верификация отклонена",
+    body: note,
+    link: "/dashboard/profile",
   });
 
   await logAdminAction(authResult.admin.id, "VERIFICATION_REJECT", {

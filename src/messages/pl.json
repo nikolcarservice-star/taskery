@@ -381,6 +381,7 @@
       "news": "Aktualności serwisu (max raz na kwartał)",
       "blogDigest": "Przegląd artykułów bloga (max raz w tygodniu)",
       "telegramMessages": "Nowe wiadomości prywatne",
+      "telegramNotifications": "Transakcje, oferty i powiadomienia serwisowe",
       "pushBrowser": "Powiadomienia push w przeglądarce",
       "pushHint": "Natychmiastowe alerty o nowych ofertach i wiadomościach",
       "pushWorking": "Łączenie…",

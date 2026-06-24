@@ -5,6 +5,7 @@ import {
   disconnectTelegram,
   getTelegramLinkStatus,
   setTelegramMessagesEnabled,
+  setTelegramNotificationsEnabled,
 } from "@/lib/actions/telegram";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -13,7 +14,8 @@ export function TelegramSettings() {
   const dict = useDictionary();
   const t = dict.settings.telegram;
   const [linked, setLinked] = useState(false);
-  const [enabled, setEnabled] = useState(false);
+  const [messagesEnabled, setMessagesEnabled] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [linkUrl, setLinkUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -26,7 +28,8 @@ export function TelegramSettings() {
         return;
       }
       setLinked(Boolean(status.linked));
-      setEnabled(Boolean(status.linked));
+      setMessagesEnabled(Boolean(status.telegramMessages));
+      setNotificationsEnabled(status.telegramNotifications ?? true);
       if (status.token && status.botUsername) {
         setLinkUrl(`https://t.me/${status.botUsername}?start=${status.token}`);
       } else {
@@ -57,19 +60,31 @@ export function TelegramSettings() {
     startTransition(async () => {
       await disconnectTelegram();
       setLinked(false);
-      setEnabled(false);
+      setMessagesEnabled(false);
+      setNotificationsEnabled(true);
       setLinkUrl(null);
     });
   };
 
-  const handleToggle = (next: boolean) => {
+  const handleMessagesToggle = (next: boolean) => {
     startTransition(async () => {
       const result = await setTelegramMessagesEnabled(next);
       if (result.error) {
         setError(result.error);
         return;
       }
-      setEnabled(next);
+      setMessagesEnabled(next);
+    });
+  };
+
+  const handleNotificationsToggle = (next: boolean) => {
+    startTransition(async () => {
+      const result = await setTelegramNotificationsEnabled(next);
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+      setNotificationsEnabled(next);
     });
   };
 
@@ -85,9 +100,19 @@ export function TelegramSettings() {
           <label className="flex cursor-pointer items-start gap-3 text-sm text-zinc-700">
             <input
               type="checkbox"
-              checked={enabled}
+              checked={notificationsEnabled}
               disabled={pending}
-              onChange={(event) => handleToggle(event.target.checked)}
+              onChange={(event) => handleNotificationsToggle(event.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500"
+            />
+            <span>{dict.settings.email.telegramNotifications}</span>
+          </label>
+          <label className="flex cursor-pointer items-start gap-3 text-sm text-zinc-700">
+            <input
+              type="checkbox"
+              checked={messagesEnabled}
+              disabled={pending}
+              onChange={(event) => handleMessagesToggle(event.target.checked)}
               className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500"
             />
             <span>{dict.settings.email.telegramMessages}</span>

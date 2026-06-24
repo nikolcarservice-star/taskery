@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
       data: {
         telegramChatId: String(chatId),
         telegramMessages: true,
+        telegramNotifications: true,
         telegramLinkToken: null,
         telegramLinkExpiresAt: null,
       },

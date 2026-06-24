@@ -2,6 +2,7 @@
 
 import { actionError } from "@/lib/action-errors";
 import { requireModerationAdmin } from "@/lib/actions/admin-moderation";
+import { createUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -27,19 +28,17 @@ async function notifyAdminConversationMessage({
   const preview =
     content.length > 120 ? `${content.slice(0, 117)}…` : content;
 
-  await prisma.notification.create({
-    data: {
-      userId: recipientId,
-      type: "NEW_MESSAGE",
-      title: "Сообщение от администратора",
-      body: `${adminName} · ${projectTitle}`,
-      link: `/messages/${conversationId}`,
-      metadata: {
-        conversationId,
-        senderId: adminId,
-        preview,
-        fromAdmin: true,
-      },
+  await createUserNotification({
+    userId: recipientId,
+    type: "NEW_MESSAGE",
+    title: "Сообщение от администратора",
+    body: `${adminName} · ${projectTitle}`,
+    link: `/messages/${conversationId}`,
+    metadata: {
+      conversationId,
+      senderId: adminId,
+      preview,
+      fromAdmin: true,
     },
   });
 }
@@ -68,20 +67,18 @@ async function notifyAdminBidMessage({
   const preview =
     content.length > 120 ? `${content.slice(0, 117)}…` : content;
 
-  await prisma.notification.create({
-    data: {
-      userId: recipientId,
-      type: "BID_MESSAGE",
-      title: "Сообщение от администратора",
-      body: `${adminName} · ${projectTitle}`,
-      link: `/projects/${projectSlug}`,
-      metadata: {
-        projectId,
-        bidId,
-        senderId: adminId,
-        preview,
-        fromAdmin: true,
-      },
+  await createUserNotification({
+    userId: recipientId,
+    type: "BID_MESSAGE",
+    title: "Сообщение от администратора",
+    body: `${adminName} · ${projectTitle}`,
+    link: `/projects/${projectSlug}`,
+    metadata: {
+      projectId,
+      bidId,
+      senderId: adminId,
+      preview,
+      fromAdmin: true,
     },
   });
 }

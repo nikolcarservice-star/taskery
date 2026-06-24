@@ -1,5 +1,4 @@
-import { createUserNotification } from "@/lib/create-user-notification";
-import { sendPushToUser } from "@/lib/push-notifications";
+import { createUserNotification, createUserNotificationsBatch } from "@/lib/create-user-notification";
 import { getProjectPath } from "@/lib/slug";
 import { MESSAGE_NOTIFICATION_TYPES } from "@/lib/messages-inbox";
 import { prisma } from "@/lib/prisma";
@@ -77,17 +76,7 @@ export async function notifyFreelancersAboutNewProject(projectId: string) {
     },
   }));
 
-  await prisma.notification.createMany({ data });
-
-  await Promise.all(
-    data.map((item) =>
-      sendPushToUser(item.userId, {
-        title: item.title,
-        body: item.body ?? "",
-        url: item.link ?? undefined,
-      }),
-    ),
-  );
+  await createUserNotificationsBatch(data);
 
   return data.length;
 }

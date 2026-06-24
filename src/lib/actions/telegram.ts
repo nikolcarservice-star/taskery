@@ -16,6 +16,8 @@ export type TelegramLinkState = {
   botUsername?: string | null;
   linked?: boolean;
   chatLinked?: boolean;
+  telegramMessages?: boolean;
+  telegramNotifications?: boolean;
 };
 
 const LINK_TTL_MS = 15 * 60 * 1000;
@@ -68,6 +70,7 @@ export async function disconnectTelegram(): Promise<TelegramLinkState> {
     data: {
       telegramChatId: null,
       telegramMessages: false,
+      telegramNotifications: true,
       telegramLinkToken: null,
       telegramLinkExpiresAt: null,
     },
@@ -90,6 +93,7 @@ export async function getTelegramLinkStatus(): Promise<TelegramLinkState> {
     select: {
       telegramChatId: true,
       telegramMessages: true,
+      telegramNotifications: true,
       telegramLinkToken: true,
       telegramLinkExpiresAt: true,
     },
@@ -105,6 +109,8 @@ export async function getTelegramLinkStatus(): Promise<TelegramLinkState> {
       settings.telegramLinkExpiresAt > new Date()
         ? settings.telegramLinkToken
         : undefined,
+    telegramMessages: settings?.telegramMessages ?? false,
+    telegramNotifications: settings?.telegramNotifications ?? true,
   };
 }
 
@@ -133,5 +139,33 @@ export async function setTelegramMessagesEnabled(
   revalidatePath("/dashboard/settings");
   revalidatePath("/client/settings");
 
-  return { success: true, linked: true };
+  return { success: true, linked: true, telegramMessages: enabled };
+}
+
+export async function setTelegramNotificationsEnabled(
+  enabled: boolean,
+): Promise<TelegramLinkState> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { error: "AUTH_REQUIRED" };
+  }
+
+  const settings = await prisma.userSettings.findUnique({
+    where: { userId: session.user.id },
+    select: { telegramChatId: true },
+  });
+
+  if (!settings?.telegramChatId) {
+    return { error: "NOT_LINKED" };
+  }
+
+  await prisma.userSettings.update({
+    where: { userId: session.user.id },
+    data: { telegramNotifications: enabled },
+  });
+
+  revalidatePath("/dashboard/settings");
+  revalidatePath("/client/settings");
+
+  return { success: true, linked: true, telegramNotifications: enabled };
 }

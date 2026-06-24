@@ -633,6 +633,7 @@ export type Dictionary = {
       news: string;
       blogDigest: string;
       telegramMessages: string;
+      telegramNotifications: string;
       pushBrowser: string;
       pushHint: string;
       pushWorking: string;

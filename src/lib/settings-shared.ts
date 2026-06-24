@@ -13,6 +13,7 @@ export type UserSettingsData = {
   soundNewMessages: boolean;
   telegramLinked: boolean;
   telegramMessages: boolean;
+  telegramNotifications: boolean;
   interfaceLanguage: string;
   autoTranslate: boolean;
   theme: string;
@@ -41,6 +42,7 @@ export const DEFAULT_SETTINGS: Omit<UserSettingsData, "email" | "twoFactorEnable
   soundNewMessages: false,
   telegramLinked: false,
   telegramMessages: false,
+  telegramNotifications: true,
   interfaceLanguage: "ru",
   autoTranslate: true,
   theme: "light",

@@ -7,6 +7,7 @@ import {
   saveUserAvatar,
 } from "@/lib/avatar-upload";
 import { mapImageUploadError } from "@/lib/image-upload-errors";
+import { contentPreModerationEnabled } from "@/lib/platform-config";
 import type { LanguageLevel } from "@/lib/personal-data-shared";
 import { prisma } from "@/lib/prisma";
 import { validatePayoutDetails } from "@/lib/withdrawals-shared";
@@ -155,16 +156,30 @@ export async function updateProfilePhoto(
   }
 
   try {
-    if (isManagedImageUrl(user.avatar)) {
-      await deleteLocalAvatar(user.avatar);
-    }
-
     const avatar = await saveUserAvatar(session.user.id, file);
 
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: { pendingAvatar: avatar },
-    });
+    if (contentPreModerationEnabled) {
+      if (isManagedImageUrl(user.avatar)) {
+        await deleteLocalAvatar(user.avatar);
+      }
+
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: { pendingAvatar: avatar },
+      });
+    } else {
+      if (isManagedImageUrl(user.avatar) && user.avatar !== avatar) {
+        await deleteLocalAvatar(user.avatar);
+      }
+
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: {
+          avatar,
+          pendingAvatar: null,
+        },
+      });
+    }
   } catch (error) {
     return mapImageUploadError(error);
   }

@@ -5,6 +5,7 @@ import { deleteStoredImage, isManagedImageUrl, uploadImage } from "@/lib/image-s
 import { mapImageUploadError } from "@/lib/image-upload-errors";
 import { prisma } from "@/lib/prisma";
 import { grantPortfolioBoostIfEligible } from "@/lib/taskboost-promotion";
+import { contentPreModerationEnabled } from "@/lib/platform-config";
 import { sanitizeOptionalHttpUrl } from "@/lib/safe-url";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
@@ -127,7 +128,7 @@ export async function addPortfolioItem(
       description,
       imageUrl,
       projectUrl,
-      moderationStatus: "PENDING",
+      moderationStatus: contentPreModerationEnabled ? "PENDING" : "APPROVED",
     },
   });
 

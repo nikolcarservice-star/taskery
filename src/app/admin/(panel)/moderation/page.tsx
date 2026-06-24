@@ -1,6 +1,7 @@
 import { AdminModerationStack } from "@/components/AdminModerationStack";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { getAdminPageContext } from "@/lib/admin-page-context";
+import { getLocale } from "@/lib/i18n/server";
 import { getContentModerationQueue } from "@/lib/queries/admin-content-moderation";
 import { getPendingModerationProjects } from "@/lib/queries/admin-pending-projects";
 import { getModerationAttentionItems } from "@/lib/queries/admin-attention";
@@ -16,6 +17,8 @@ export default async function AdminModerationPage() {
   if (!hasAdminPermission(permissions, "MODERATION")) {
     redirect("/admin/overview");
   }
+
+  const locale = await getLocale();
 
   const [
     attentionItems,
@@ -70,6 +73,7 @@ export default async function AdminModerationPage() {
         contentModeration={contentModeration}
         supportTickets={supportTickets}
         moderationBackHref="/admin/moderation"
+        locale={locale}
       />
     </Suspense>
   );

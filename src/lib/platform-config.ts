@@ -11,3 +11,6 @@ function envFlag(name: string, defaultValue: boolean): boolean {
 
 /** When false, new projects are created with status OPEN (no admin pre-approval). */
 export const projectPreModerationEnabled = envFlag("PROJECT_PRE_MODERATION", true);
+
+/** When false, portfolio items and avatars publish immediately without admin review. */
+export const contentPreModerationEnabled = envFlag("CONTENT_PRE_MODERATION", true);

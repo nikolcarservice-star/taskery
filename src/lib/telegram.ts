@@ -1,3 +1,5 @@
+import type { NotificationType } from "@/generated/prisma/client";
+import { shouldSendTelegramForType } from "@/lib/notification-channels";
 import { siteConfig } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
 
@@ -32,15 +34,29 @@ export async function sendTelegramToUser(
   title: string,
   body: string,
   link?: string,
+  type: NotificationType = "USER_WARNING",
 ) {
   if (!telegramConfigured()) return;
 
   const settings = await prisma.userSettings.findUnique({
     where: { userId },
-    select: { telegramChatId: true, telegramMessages: true },
+    select: {
+      telegramChatId: true,
+      telegramMessages: true,
+      telegramNotifications: true,
+    },
   });
 
-  if (!settings?.telegramChatId || !settings.telegramMessages) return;
+  if (!settings?.telegramChatId) return;
+
+  if (
+    !shouldSendTelegramForType(type, {
+      telegramMessages: settings.telegramMessages,
+      telegramNotifications: settings.telegramNotifications,
+    })
+  ) {
+    return;
+  }
 
   const url = link
     ? link.startsWith("http")

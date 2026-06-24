@@ -68,6 +68,7 @@ export async function atomicApproveWithdrawal(
         type: true,
         status: true,
         amount: true,
+        currency: true,
         metadata: true,
       },
     });
@@ -113,6 +114,7 @@ export async function atomicRejectWithdrawal(
         type: true,
         status: true,
         amount: true,
+        currency: true,
         metadata: true,
       },
     });

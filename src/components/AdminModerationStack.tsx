@@ -26,6 +26,8 @@ import { contractStatusLabels } from "@/lib/contract-labels";
 import type { ContentModerationOverview } from "@/lib/queries/admin-content-moderation";
 import type { PendingProjectItem } from "@/lib/queries/admin-pending-projects";
 import type { AdminSupportTicketItem } from "@/lib/queries/admin-support";
+import { getAdminCopy } from "@/lib/admin-i18n";
+import type { AppLocale } from "@/lib/i18n/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useActionState, useMemo, useState } from "react";
 
@@ -61,6 +63,7 @@ type AdminModerationStackProps = {
   moderationBackHref?: string;
   layout?: "stack" | "tabs";
   syncSectionToUrl?: boolean;
+  locale?: AppLocale;
 };
 
 const initialState: ActionState = {};
@@ -320,9 +323,11 @@ export function AdminModerationStack({
   moderationBackHref = "/admin/moderation",
   layout = "stack",
   syncSectionToUrl = false,
+  locale = "ru",
 }: AdminModerationStackProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const adminCopy = getAdminCopy(locale);
   const gap = compact ? "space-y-4" : "space-y-8";
   const contentCount = contentModeration
     ? contentModeration.portfolio.length + contentModeration.avatars.length
@@ -421,7 +426,7 @@ export function AdminModerationStack({
           size={compact ? "sm" : "md"}
           tabs={MODERATION_SECTIONS.map((section) => ({
             id: section.id,
-            label: section.label,
+            label: adminCopy.moderationSections[section.id],
             badge: sectionBadges[section.id],
           }))}
           active={currentSection}

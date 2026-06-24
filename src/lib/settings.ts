@@ -37,6 +37,8 @@ export async function getUserSettings(userId: string): Promise<UserSettingsData>
     soundNewMessages: settings?.soundNewMessages ?? DEFAULT_SETTINGS.soundNewMessages,
     telegramLinked: Boolean(settings?.telegramChatId),
     telegramMessages: settings?.telegramMessages ?? DEFAULT_SETTINGS.telegramMessages,
+    telegramNotifications:
+      settings?.telegramNotifications ?? DEFAULT_SETTINGS.telegramNotifications,
     interfaceLanguage: localePrefs.interfaceLanguage,
     autoTranslate: localePrefs.autoTranslate,
     theme: settings?.theme ?? DEFAULT_SETTINGS.theme,

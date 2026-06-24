@@ -402,6 +402,7 @@
       "news": "Service news (no more than once a quarter)",
       "blogDigest": "Blog digest (no more than once a week)",
       "telegramMessages": "New private messages",
+      "telegramNotifications": "Deals, bids, and service notifications",
       "pushBrowser": "Browser push notifications",
       "pushHint": "Instant alerts for new bids and messages",
       "pushWorking": "Connecting…",

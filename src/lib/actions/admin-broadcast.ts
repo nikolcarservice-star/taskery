@@ -3,6 +3,7 @@
 import { logAdminAction } from "@/lib/admin-audit";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { auth } from "@/lib/auth";
+import { createUserNotificationsBatch } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import type { Role } from "@/generated/prisma/client";
 import { isUserCurrentlyBanned } from "@/lib/user-ban";
@@ -16,8 +17,6 @@ export type BroadcastActionState = {
   success?: boolean;
   recipientCount?: number;
 };
-
-const BATCH_SIZE = 500;
 
 async function requireBroadcastAdmin() {
   const session = await auth();
@@ -125,24 +124,20 @@ export async function adminSendBroadcast(
   }
 
   const broadcastId = randomUUID();
+  const notifications = userIds.map((userId) => ({
+    userId,
+    type: "ADMIN_BROADCAST" as const,
+    title,
+    body,
+    link,
+    metadata: {
+      broadcastId,
+      audience,
+      adminId: authResult.admin.id,
+    },
+  }));
 
-  for (let offset = 0; offset < userIds.length; offset += BATCH_SIZE) {
-    const chunk = userIds.slice(offset, offset + BATCH_SIZE);
-    await prisma.notification.createMany({
-      data: chunk.map((userId) => ({
-        userId,
-        type: "ADMIN_BROADCAST" as const,
-        title,
-        body,
-        link,
-        metadata: {
-          broadcastId,
-          audience,
-          adminId: authResult.admin.id,
-        },
-      })),
-    });
-  }
+  await createUserNotificationsBatch(notifications);
 
   await logAdminAction(authResult.admin.id, "BROADCAST_SEND", {
     targetType: "broadcast",
