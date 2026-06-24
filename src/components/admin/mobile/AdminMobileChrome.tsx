@@ -1,6 +1,6 @@
 import type { AdminTabDefinition } from "@/lib/admin-tabs";
 
-export const ADMIN_MOBILE_NAV_HEIGHT = "0px";
+export { ADMIN_MOBILE_BOTTOM_NAV_HEIGHT as ADMIN_MOBILE_NAV_HEIGHT } from "@/components/admin/mobile/AdminMobileBottomNav";
 
 type AdminMobileHeaderProps = {
   adminName: string | null;

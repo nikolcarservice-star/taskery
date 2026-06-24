@@ -8,6 +8,7 @@ type AdminCopy = {
   mobileVersion: string;
   desktopVersion: string;
   moreSettings: string;
+  morePageDescription: string;
   backToCabinet: string;
   tabs: Record<
     AdminTabKey,
@@ -27,6 +28,7 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     mobileVersion: "Мобильная версия",
     desktopVersion: "Полная версия",
     moreSettings: "Ещё",
+    morePageDescription: "Дополнительные разделы и настройки",
     backToCabinet: "В кабинет",
     tabs: {
       overview: {
@@ -69,6 +71,7 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     mobileVersion: "Мобільна версія",
     desktopVersion: "Повна версія",
     moreSettings: "Ще",
+    morePageDescription: "Додаткові розділи та налаштування",
     backToCabinet: "До кабінету",
     tabs: {
       overview: {
@@ -111,6 +114,7 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     mobileVersion: "Wersja mobilna",
     desktopVersion: "Wersja pełna",
     moreSettings: "Więcej",
+    morePageDescription: "Dodatkowe sekcje i ustawienia",
     backToCabinet: "Do panelu",
     tabs: {
       overview: {
@@ -153,6 +157,7 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     mobileVersion: "Mobile version",
     desktopVersion: "Desktop version",
     moreSettings: "More",
+    morePageDescription: "Additional sections and settings",
     backToCabinet: "Back to cabinet",
     tabs: {
       overview: {

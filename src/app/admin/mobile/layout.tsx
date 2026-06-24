@@ -1,7 +1,7 @@
 import { AdminMobileShell } from "@/components/admin/mobile/AdminMobileShell";
 import { getAdminPageContext } from "@/lib/admin-page-context";
-import { localizeAdminTab } from "@/lib/admin-i18n";
-import { resolveAdminTabFromPath } from "@/lib/admin-tabs";
+import { getAdminCopy, localizeAdminTab } from "@/lib/admin-i18n";
+import { ADMIN_MOBILE_ROOT, resolveAdminTabFromPath } from "@/lib/admin-tabs";
 import { getLocale } from "@/lib/i18n/server";
 import { getAdminMobileBadges } from "@/lib/queries/admin-mobile-badges";
 import { headers } from "next/headers";
@@ -23,10 +23,16 @@ export default async function AdminMobileLayout({
   const locale = await getLocale();
   const { admin, permissions } = await getAdminPageContext(pathname);
   const badges = await getAdminMobileBadges(permissions, admin.id);
-  const activeTab = localizeAdminTab(
-    resolveAdminTabFromPath(pathname, permissions),
-    locale,
-  );
+  const copy = getAdminCopy(locale);
+  const isMorePage = pathname === `${ADMIN_MOBILE_ROOT}/more`;
+  const resolvedTab = resolveAdminTabFromPath(pathname, permissions);
+  const activeTab = isMorePage
+    ? {
+        ...localizeAdminTab(resolvedTab, locale),
+        label: copy.moreSettings,
+        description: copy.morePageDescription,
+      }
+    : localizeAdminTab(resolvedTab, locale);
 
   return (
     <AdminMobileShell
