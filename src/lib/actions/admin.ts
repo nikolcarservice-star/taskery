@@ -9,6 +9,8 @@ import {
   atomicReleaseDispute,
   atomicSplitDispute,
 } from "@/lib/escrow-ops";
+import { createUserNotification } from "@/lib/create-user-notification";
+import { refundStripeEscrowFunding, StripeRefundError } from "@/lib/stripe-refund";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -43,6 +45,7 @@ async function requireAdminSession(
 
 function escrowErrorMessage(error: unknown): string {
   if (error instanceof EscrowError) return error.message;
+  if (error instanceof StripeRefundError) return error.message;
   return "Не удалось выполнить операцию";
 }
 
@@ -122,24 +125,50 @@ export async function adminRefundDispute(
 
   const amount = Number(project.contract.amount);
 
+  let stripeRefunded = false;
+  try {
+    const stripeResult = await refundStripeEscrowFunding(
+      project.contract.id,
+      project.clientId,
+    );
+    stripeRefunded = stripeResult.refunded;
+  } catch (error) {
+    return { error: escrowErrorMessage(error) };
+  }
+
   try {
     await atomicRefundContract(
       project.contract.id,
       projectId,
       project.clientId,
       amount,
+      { creditBalance: !stripeRefunded },
     );
   } catch (error) {
     return { error: escrowErrorMessage(error) };
   }
 
+  await createUserNotification({
+    userId: project.clientId,
+    type: "USER_WARNING",
+    title: "Спор решён в вашу пользу",
+    body: stripeRefunded
+      ? `Средства по проекту «${project.title}» возвращены на карту через Stripe.`
+      : `Средства по проекту «${project.title}» возвращены на баланс.`,
+    link: `/client/finances`,
+  });
+
   await logAdminAction(authResult.admin.id, "DISPUTE_REFUND", {
     targetType: "project",
     targetId: projectId,
-    details: { contractId: project.contract.id, amount },
+    details: {
+      contractId: project.contract.id,
+      amount,
+      stripeRefunded,
+    },
   });
 
-  revalidatePath("/admin");
+  revalidatePath("/admin/moderation");
   revalidatePath("/admin/mobile/moderation");
   revalidatePath(`/projects/${projectId}`);
 

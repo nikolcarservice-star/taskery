@@ -93,7 +93,10 @@ export async function atomicRefundContract(
   projectId: string,
   clientId: string,
   amount: number,
+  options?: { creditBalance?: boolean },
 ) {
+  const creditBalance = options?.creditBalance ?? true;
+
   return prisma.$transaction(async (tx) => {
     const contractResult = await tx.contract.updateMany({
       where: { id: contractId, status: "ESCROWED" },
@@ -104,10 +107,12 @@ export async function atomicRefundContract(
       throw new EscrowError("Средства уже обработаны", "ALREADY_PROCESSED");
     }
 
-    await tx.user.update({
-      where: { id: clientId },
-      data: { balance: { increment: amount } },
-    });
+    if (creditBalance) {
+      await tx.user.update({
+        where: { id: clientId },
+        data: { balance: { increment: amount } },
+      });
+    }
 
     await tx.project.updateMany({
       where: { id: projectId, status: "UNDER_DISPUTE" },

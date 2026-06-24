@@ -412,6 +412,7 @@
       "pushUnsubscribeFailed": "Could not disable push notifications",
       "pushSoon": "Soon",
       "soundMessages": "New private messages (sound)",
+      "soundHint": "Short alert when unread messages arrive",
       "soundSoon": "Soon"
     },
     "localization": {

@@ -1,19 +1,17 @@
 "use client";
 
 import { MessagesPopover } from "@/components/MessagesPopover";
+import { NavPopoverAnchor } from "@/components/NavPopoverAnchor";
 import { useLocalizedPath } from "@/components/LocalizedLink";
 import { headerIconButtonClass } from "@/components/HeaderShell";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import type { MessagePreviewItem } from "@/lib/messages-shared";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
 
 type MessagesNavButtonProps = {
   messages: MessagePreviewItem[];
   unreadCount: number;
 };
-
-const CLOSE_DELAY_MS = 200;
 
 function MessageIcon() {
   return (
@@ -40,31 +38,12 @@ export function MessagesNavButton({
 }: MessagesNavButtonProps) {
   const dict = useDictionary();
   const l = useLocalizedPath();
-  const [hoverOpen, setHoverOpen] = useState(false);
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const openPopover = useCallback(() => {
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
-    }
-    setHoverOpen(true);
-  }, []);
-
-  const scheduleClose = useCallback(() => {
-    closeTimerRef.current = setTimeout(() => {
-      setHoverOpen(false);
-    }, CLOSE_DELAY_MS);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
-    };
-  }, []);
 
   return (
-    <div className="relative">
+    <NavPopoverAnchor
+      toggleOnClick={false}
+      panel={<MessagesPopover messages={messages} unreadCount={unreadCount} />}
+    >
       <Link
         href={l("/messages")}
         className={`${headerIconButtonClass} relative inline-flex`}
@@ -73,11 +52,6 @@ export function MessagesNavButton({
             ? dict.header.messagesUnread.replace("{count}", String(unreadCount))
             : dict.header.messages
         }
-        aria-expanded={hoverOpen}
-        onMouseEnter={openPopover}
-        onMouseLeave={scheduleClose}
-        onFocus={openPopover}
-        onBlur={scheduleClose}
       >
         <MessageIcon />
         {unreadCount > 0 && (
@@ -86,16 +60,6 @@ export function MessagesNavButton({
           </span>
         )}
       </Link>
-
-      {hoverOpen && (
-        <div
-          className="absolute right-0 top-full z-[60] w-[min(360px,calc(100vw-2rem))] pt-2"
-          onMouseEnter={openPopover}
-          onMouseLeave={scheduleClose}
-        >
-          <MessagesPopover messages={messages} unreadCount={unreadCount} />
-        </div>
-      )}
-    </div>
+    </NavPopoverAnchor>
   );
 }

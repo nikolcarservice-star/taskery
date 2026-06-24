@@ -391,6 +391,7 @@
       "pushUnsubscribeFailed": "Nie udało się wyłączyć powiadomień push",
       "pushSoon": "Wkrótce",
       "soundMessages": "Nowe wiadomości prywatne (dźwięk)",
+      "soundHint": "Krótki sygnał przy nowych nieprzeczytanych wiadomościach",
       "soundSoon": "Wkrótce"
     },
     "localization": {

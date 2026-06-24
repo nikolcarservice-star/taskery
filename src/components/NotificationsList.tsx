@@ -2,6 +2,7 @@
 
 import {
   markAllNotificationsReadAction,
+  markNotificationReadAction,
   openNotificationAction,
 } from "@/lib/actions/notifications";
 import { useLocalizedPath } from "@/components/LocalizedLink";
@@ -78,14 +79,20 @@ function NotificationRow({
   }
 
   return (
-    <li
-      className={`rounded-xl border p-4 ${
-        isUnread
-          ? "border-indigo-200 bg-indigo-50/30"
-          : "border-zinc-200 bg-white"
-      }`}
-    >
-      {content}
+    <li>
+      <form action={markNotificationReadAction}>
+        <input type="hidden" name="notificationId" value={item.id} />
+        <button
+          type="submit"
+          className={`block w-full rounded-xl border p-4 text-left transition-colors hover:border-indigo-200 hover:bg-indigo-50/40 ${
+            isUnread
+              ? "border-indigo-200 bg-indigo-50/30"
+              : "border-zinc-200 bg-white"
+          }`}
+        >
+          {content}
+        </button>
+      </form>
     </li>
   );
 }

@@ -1,18 +1,16 @@
 "use client";
 
 import { NotificationsPopover } from "@/components/NotificationsPopover";
+import { NavPopoverAnchor } from "@/components/NavPopoverAnchor";
 import { headerIconButtonClass } from "@/components/HeaderShell";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import type { NotificationItem } from "@/lib/notifications-shared";
-import { useCallback, useEffect, useRef, useState } from "react";
 
 type NotificationsNavButtonProps = {
   notifications: NotificationItem[];
   unreadCount: number;
   variant?: "client" | "freelancer";
 };
-
-const CLOSE_DELAY_MS = 200;
 
 function BellIcon() {
   return (
@@ -39,31 +37,17 @@ export function NotificationsNavButton({
   variant = "freelancer",
 }: NotificationsNavButtonProps) {
   const dict = useDictionary();
-  const [hoverOpen, setHoverOpen] = useState(false);
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const openPopover = useCallback(() => {
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
-    }
-    setHoverOpen(true);
-  }, []);
-
-  const scheduleClose = useCallback(() => {
-    closeTimerRef.current = setTimeout(() => {
-      setHoverOpen(false);
-    }, CLOSE_DELAY_MS);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
-    };
-  }, []);
 
   return (
-    <div className="relative">
+    <NavPopoverAnchor
+      panel={
+        <NotificationsPopover
+          notifications={notifications}
+          unreadCount={unreadCount}
+          variant={variant}
+        />
+      }
+    >
       <button
         type="button"
         className={`${headerIconButtonClass} relative`}
@@ -72,11 +56,6 @@ export function NotificationsNavButton({
             ? dict.header.notificationsUnread.replace("{count}", String(unreadCount))
             : dict.header.notifications
         }
-        aria-expanded={hoverOpen}
-        onMouseEnter={openPopover}
-        onMouseLeave={scheduleClose}
-        onFocus={openPopover}
-        onBlur={scheduleClose}
       >
         <BellIcon />
         {unreadCount > 0 && (
@@ -85,20 +64,6 @@ export function NotificationsNavButton({
           </span>
         )}
       </button>
-
-      {hoverOpen && (
-        <div
-          className="absolute right-0 top-full z-[60] w-[min(360px,calc(100vw-2rem))] pt-2"
-          onMouseEnter={openPopover}
-          onMouseLeave={scheduleClose}
-        >
-          <NotificationsPopover
-            notifications={notifications}
-            unreadCount={unreadCount}
-            variant={variant}
-          />
-        </div>
-      )}
-    </div>
+    </NavPopoverAnchor>
   );
 }

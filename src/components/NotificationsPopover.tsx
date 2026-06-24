@@ -1,6 +1,6 @@
 "use client";
 
-import { openNotificationAction } from "@/lib/actions/notifications";
+import { openNotificationAction, markNotificationReadAction } from "@/lib/actions/notifications";
 import { useLocalizedPath } from "@/components/LocalizedLink";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { getNotificationDisplayText } from "@/lib/i18n/notification-display";
@@ -78,7 +78,16 @@ export function NotificationsPopover({
                   isUnread ? "bg-indigo-50/30" : "bg-white"
                 }`}
               >
-                <NotificationRowContent item={item} isUnread={isUnread} />
+                {isUnread ? (
+                  <form action={markNotificationReadAction}>
+                    <input type="hidden" name="notificationId" value={item.id} />
+                    <button type="submit" className="block w-full text-left">
+                      <NotificationRowContent item={item} isUnread={isUnread} />
+                    </button>
+                  </form>
+                ) : (
+                  <NotificationRowContent item={item} isUnread={isUnread} />
+                )}
               </li>
             );
           })}

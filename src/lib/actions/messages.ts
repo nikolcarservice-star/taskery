@@ -1,5 +1,6 @@
 "use server";
 
+import { createUserNotification } from "@/lib/create-user-notification";
 import { auth } from "@/lib/auth";
 import { actionError } from "@/lib/action-errors";
 import { createConversationContactWarning } from "@/lib/moderation/contact-warnings";
@@ -10,6 +11,7 @@ import {
 } from "@/lib/moderation/message-guard";
 import { prisma } from "@/lib/prisma";
 import { safeRedirectPath } from "@/lib/safe-redirect";
+import { revalidateInboxPaths } from "@/lib/revalidate-inbox";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -81,11 +83,32 @@ export async function sendMessage(
     }
   }
 
+  const recipientId =
+    conversation.clientId === session.user.id
+      ? conversation.freelancerId
+      : conversation.clientId;
+
   await prisma.message.create({
     data: {
       conversationId,
       senderId: session.user.id,
       content,
+    },
+  });
+
+  const senderName =
+    session.user.name ??
+    (session.user.role === "ADMIN" ? "Администратор" : "Участник");
+
+  await createUserNotification({
+    userId: recipientId,
+    type: "NEW_MESSAGE",
+    title: "Новое сообщение",
+    body: `${senderName} · ${conversation.project.title}`,
+    link: `/messages/${conversationId}`,
+    metadata: {
+      conversationId,
+      preview: content.length > 120 ? `${content.slice(0, 117)}…` : content,
     },
   });
 
@@ -98,11 +121,8 @@ export async function sendMessage(
     },
   });
 
-  revalidatePath("/messages");
-  revalidatePath(`/messages/${conversationId}`);
   revalidatePath(`/projects/${conversation.project.slug}`);
-  revalidatePath("/dashboard", "layout");
-  revalidatePath("/client", "layout");
+  revalidateInboxPaths();
 
   return { success: true };
 }

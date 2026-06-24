@@ -643,6 +643,7 @@ export type Dictionary = {
       pushUnsubscribeFailed: string;
       pushSoon: string;
       soundMessages: string;
+      soundHint: string;
       soundSoon: string;
     };
     localization: {

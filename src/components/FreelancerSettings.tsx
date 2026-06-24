@@ -160,8 +160,7 @@ function ServiceSettingsTab({
             name="soundNewMessages"
             label={t.email.soundMessages}
             defaultChecked={settings.soundNewMessages}
-            hint={t.email.soundSoon}
-            disabled
+            hint={t.email.soundHint}
           />
         </div>
       </SettingsSection>

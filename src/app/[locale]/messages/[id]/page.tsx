@@ -8,6 +8,8 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { localizedPath } from "@/lib/i18n/routing";
 import { markConversationMessagesRead } from "@/lib/messages-inbox";
+import { markBidMessageNotificationsReadForProject } from "@/lib/notifications";
+import { revalidateInboxPaths } from "@/lib/revalidate-inbox";
 import { participantMessagesWhere } from "@/lib/messages-visibility";
 import { shouldWarnExternalLinks } from "@/lib/moderation/message-guard";
 import { createMetadata } from "@/lib/metadata";
@@ -85,6 +87,11 @@ export default async function ConversationPage({ params }: ConversationPageProps
   if (!isParticipant) notFound();
 
   await markConversationMessagesRead(session.user.id, conversation.id);
+  await markBidMessageNotificationsReadForProject(
+    session.user.id,
+    conversation.project.id,
+  );
+  revalidateInboxPaths();
 
   const isClient = conversation.clientId === session.user.id;
   const isFreelancerRole = conversation.freelancerId === session.user.id;

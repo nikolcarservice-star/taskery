@@ -871,6 +871,7 @@
       "pushUnsubscribeFailed": "Не удалось отключить push-уведомления",
       "pushSoon": "Скоро",
       "soundMessages": "Новые личные сообщения (звук)",
+      "soundHint": "Короткий сигнал при новых непрочитанных сообщениях",
       "soundSoon": "Скоро"
     },
     "localization": {
