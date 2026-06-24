@@ -3,6 +3,7 @@
 import {
   closeSupportTicket,
   replySupportTicket,
+  resolveSupportTicket,
   type TicketActionState,
 } from "@/lib/actions/support-tickets";
 import type { AdminSupportTicketItem } from "@/lib/queries/admin-support";
@@ -77,6 +78,27 @@ function TicketCloseButton({ ticketId }: { ticketId: string }) {
   );
 }
 
+function TicketResolveButton({ ticketId }: { ticketId: string }) {
+  const [state, formAction, pending] = useActionState(
+    resolveSupportTicket,
+    initialState,
+  );
+
+  return (
+    <form action={formAction}>
+      <input type="hidden" name="ticketId" value={ticketId} />
+      <button
+        type="submit"
+        disabled={pending}
+        className="rounded-full border border-emerald-300 px-3 py-1.5 text-xs font-medium text-emerald-800 hover:bg-emerald-50 disabled:opacity-50"
+      >
+        Отметить решённым
+      </button>
+      {state.error && <p className="mt-1 text-xs text-red-600">{state.error}</p>}
+    </form>
+  );
+}
+
 type AdminSupportPanelProps = {
   tickets: AdminSupportTicketItem[];
   compact?: boolean;
@@ -145,7 +167,8 @@ export function AdminSupportPanel({ tickets, compact = false }: AdminSupportPane
             {ticket.status !== "CLOSED" && (
               <>
                 <TicketReplyForm ticketId={ticket.id} />
-                <div className="mt-2">
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <TicketResolveButton ticketId={ticket.id} />
                   <TicketCloseButton ticketId={ticket.id} />
                 </div>
               </>

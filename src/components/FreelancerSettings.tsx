@@ -5,6 +5,7 @@ import { FormActionError } from "@/components/FormActionError";
 import { LocalizationSettings } from "@/components/LocalizationSettings";
 import { useLocalizedPath } from "@/components/LocalizedLink";
 import { TwoFactorSettings } from "@/components/TwoFactorSettings";
+import { SessionLogoutAllButton } from "@/components/SessionLogoutAllButton";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { stripLocalePrefix } from "@/lib/i18n/routing";
 import {
@@ -250,7 +251,7 @@ function SecuritySettingsTab({
       </SettingsSection>
 
       <SettingsSection title={t.sessions}>
-        <p className="text-sm text-zinc-600">{t.sessionsHint}</p>
+        <SessionLogoutAllButton />
       </SettingsSection>
 
       <SettingsSection title={t.personalData}>

@@ -17,13 +17,21 @@ export function AdminAuditPanel({ entries, mobile = false }: AdminAuditPanelProp
       }
     >
       {!mobile && (
-        <div>
-          <h2 className="text-lg font-semibold text-zinc-900">
-            Журнал действий ({entries.length})
-          </h2>
-          <p className="mt-1 text-sm text-zinc-600">
-            Последние действия администраторов на платформе
-          </p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold text-zinc-900">
+              Журнал действий ({entries.length})
+            </h2>
+            <p className="mt-1 text-sm text-zinc-600">
+              Последние действия администраторов на платформе
+            </p>
+          </div>
+          <a
+            href="/api/admin/export/audit"
+            className="inline-flex rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
+          >
+            Экспорт CSV
+          </a>
         </div>
       )}
 

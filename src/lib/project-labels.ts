@@ -3,6 +3,7 @@ import { formatBudget as formatBudgetMoney } from "@/lib/i18n/currencies";
 import type { AppLocale } from "@/lib/i18n/types";
 
 export const projectStatusLabels: Record<ProjectStatus, string> = {
+  PENDING_MODERATION: "На модерации",
   OPEN: "Открыт",
   IN_PROGRESS: "В работе",
   CLOSED: "Закрыт",
@@ -10,6 +11,7 @@ export const projectStatusLabels: Record<ProjectStatus, string> = {
 };
 
 export const projectStatusColors: Record<ProjectStatus, string> = {
+  PENDING_MODERATION: "bg-amber-100 text-amber-800",
   OPEN: "bg-green-100 text-green-800",
   IN_PROGRESS: "bg-blue-100 text-blue-800",
   CLOSED: "bg-zinc-100 text-zinc-700",

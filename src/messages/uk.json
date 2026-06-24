@@ -279,6 +279,8 @@
       "google": "Увійти через Google",
       "orDivider": "або email",
       "forgotPassword": "Забули пароль?",
+      "totpCode": "Код 2FA",
+      "totpOptional": "Якщо увімкнено двофакторну автентифікацію",
       "errors": {
         "invalid": "Невірний email або пароль",
         "admin": "Для адміністратора використовуйте окремий вхід.",
@@ -435,7 +437,10 @@
       "twoFactorEnabledSuccess": "2FA успішно увімкнено",
       "twoFactorDisabledSuccess": "2FA вимкнено",
       "sessions": "Активні сесії",
-      "sessionsHint": "Ви увійшли в акаунт на цьому пристрої. Керування сесіями з’явиться пізніше.",
+      "sessionsHint": "Вийти з акаунта на всіх інших пристроях. Поточна сесія також завершиться при наступному запиті.",
+      "sessionsLogoutAll": "Вийти на всіх пристроях",
+      "sessionsLoggingOut": "Вихід…",
+      "sessionsLoggedOut": "Сесії скинуто. Оновіть сторінку або увійдіть знову.",
       "personalData": "Особисті дані",
       "personalDataLink": "Перейти до особистих даних →",
       "account": "Акаунт"
@@ -602,13 +607,15 @@
       "ADMIN_BROADCAST": "Повідомлення платформи",
       "ADMIN_DISPUTE": "Спір",
       "ADMIN_REPORT": "Скарга",
-      "ADMIN_WITHDRAWAL": "Заявка на виведення"
+      "ADMIN_WITHDRAWAL": "Заявка на виведення",
+      "ADMIN_PROJECT_PENDING": "Проєкт на модерації"
     },
     "projectStatus": {
       "OPEN": "Відкритий",
       "IN_PROGRESS": "В роботі",
       "CLOSED": "Закритий",
-      "UNDER_DISPUTE": "Спір"
+      "UNDER_DISPUTE": "Спір",
+      "PENDING_MODERATION": "На модерації"
     },
     "bidStatus": {
       "PENDING": "На розгляді",
@@ -1880,6 +1887,10 @@
     },
     "ADMIN_WITHDRAWAL": {
       "title": "Заявка на виведення",
+      "body": "{project}"
+    },
+    "ADMIN_PROJECT_PENDING": {
+      "title": "Проєкт на модерації",
       "body": "{project}"
     }
   },

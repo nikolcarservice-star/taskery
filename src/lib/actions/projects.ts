@@ -1,7 +1,6 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { notifyFreelancersAboutNewProject } from "@/lib/notifications";
 import { generateUniqueProjectSlug } from "@/lib/slug";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
@@ -15,6 +14,7 @@ export type CreateProjectState = {
   success?: boolean;
   projectId?: string;
   projectSlug?: string;
+  pendingModeration?: boolean;
 };
 
 export async function createProject(
@@ -119,10 +119,14 @@ export async function createProject(
       budget,
       currency,
       deadline,
+      status: "PENDING_MODERATION",
     },
   });
 
-  await notifyFreelancersAboutNewProject(project.id);
+  const { notifyAdminsNewProjectPending } = await import(
+    "@/lib/actions/admin-project-moderation"
+  );
+  await notifyAdminsNewProjectPending(project.id, project.title);
 
   revalidatePath("/projects/my");
   revalidatePath("/client/projects");
@@ -133,6 +137,7 @@ export async function createProject(
     success: true,
     projectId: project.id,
     projectSlug: project.slug,
+    pendingModeration: true,
   };
 }
 

@@ -15,6 +15,7 @@ declare module "next-auth" {
       role?: Role;
       interfaceLanguage?: string;
       isBanned?: boolean;
+      sessionInvalid?: boolean;
     };
   }
 }
@@ -25,5 +26,7 @@ declare module "next-auth/jwt" {
     role?: Role;
     interfaceLanguage?: string;
     isBanned?: boolean;
+    sessionVersion?: number;
+    sessionInvalid?: boolean;
   }
 }

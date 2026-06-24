@@ -8,6 +8,9 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getAdminFinanceOverview } from "@/lib/queries/admin-finance";
 import { getAdminAnalyticsOverview } from "@/lib/queries/admin-analytics";
+import { getContentModerationQueue } from "@/lib/queries/admin-content-moderation";
+import { getCmsPages } from "@/lib/queries/admin-cms";
+import { getPendingModerationProjects } from "@/lib/queries/admin-pending-projects";
 import { getRecentAdminAuditLogs } from "@/lib/admin-audit";
 import { getAdminCatalogOverview } from "@/lib/queries/admin-catalog";
 import { getPendingProfileVerifications } from "@/lib/queries/admin-verification";
@@ -24,8 +27,17 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function AdminPage() {
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ days?: string }>;
+}) {
   const session = await auth();
+  const { days: daysParam } = await searchParams;
+  const analyticsDays = Math.min(
+    Math.max(Number.parseInt(daysParam ?? "30", 10) || 30, 7),
+    90,
+  );
 
   if (!session?.user?.email) {
     return <AdminLoginView />;
@@ -74,6 +86,9 @@ export default async function AdminPage() {
     catalogOverview,
     pendingWithdrawals,
     analytics,
+    pendingProjects,
+    contentModeration,
+    cmsPages,
   ] = await Promise.all([
     canModerate
       ? prisma.project.findMany({
@@ -132,7 +147,10 @@ export default async function AdminPage() {
     canViewUsers ? getPendingProfileVerifications() : Promise.resolve([]),
     canManageStaff ? getAdminCatalogOverview() : Promise.resolve(null),
     canViewFinance ? getPendingWithdrawals() : Promise.resolve([]),
-    canViewFinance ? getAdminAnalyticsOverview() : Promise.resolve(null),
+    canViewFinance ? getAdminAnalyticsOverview(analyticsDays) : Promise.resolve(null),
+    canModerate ? getPendingModerationProjects() : Promise.resolve([]),
+    canModerate ? getContentModerationQueue() : Promise.resolve({ portfolio: [], avatars: [] }),
+    canManageStaff ? getCmsPages() : Promise.resolve([]),
   ]);
 
   return (
@@ -173,6 +191,9 @@ export default async function AdminPage() {
             catalogCategories={catalogOverview?.categories ?? []}
             catalogSkills={catalogOverview?.skills ?? []}
             pendingWithdrawals={pendingWithdrawals}
+            pendingProjects={pendingProjects}
+            contentModeration={contentModeration}
+            cmsPages={cmsPages}
           />
         </div>
       </main>

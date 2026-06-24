@@ -192,6 +192,8 @@ export type Dictionary = {
       google: string;
       orDivider: string;
       forgotPassword: string;
+      totpCode: string;
+      totpOptional: string;
       errors: {
         invalid: string;
         admin: string;
@@ -677,6 +679,9 @@ export type Dictionary = {
       twoFactorDisabledSuccess: string;
       sessions: string;
       sessionsHint: string;
+      sessionsLogoutAll: string;
+      sessionsLoggingOut: string;
+      sessionsLoggedOut: string;
       personalData: string;
       personalDataLink: string;
       account: string;
@@ -826,12 +831,14 @@ export type Dictionary = {
       ADMIN_DISPUTE: string;
       ADMIN_REPORT: string;
       ADMIN_WITHDRAWAL: string;
+      ADMIN_PROJECT_PENDING: string;
     };
     projectStatus: {
       OPEN: string;
       IN_PROGRESS: string;
       CLOSED: string;
       UNDER_DISPUTE: string;
+      PENDING_MODERATION: string;
     };
     bidStatus: {
       PENDING: string;
@@ -1552,6 +1559,7 @@ export type Dictionary = {
     ADMIN_DISPUTE: { title: string; body: string };
     ADMIN_REPORT: { title: string; body: string };
     ADMIN_WITHDRAWAL: { title: string; body: string };
+    ADMIN_PROJECT_PENDING: { title: string; body: string };
   };
   faq: FaqItem[];
 };

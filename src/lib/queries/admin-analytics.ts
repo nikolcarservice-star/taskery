@@ -11,11 +11,12 @@ export type DailyAmountMetric = {
 };
 
 export type AdminAnalyticsOverview = {
+  days: number;
   kpis: {
-    newUsers30d: number;
-    newProjects30d: number;
-    releasedGmv30d: number;
-    commissions30d: number;
+    newUsersInPeriod: number;
+    newProjectsInPeriod: number;
+    releasedGmvInPeriod: number;
+    commissionsInPeriod: number;
     openDisputes: number;
     pendingReports: number;
     pendingWithdrawals: number;
@@ -28,17 +29,16 @@ export type AdminAnalyticsOverview = {
   dailyGmv: DailyAmountMetric[];
 };
 
-function last30DayKeys(): string[] {
+function dayKeys(days: number): string[] {
   const keys: string[] = [];
   const now = new Date();
-  for (let i = 29; i >= 0; i -= 1) {
+  for (let i = days - 1; i >= 0; i -= 1) {
     const date = new Date(now);
     date.setDate(now.getDate() - i);
     keys.push(date.toISOString().slice(0, 10));
   }
   return keys;
 }
-
 function bucketByDay<T extends { createdAt: Date }>(
   items: T[],
   keys: string[],
@@ -67,11 +67,14 @@ function bucketGmvByDay(
   return keys.map((date) => ({ date, amount: amounts.get(date) ?? 0 }));
 }
 
-export async function getAdminAnalyticsOverview(): Promise<AdminAnalyticsOverview> {
+export async function getAdminAnalyticsOverview(
+  days = 30,
+): Promise<AdminAnalyticsOverview> {
+  const periodDays = Math.min(Math.max(days, 7), 90);
   const since = new Date();
-  since.setDate(since.getDate() - 30);
+  since.setDate(since.getDate() - periodDays);
   since.setHours(0, 0, 0, 0);
-  const keys = last30DayKeys();
+  const keys = dayKeys(periodDays);
 
   const [
     recentUsers,
@@ -123,11 +126,12 @@ export async function getAdminAnalyticsOverview(): Promise<AdminAnalyticsOvervie
   );
 
   return {
+    days: periodDays,
     kpis: {
-      newUsers30d: recentUsers.length,
-      newProjects30d: recentProjects.length,
-      releasedGmv30d,
-      commissions30d,
+      newUsersInPeriod: recentUsers.length,
+      newProjectsInPeriod: recentProjects.length,
+      releasedGmvInPeriod: releasedGmv30d,
+      commissionsInPeriod: commissions30d,
       openDisputes,
       pendingReports,
       pendingWithdrawals: pendingWithdrawals.length,

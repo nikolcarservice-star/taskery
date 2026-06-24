@@ -231,3 +231,55 @@ export async function adminSaveCategoryMinBudget(
   revalidatePath("/projects");
   return { success: true };
 }
+
+export async function adminDeleteCategory(
+  _prevState: CatalogActionState,
+  formData: FormData,
+): Promise<CatalogActionState> {
+  const authResult = await requireCatalogAdmin();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const categoryId = (formData.get("categoryId") as string | null)?.trim();
+  if (!categoryId) return { error: "Категория не найдена" };
+
+  const projectsCount = await prisma.project.count({
+    where: { categoryId },
+  });
+  if (projectsCount > 0) {
+    return { error: "Нельзя удалить категорию с проектами" };
+  }
+
+  await prisma.categoryMinBudget.deleteMany({ where: { categoryId } });
+  await prisma.category.delete({ where: { id: categoryId } });
+
+  await logAdminAction(authResult.admin.id, "CATALOG_CATEGORY_DELETE", {
+    targetType: "category",
+    targetId: categoryId,
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/mobile/catalog");
+  return { success: true };
+}
+
+export async function adminDeleteSkill(
+  _prevState: CatalogActionState,
+  formData: FormData,
+): Promise<CatalogActionState> {
+  const authResult = await requireCatalogAdmin();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const skillId = (formData.get("skillId") as string | null)?.trim();
+  if (!skillId) return { error: "Навык не найден" };
+
+  await prisma.skill.delete({ where: { id: skillId } });
+
+  await logAdminAction(authResult.admin.id, "CATALOG_SKILL_DELETE", {
+    targetType: "skill",
+    targetId: skillId,
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/mobile/catalog");
+  return { success: true };
+}

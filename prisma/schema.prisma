@@ -29,6 +29,7 @@ enum SubscriptionPlan {
 }
 
 enum ProjectStatus {
+  PENDING_MODERATION
   OPEN
   IN_PROGRESS
   CLOSED
@@ -99,6 +100,7 @@ enum NotificationType {
   ADMIN_DISPUTE
   ADMIN_REPORT
   ADMIN_WITHDRAWAL
+  ADMIN_PROJECT_PENDING
 }
 
 enum ReportTargetType {
@@ -157,6 +159,18 @@ enum AdminAuditAction {
   WITHDRAWAL_APPROVE
   WITHDRAWAL_REJECT
   BROADCAST_SEND
+  PROJECT_APPROVE
+  PROJECT_REJECT
+  PORTFOLIO_APPROVE
+  PORTFOLIO_REJECT
+  AVATAR_APPROVE
+  AVATAR_REJECT
+  TICKET_RESOLVE
+  TICKET_ASSIGN
+  CMS_PAGE_SAVE
+  CATALOG_CATEGORY_DELETE
+  CATALOG_SKILL_DELETE
+  REPORT_RESOLVE_NO_ACTION
   STAFF_CREATE
   STAFF_UPDATE
   STAFF_DEACTIVATE
@@ -191,6 +205,12 @@ enum PayoutMethod {
   IBAN
 }
 
+enum PortfolioModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id                 String           @id @default(cuid())
   email              String           @unique
@@ -220,6 +240,8 @@ model User {
   deletedAt          DateTime?        @map("deleted_at")
   twoFactorEnabled   Boolean          @default(false) @map("two_factor_enabled")
   twoFactorSecret    String?          @map("two_factor_secret")
+  sessionVersion     Int              @default(0) @map("session_version")
+  pendingAvatar      String?          @map("pending_avatar")
   createdAt          DateTime         @default(now()) @map("created_at")
   updatedAt          DateTime         @updatedAt @map("updated_at")
 
@@ -316,6 +338,8 @@ model PortfolioItem {
   description         String?  @db.Text
   imageUrl            String?  @map("image_url")
   projectUrl          String?  @map("project_url")
+  moderationStatus    PortfolioModerationStatus @default(APPROVED) @map("moderation_status")
+  rejectReason        String?  @map("reject_reason") @db.Text
   createdAt           DateTime @default(now()) @map("created_at")
 
   freelancerProfile FreelancerProfile @relation(fields: [freelancerProfileId], references: [id], onDelete: Cascade)
@@ -405,6 +429,7 @@ model Project {
   hiddenFromCatalog      Boolean       @default(false) @map("hidden_from_catalog")
   blockedAt              DateTime?     @map("blocked_at")
   blockReason            String?       @map("block_reason") @db.Text
+  moderationNote         String?       @map("moderation_note") @db.Text
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @updatedAt @map("updated_at")
 
@@ -682,4 +707,18 @@ model SupportTicketMessage {
 
   @@index([ticketId, createdAt])
   @@map("support_ticket_messages")
+}
+
+model CmsPage {
+  id        String   @id @default(cuid())
+  slug      String
+  locale    String
+  title     String
+  body      String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([slug, locale])
+  @@index([slug])
+  @@map("cms_pages")
 }

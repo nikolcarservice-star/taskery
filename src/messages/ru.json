@@ -294,6 +294,8 @@
       "google": "Войти через Google",
       "orDivider": "или email",
       "forgotPassword": "Забыли пароль?",
+      "totpCode": "Код 2FA",
+      "totpOptional": "Если включена двухфакторная аутентификация",
       "errors": {
         "invalid": "Неверный email или пароль",
         "admin": "Для администратора используйте отдельный вход.",
@@ -909,7 +911,10 @@
       "twoFactorEnabledSuccess": "2FA успешно включена",
       "twoFactorDisabledSuccess": "2FA отключена",
       "sessions": "Активные сессии",
-      "sessionsHint": "Вы вошли в аккаунт на этом устройстве. Управление сессиями появится в следующих обновлениях.",
+      "sessionsHint": "Завершите все активные сессии на других устройствах. Текущая сессия также будет сброшена при следующем запросе.",
+      "sessionsLogoutAll": "Выйти на всех устройствах",
+      "sessionsLoggingOut": "Сброс…",
+      "sessionsLoggedOut": "Сессии сброшены. Обновите страницу или войдите снова.",
       "personalData": "Личные данные",
       "personalDataLink": "Перейти к личным данным →",
       "account": "Аккаунт"
@@ -1046,13 +1051,15 @@
       "ADMIN_BROADCAST": "Сообщение платформы",
       "ADMIN_DISPUTE": "Спор",
       "ADMIN_REPORT": "Жалоба",
-      "ADMIN_WITHDRAWAL": "Заявка на вывод"
+      "ADMIN_WITHDRAWAL": "Заявка на вывод",
+      "ADMIN_PROJECT_PENDING": "Проект на модерации"
     },
     "projectStatus": {
       "OPEN": "Открыт",
       "IN_PROGRESS": "В работе",
       "CLOSED": "Закрыт",
-      "UNDER_DISPUTE": "Спор"
+      "UNDER_DISPUTE": "Спор",
+      "PENDING_MODERATION": "На модерации"
     },
     "bidStatus": {
       "PENDING": "На рассмотрении",
@@ -1865,6 +1872,10 @@
     },
     "ADMIN_WITHDRAWAL": {
       "title": "Заявка на вывод",
+      "body": "{project}"
+    },
+    "ADMIN_PROJECT_PENDING": {
+      "title": "Проект на модерации",
       "body": "{project}"
     }
   },

@@ -1,6 +1,9 @@
 "use client";
 
 import { AdminAnalyticsPanel } from "@/components/AdminAnalyticsPanel";
+import { AdminCmsPanel } from "@/components/AdminCmsPanel";
+import { AdminContentModerationPanel } from "@/components/AdminContentModerationPanel";
+import { AdminPendingProjectsPanel } from "@/components/AdminPendingProjectsPanel";
 import { AdminModerationStack } from "@/components/AdminModerationStack";
 import { AdminFinancePanel } from "@/components/AdminFinancePanel";
 import { AdminAuditPanel } from "@/components/AdminAuditPanel";
@@ -19,6 +22,9 @@ import {
 } from "@/lib/admin-permissions";
 import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
 import type { AdminAnalyticsOverview } from "@/lib/queries/admin-analytics";
+import type { ContentModerationOverview } from "@/lib/queries/admin-content-moderation";
+import type { CmsPageItem } from "@/lib/queries/admin-cms";
+import type { PendingProjectItem } from "@/lib/queries/admin-pending-projects";
 import type { AdminFinanceOverview } from "@/lib/queries/admin-finance";
 import type { AdminUserItem } from "@/lib/queries/admin-users";
 import type { AdminAuditEntry } from "@/lib/admin-audit-types";
@@ -67,6 +73,9 @@ type AdminPanelProps = {
   catalogCategories: AdminCategoryItem[];
   catalogSkills: AdminSkillItem[];
   pendingWithdrawals: AdminWithdrawalItem[];
+  pendingProjects: PendingProjectItem[];
+  contentModeration: ContentModerationOverview;
+  cmsPages: CmsPageItem[];
 };
 
 export function AdminPanel({
@@ -87,6 +96,9 @@ export function AdminPanel({
   catalogCategories,
   catalogSkills,
   pendingWithdrawals,
+  pendingProjects,
+  contentModeration,
+  cmsPages,
 }: AdminPanelProps) {
   const canModerate = hasAdminPermission(permissions, "MODERATION");
   const canManageStaff = hasAdminPermission(permissions, "STAFF_MANAGE");
@@ -129,12 +141,16 @@ export function AdminPanel({
       )}
 
       {canModerate && (
-        <AdminModerationStack
+        <>
+          <AdminPendingProjectsPanel projects={pendingProjects} />
+          <AdminContentModerationPanel queue={contentModeration} />
+          <AdminModerationStack
           attentionItems={attentionItems}
           reports={reports}
           disputes={disputes}
           openProjects={openProjects}
         />
+        </>
       )}
 
       {canModerate && (
@@ -160,6 +176,7 @@ export function AdminPanel({
             categories={catalogCategories}
             skills={catalogSkills}
           />
+          <AdminCmsPanel pages={cmsPages} />
         </>
       )}
 

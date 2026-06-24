@@ -49,6 +49,20 @@ function AdminLoginFormInner() {
           className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
         />
       </div>
+      <div>
+        <label htmlFor="admin-totp" className="block text-sm font-medium text-zinc-700">
+          Код 2FA (если включён)
+        </label>
+        <input
+          id="admin-totp"
+          name="totpCode"
+          type="text"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          maxLength={6}
+          className="mt-1 w-full max-w-xs rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+        />
+      </div>
       {state.error && (
         <p className="text-sm text-red-600" role="alert">
           Неверный email, пароль или недостаточно прав

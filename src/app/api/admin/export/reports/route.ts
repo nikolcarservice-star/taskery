@@ -18,38 +18,41 @@ export async function GET() {
 
   if (
     !admin?.adminActive ||
-    !hasAdminPermission(admin.adminPermissions, "FINANCE")
+    !hasAdminPermission(admin.adminPermissions, "MODERATION")
   ) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const payments = await prisma.payment.findMany({
+  const reports = await prisma.report.findMany({
     orderBy: { createdAt: "desc" },
     take: 5000,
     select: {
       id: true,
-      amount: true,
-      currency: true,
-      type: true,
+      targetType: true,
+      reason: true,
       status: true,
       createdAt: true,
-      user: { select: { email: true, name: true } },
+      reporter: { select: { email: true } },
+      targetUser: { select: { email: true } },
+      targetProject: { select: { slug: true, title: true } },
     },
   });
 
-  const header = "id,date,email,name,type,status,amount,currency";
-  const rows = payments.map((payment) =>
+  const header =
+    "id,date,status,targetType,reason,reporterEmail,targetUserEmail,projectSlug,projectTitle";
+  const rows = reports.map((report) =>
     [
-      payment.id,
-      payment.createdAt.toISOString(),
-      csvEscape(payment.user.email),
-      csvEscape(payment.user.name ?? ""),
-      payment.type,
-      payment.status,
-      payment.amount.toString(),
-      payment.currency,
+      report.id,
+      report.createdAt.toISOString(),
+      report.status,
+      report.targetType,
+      csvEscape(report.reason),
+      csvEscape(report.reporter.email),
+      csvEscape(report.targetUser?.email ?? ""),
+      csvEscape(report.targetProject?.slug ?? ""),
+      csvEscape(report.targetProject?.title ?? ""),
     ].join(","),
   );
 
-  return buildCsvResponse([header, ...rows], "taskery-payments");
+  return buildCsvResponse([header, ...rows], "taskery-reports");
 }

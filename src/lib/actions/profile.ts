@@ -127,6 +127,7 @@ export async function addPortfolioItem(
       description,
       imageUrl,
       projectUrl,
+      moderationStatus: "PENDING",
     },
   });
 

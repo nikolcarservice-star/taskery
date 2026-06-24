@@ -17,6 +17,9 @@ export const authConfig = {
       return token;
     },
     session({ session, token }) {
+      if (token.sessionInvalid) {
+        return { ...session, expires: "1970-01-01T00:00:00.000Z" };
+      }
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as Role | undefined;
@@ -25,6 +28,7 @@ export const authConfig = {
           session.user.email = token.email as string;
         }
         session.user.isBanned = Boolean(token.isBanned);
+        session.user.sessionInvalid = Boolean(token.sessionInvalid);
       }
       return session;
     },

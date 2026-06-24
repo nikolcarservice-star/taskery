@@ -273,6 +273,8 @@
       "google": "Zaloguj przez Google",
       "orDivider": "lub email",
       "forgotPassword": "Nie pamiętasz hasła?",
+      "totpCode": "Kod 2FA",
+      "totpOptional": "Jeśli włączone jest uwierzytelnianie dwuskładnikowe",
       "errors": {
         "invalid": "Nieprawidłowy email lub hasło",
         "admin": "Dla administratora użyj osobnego logowania.",
@@ -429,7 +431,10 @@
       "twoFactorEnabledSuccess": "2FA włączone pomyślnie",
       "twoFactorDisabledSuccess": "2FA wyłączone",
       "sessions": "Aktywne sesje",
-      "sessionsHint": "Jesteś zalogowany na tym urządzeniu. Zarządzanie sesjami pojawi się później.",
+      "sessionsHint": "Wyloguj się na wszystkich innych urządzeniach. Bieżąca sesja też zakończy się przy następnym żądaniu.",
+      "sessionsLogoutAll": "Wyloguj wszędzie",
+      "sessionsLoggingOut": "Wylogowywanie…",
+      "sessionsLoggedOut": "Sesje wyczyszczone. Odśwież stronę lub zaloguj się ponownie.",
       "personalData": "Dane osobowe",
       "personalDataLink": "Przejdź do danych osobowych →",
       "account": "Konto"
@@ -596,13 +601,15 @@
       "ADMIN_BROADCAST": "Wiadomość platformy",
       "ADMIN_DISPUTE": "Spór",
       "ADMIN_REPORT": "Zgłoszenie",
-      "ADMIN_WITHDRAWAL": "Wniosek o wypłatę"
+      "ADMIN_WITHDRAWAL": "Wniosek o wypłatę",
+      "ADMIN_PROJECT_PENDING": "Projekt w moderacji"
     },
     "projectStatus": {
       "OPEN": "Otwarty",
       "IN_PROGRESS": "W trakcie",
       "CLOSED": "Zamknięty",
-      "UNDER_DISPUTE": "Spór"
+      "UNDER_DISPUTE": "Spór",
+      "PENDING_MODERATION": "W moderacji"
     },
     "bidStatus": {
       "PENDING": "W rozpatrywaniu",
@@ -1874,6 +1881,10 @@
     },
     "ADMIN_WITHDRAWAL": {
       "title": "Wniosek o wypłatę",
+      "body": "{project}"
+    },
+    "ADMIN_PROJECT_PENDING": {
+      "title": "Projekt w moderacji",
       "body": "{project}"
     }
   },

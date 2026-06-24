@@ -109,6 +109,14 @@ function ProjectStatusIcon({
         </svg>
       ),
     },
+    PENDING_MODERATION: {
+      className: "bg-amber-50 text-amber-700",
+      icon: (
+        <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+      ),
+    },
     UNDER_DISPUTE: {
       className: "bg-red-50 text-red-600",
       icon: (

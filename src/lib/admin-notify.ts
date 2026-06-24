@@ -1,4 +1,5 @@
 import type { AdminPermission, NotificationType, Prisma } from "@/generated/prisma/client";
+import { sendAdminAlertEmail } from "@/lib/admin-email";
 import { hasAdminPermission } from "@/lib/admin-permissions";
 import { prisma } from "@/lib/prisma";
 
@@ -8,6 +9,7 @@ type AdminNotifyPayload = {
   body: string;
   link: string;
   metadata?: Prisma.InputJsonValue;
+  emailSubject?: string;
 };
 
 export async function notifyAdminsWithPermission(
@@ -16,20 +18,20 @@ export async function notifyAdminsWithPermission(
 ) {
   const admins = await prisma.user.findMany({
     where: { role: "ADMIN", adminActive: true },
-    select: { id: true, adminPermissions: true },
+    select: { id: true, email: true, adminPermissions: true },
   });
 
-  const recipientIds = admins
-    .filter((admin) => hasAdminPermission(admin.adminPermissions, permission))
-    .map((admin) => admin.id);
+  const recipients = admins.filter((admin) =>
+    hasAdminPermission(admin.adminPermissions, permission),
+  );
 
-  if (recipientIds.length === 0) {
+  if (recipients.length === 0) {
     return 0;
   }
 
   await prisma.notification.createMany({
-    data: recipientIds.map((userId) => ({
-      userId,
+    data: recipients.map((admin) => ({
+      userId: admin.id,
       type: payload.type,
       title: payload.title,
       body: payload.body,
@@ -38,5 +40,19 @@ export async function notifyAdminsWithPermission(
     })),
   });
 
-  return recipientIds.length;
+  const emailSubject = payload.emailSubject ?? payload.title;
+  await Promise.all(
+    recipients.map((admin) =>
+      sendAdminAlertEmail({
+        to: admin.email,
+        subject: emailSubject,
+        body: payload.body,
+        link: payload.link,
+      }).catch((error) => {
+        console.error("[admin-email]", admin.email, error);
+      }),
+    ),
+  );
+
+  return recipients.length;
 }

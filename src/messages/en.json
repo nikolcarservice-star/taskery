@@ -294,6 +294,8 @@
       "google": "Sign in with Google",
       "orDivider": "or email",
       "forgotPassword": "Forgot password?",
+      "totpCode": "2FA code",
+      "totpOptional": "If two-factor authentication is enabled",
       "errors": {
         "invalid": "Invalid email or password",
         "admin": "Use the separate admin login.",
@@ -450,7 +452,10 @@
       "twoFactorEnabledSuccess": "2FA enabled successfully",
       "twoFactorDisabledSuccess": "2FA disabled",
       "sessions": "Active sessions",
-      "sessionsHint": "You are signed in on this device. Session management is coming later.",
+      "sessionsHint": "Sign out on all other devices. Your current session will also end on the next request.",
+      "sessionsLogoutAll": "Sign out everywhere",
+      "sessionsLoggingOut": "Signing out…",
+      "sessionsLoggedOut": "Sessions cleared. Refresh the page or sign in again.",
       "personalData": "Personal data",
       "personalDataLink": "Go to personal data →",
       "account": "Account"
@@ -617,13 +622,15 @@
       "ADMIN_BROADCAST": "Platform message",
       "ADMIN_DISPUTE": "Dispute",
       "ADMIN_REPORT": "Report",
-      "ADMIN_WITHDRAWAL": "Withdrawal request"
+      "ADMIN_WITHDRAWAL": "Withdrawal request",
+      "ADMIN_PROJECT_PENDING": "Project moderation"
     },
     "projectStatus": {
       "OPEN": "Open",
       "IN_PROGRESS": "In progress",
       "CLOSED": "Closed",
-      "UNDER_DISPUTE": "Dispute"
+      "UNDER_DISPUTE": "Dispute",
+      "PENDING_MODERATION": "Pending moderation"
     },
     "bidStatus": {
       "PENDING": "Pending",
@@ -1895,6 +1902,10 @@
     },
     "ADMIN_WITHDRAWAL": {
       "title": "Withdrawal request",
+      "body": "{project}"
+    },
+    "ADMIN_PROJECT_PENDING": {
+      "title": "Project pending moderation",
       "body": "{project}"
     }
   },

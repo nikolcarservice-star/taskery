@@ -312,6 +312,15 @@ export default auth((request) => {
     );
   }
 
+  if (session?.user?.sessionInvalid) {
+    const loginUrl = new URL(getLoginPath(activeLocale), request.url);
+    loginUrl.searchParams.set("error", "session");
+    return withLocaleHeaders(
+      NextResponse.redirect(loginUrl),
+      activeLocale,
+    );
+  }
+
   if (isAuthRoute && session?.user) {
     return withLocaleHeaders(
       withLocaleCookie(

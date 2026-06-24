@@ -2,11 +2,14 @@
 
 import type { AdminAnalyticsOverview } from "@/lib/queries/admin-analytics";
 import { formatUah } from "@/lib/freelancer-finances-shared";
+import Link from "next/link";
 
 type AdminAnalyticsPanelProps = {
   analytics: AdminAnalyticsOverview;
   mobile?: boolean;
 };
+
+const RANGE_OPTIONS = [7, 30, 90] as const;
 
 function DailyBarChart({
   title,
@@ -57,13 +60,14 @@ export function AdminAnalyticsPanel({
   analytics,
   mobile = false,
 }: AdminAnalyticsPanelProps) {
-  const { kpis, dailySignups, dailyProjects, dailyGmv } = analytics;
+  const { days, kpis, dailySignups, dailyProjects, dailyGmv } = analytics;
+  const periodLabel = `${days} дн.`;
 
   const kpiCards = [
-    { label: "Новых пользователей (30 дн.)", value: String(kpis.newUsers30d) },
-    { label: "Новых проектов (30 дн.)", value: String(kpis.newProjects30d) },
-    { label: "GMV завершённых сделок", value: formatUah(kpis.releasedGmv30d) },
-    { label: "Комиссии платформы", value: formatUah(kpis.commissions30d) },
+    { label: `Новых пользователей (${periodLabel})`, value: String(kpis.newUsersInPeriod) },
+    { label: `Новых проектов (${periodLabel})`, value: String(kpis.newProjectsInPeriod) },
+    { label: `GMV завершённых сделок (${periodLabel})`, value: formatUah(kpis.releasedGmvInPeriod) },
+    { label: `Комиссии платформы (${periodLabel})`, value: formatUah(kpis.commissionsInPeriod) },
     { label: "Открытых споров", value: String(kpis.openDisputes), alert: kpis.openDisputes > 0 },
     { label: "Жалоб в очереди", value: String(kpis.pendingReports), alert: kpis.pendingReports > 0 },
     {
@@ -83,17 +87,34 @@ export function AdminAnalyticsPanel({
         <div>
           <h2 className="text-lg font-semibold text-zinc-900">Аналитика платформы</h2>
           <p className="mt-1 text-sm text-zinc-500">
-            Ключевые метрики и динамика за последние 30 дней.
+            Ключевые метрики и динамика за выбранный период.
           </p>
         </div>
-        {!mobile && (
-          <a
-            href="/api/admin/export/finance"
-            className="inline-flex rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
-          >
-            Экспорт CSV
-          </a>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex rounded-lg border border-zinc-200 bg-white p-0.5 shadow-sm">
+            {RANGE_OPTIONS.map((option) => (
+              <Link
+                key={option}
+                href={option === 30 ? "/admin" : `/admin?days=${option}`}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+                  days === option
+                    ? "bg-zinc-900 text-white"
+                    : "text-zinc-600 hover:bg-zinc-50"
+                }`}
+              >
+                {option}д
+              </Link>
+            ))}
+          </div>
+          {!mobile && (
+            <a
+              href="/api/admin/export/finance"
+              className="inline-flex rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
+            >
+              Экспорт CSV
+            </a>
+          )}
+        </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

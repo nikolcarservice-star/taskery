@@ -3,6 +3,7 @@ import { isUserCurrentlyBanned, clearExpiredTemporaryBan } from "@/lib/user-ban"
 import { authConfig } from "@/lib/auth.config";
 import { getRegistrationBoostFields } from "@/lib/taskboost-promotion.shared";
 import { prisma } from "@/lib/prisma";
+import { verifyTotpCode } from "@/lib/totp";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
@@ -20,6 +21,8 @@ async function loadUserIntoToken(token: {
   role?: Role;
   interfaceLanguage?: string;
   isBanned?: boolean;
+  sessionVersion?: number;
+  sessionInvalid?: boolean;
 }) {
   const dbUser = token.id
     ? await prisma.user.findUnique({ where: { id: token.id } })
@@ -27,7 +30,18 @@ async function loadUserIntoToken(token: {
       ? await prisma.user.findUnique({ where: { email: token.email } })
       : null;
 
-  if (!dbUser) return token;
+  if (!dbUser) {
+    token.sessionInvalid = true;
+    return token;
+  }
+
+  if (
+    token.sessionVersion !== undefined &&
+    token.sessionVersion !== dbUser.sessionVersion
+  ) {
+    token.sessionInvalid = true;
+    return token;
+  }
 
   await clearExpiredTemporaryBan(dbUser.id);
 
@@ -63,13 +77,15 @@ async function loadUserIntoToken(token: {
   token.email = dbUser.email;
   token.role = dbUser.role;
   token.interfaceLanguage = dbUser.interfaceLanguage;
+  token.sessionVersion = dbUser.sessionVersion;
+  token.sessionInvalid = false;
   return token;
 }
 
 async function authorizeWithPassword(
   email: string | undefined,
   password: string | undefined,
-  options?: { adminOnly?: boolean },
+  options?: { adminOnly?: boolean; totpCode?: string },
 ) {
   if (!email || !password) return null;
 
@@ -91,6 +107,13 @@ async function authorizeWithPassword(
     return null;
   }
 
+  if (user.twoFactorEnabled && user.twoFactorSecret) {
+    const code = options?.totpCode?.trim() ?? "";
+    if (!code || !verifyTotpCode(user.twoFactorSecret, code)) {
+      return null;
+    }
+  }
+
   return {
     id: user.id,
     email: user.email,
@@ -106,11 +129,13 @@ export const { handlers, signIn, signOut, auth: getAuthSession } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        totpCode: { label: "2FA Code", type: "text" },
       },
       async authorize(credentials) {
         return authorizeWithPassword(
           credentials?.email as string | undefined,
           credentials?.password as string | undefined,
+          { totpCode: credentials?.totpCode as string | undefined },
         );
       },
     }),
@@ -119,12 +144,13 @@ export const { handlers, signIn, signOut, auth: getAuthSession } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        totpCode: { label: "2FA Code", type: "text" },
       },
       async authorize(credentials) {
         return authorizeWithPassword(
           credentials?.email as string | undefined,
           credentials?.password as string | undefined,
-          { adminOnly: true },
+          { adminOnly: true, totpCode: credentials?.totpCode as string | undefined },
         );
       },
     }),
@@ -198,7 +224,8 @@ export const { handlers, signIn, signOut, auth: getAuthSession } = NextAuth({
         Boolean(user) ||
         trigger === "update" ||
         !token.role ||
-        !token.interfaceLanguage;
+        !token.interfaceLanguage ||
+        token.sessionVersion === undefined;
 
       if (shouldSyncFromDb && (token.id || token.email)) {
         return loadUserIntoToken(token);

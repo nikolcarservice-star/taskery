@@ -85,6 +85,37 @@ export async function adminDismissReport(
   return { success: true };
 }
 
+export async function adminResolveReportNoAction(
+  _prevState: ModerationActionState,
+  formData: FormData,
+): Promise<ModerationActionState> {
+  const authResult = await requireModerationAdmin();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const reportId = (formData.get("reportId") as string | null)?.trim();
+  if (!reportId) return { error: "Жалоба не найдена" };
+
+  const note =
+    (formData.get("adminNote") as string | null)?.trim() ||
+    "Жалоба рассмотрена без санкций";
+
+  try {
+    await resolveReportById(reportId, authResult.admin.id, "RESOLVED", note);
+  } catch {
+    return { error: "Жалоба не найдена" };
+  }
+
+  await logAdminAction(authResult.admin.id, "REPORT_RESOLVE_NO_ACTION", {
+    targetType: "report",
+    targetId: reportId,
+    details: { note },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/mobile/moderation");
+  return { success: true };
+}
+
 export async function adminTakeReportReview(
   _prevState: ModerationActionState,
   formData: FormData,

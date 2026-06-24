@@ -18,6 +18,7 @@ export async function loginWithCredentials(
 ): Promise<LoginActionState> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
+  const totpCode = String(formData.get("totpCode") ?? "").trim();
   const callbackUrl = safeRedirectPath(
     String(formData.get("callbackUrl") ?? ""),
     "/",
@@ -31,6 +32,7 @@ export async function loginWithCredentials(
     await signIn("credentials", {
       email,
       password,
+      totpCode,
       redirectTo: authContinuePath(callbackUrl),
     });
   } catch (error) {
@@ -57,6 +59,7 @@ export async function loginWithAdminCredentials(
 ): Promise<AdminLoginActionState> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
+  const totpCode = String(formData.get("totpCode") ?? "").trim();
   const callbackUrl = safeRedirectPath(
     String(formData.get("callbackUrl") ?? ""),
     "/cabinet",
@@ -70,6 +73,7 @@ export async function loginWithAdminCredentials(
     await signIn("admin", {
       email,
       password,
+      totpCode,
       redirectTo: authContinuePath(callbackUrl),
     });
   } catch (error) {

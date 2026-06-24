@@ -6,6 +6,7 @@ import {
   adminDeleteUser,
   adminDismissProjectReports,
   adminDismissUserReports,
+  adminResolveReportNoAction,
   adminTakeReportReview,
   type ModerationActionState,
 } from "@/lib/actions/admin-moderation";
@@ -79,14 +80,43 @@ function ReportRow({ report }: { report: AdminReportItem }) {
             disabled={reviewPending}
             className="rounded-full border border-blue-300 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-50 disabled:opacity-50"
           >
-            Взять в работу
+            {reviewPending ? "…" : "Взять в работу"}
           </button>
-          {reviewState.error && (
-            <p className="mt-1 text-xs text-red-600">{reviewState.error}</p>
-          )}
         </form>
       )}
+      {report.status === "IN_REVIEW" && (
+        <ResolveReportForm reportId={report.id} />
+      )}
+      {reviewState.error && (
+        <p className="mt-1 text-xs text-red-600">{reviewState.error}</p>
+      )}
     </li>
+  );
+}
+
+function ResolveReportForm({ reportId }: { reportId: string }) {
+  const [state, formAction, pending] = useActionState(
+    adminResolveReportNoAction,
+    initialState,
+  );
+
+  return (
+    <form action={formAction} className="mt-2 flex flex-wrap items-center gap-2">
+      <input type="hidden" name="reportId" value={reportId} />
+      <input
+        name="adminNote"
+        placeholder="Комментарий"
+        className="min-w-[140px] flex-1 rounded-lg border border-zinc-300 px-2 py-1 text-xs"
+      />
+      <button
+        type="submit"
+        disabled={pending}
+        className="rounded-full border border-emerald-300 px-3 py-1 text-xs font-medium text-emerald-800 hover:bg-emerald-50 disabled:opacity-50"
+      >
+        Решить без санкций
+      </button>
+      {state.error && <p className="w-full text-xs text-red-600">{state.error}</p>}
+    </form>
   );
 }
 
@@ -398,13 +428,23 @@ export function AdminReportsPanel({ reports }: AdminReportsPanelProps) {
 
   return (
     <section className="rounded-2xl border border-orange-200 bg-white p-6 shadow-sm">
-      <h2 className="text-lg font-semibold text-orange-900">
-        Жалобы ({totalReports} · {groups.length}{" "}
-        {groups.length === 1 ? "объект" : groups.length < 5 ? "объекта" : "объектов"})
-      </h2>
-      <p className="mt-1 text-sm text-zinc-600">
-        Жалобы сгруппированы по проекту или пользователю
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold text-orange-900">
+            Жалобы ({totalReports} · {groups.length}{" "}
+            {groups.length === 1 ? "объект" : groups.length < 5 ? "объекта" : "объектов"})
+          </h2>
+          <p className="mt-1 text-sm text-zinc-600">
+            Жалобы сгруппированы по проекту или пользователю
+          </p>
+        </div>
+        <a
+          href="/api/admin/export/reports"
+          className="inline-flex rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
+        >
+          Экспорт CSV
+        </a>
+      </div>
 
       <ul className="mt-4 space-y-4">
         {groups.map((group) =>

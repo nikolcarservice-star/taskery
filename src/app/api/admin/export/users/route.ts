@@ -18,38 +18,40 @@ export async function GET() {
 
   if (
     !admin?.adminActive ||
-    !hasAdminPermission(admin.adminPermissions, "FINANCE")
+    !hasAdminPermission(admin.adminPermissions, "USERS")
   ) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const payments = await prisma.payment.findMany({
+  const users = await prisma.user.findMany({
+    where: { role: { not: "ADMIN" } },
     orderBy: { createdAt: "desc" },
-    take: 5000,
+    take: 10000,
     select: {
       id: true,
-      amount: true,
-      currency: true,
-      type: true,
-      status: true,
+      email: true,
+      name: true,
+      role: true,
+      bannedAt: true,
+      deletedAt: true,
       createdAt: true,
-      user: { select: { email: true, name: true } },
+      twoFactorEnabled: true,
     },
   });
 
-  const header = "id,date,email,name,type,status,amount,currency";
-  const rows = payments.map((payment) =>
+  const header = "id,date,email,name,role,twoFactorEnabled,banned,deleted";
+  const rows = users.map((user) =>
     [
-      payment.id,
-      payment.createdAt.toISOString(),
-      csvEscape(payment.user.email),
-      csvEscape(payment.user.name ?? ""),
-      payment.type,
-      payment.status,
-      payment.amount.toString(),
-      payment.currency,
+      user.id,
+      user.createdAt.toISOString(),
+      csvEscape(user.email),
+      csvEscape(user.name ?? ""),
+      user.role,
+      user.twoFactorEnabled ? "yes" : "no",
+      user.bannedAt ? user.bannedAt.toISOString() : "",
+      user.deletedAt ? user.deletedAt.toISOString() : "",
     ].join(","),
   );
 
-  return buildCsvResponse([header, ...rows], "taskery-payments");
+  return buildCsvResponse([header, ...rows], "taskery-users");
 }

@@ -163,7 +163,7 @@ export async function updateProfilePhoto(
 
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { avatar },
+      data: { pendingAvatar: avatar },
     });
   } catch (error) {
     return mapImageUploadError(error);

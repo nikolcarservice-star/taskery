@@ -62,7 +62,10 @@ export default async function FreelancerPage({ params }: FreelancerPageProps) {
       freelancerProfile: {
         include: {
           skills: { orderBy: { name: "asc" } },
-          portfolioItems: { orderBy: { createdAt: "desc" } },
+          portfolioItems: {
+            where: { moderationStatus: "APPROVED" },
+            orderBy: { createdAt: "desc" },
+          },
         },
       },
       contractsAsFreelancer: {

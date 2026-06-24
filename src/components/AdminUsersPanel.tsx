@@ -215,6 +215,12 @@ export function AdminUsersPanel({
             <p className="mt-1 text-sm text-zinc-600">
               Поиск, блокировка и удаление аккаунтов клиентов и фрилансеров.
             </p>
+            <a
+              href="/api/admin/export/users"
+              className="mt-3 inline-flex rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50"
+            >
+              Экспорт CSV
+            </a>
           </div>
         )}
         <div className={`flex flex-col gap-2 ${mobile ? "w-full" : "flex-wrap sm:flex-row"}`}>

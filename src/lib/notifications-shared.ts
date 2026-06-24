@@ -22,6 +22,7 @@ export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
   ADMIN_DISPUTE: "Спор (админ)",
   ADMIN_REPORT: "Жалоба (админ)",
   ADMIN_WITHDRAWAL: "Вывод (админ)",
+  ADMIN_PROJECT_PENDING: "Проект на модерации",
 };
 
 export function formatNotificationWhen(date: Date): string {

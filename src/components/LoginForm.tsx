@@ -94,6 +94,22 @@ function LoginFormInner({ googleEnabled }: { googleEnabled: boolean }) {
             </a>
           </p>
         </div>
+        <div>
+          <label htmlFor="totpCode" className="block text-sm font-medium text-zinc-700">
+            {dict.auth.login.totpCode}
+          </label>
+          <input
+            id="totpCode"
+            name="totpCode"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            pattern="\d{6}"
+            maxLength={6}
+            placeholder={dict.auth.login.totpOptional}
+            className="mt-1 w-full max-w-xs rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-base text-zinc-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:text-sm"
+          />
+        </div>
         {errorMessage && (
           <p className="text-sm text-red-600" role="alert">
             {errorMessage}

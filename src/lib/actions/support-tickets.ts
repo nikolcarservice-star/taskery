@@ -193,3 +193,78 @@ export async function closeSupportTicket(
   revalidatePath("/support");
   return { success: true };
 }
+
+export async function resolveSupportTicket(
+  _prevState: TicketActionState,
+  formData: FormData,
+): Promise<TicketActionState> {
+  const authResult = await requireModerationAdmin();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const ticketId = (formData.get("ticketId") as string | null)?.trim();
+  if (!ticketId) return { error: "Обращение не найдено" };
+
+  const ticket = await prisma.supportTicket.update({
+    where: { id: ticketId },
+    data: { status: "RESOLVED" },
+    select: { userId: true, subject: true },
+  });
+
+  await notifyTicketUser(
+    ticket.userId,
+    ticketId,
+    "Обращение решено",
+    ticket.subject,
+  );
+
+  await logAdminAction(authResult.admin.id, "TICKET_RESOLVE", {
+    targetType: "ticket",
+    targetId: ticketId,
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/mobile/support");
+  return { success: true };
+}
+
+export async function assignSupportTicket(
+  _prevState: TicketActionState,
+  formData: FormData,
+): Promise<TicketActionState> {
+  const authResult = await requireModerationAdmin();
+  if ("error" in authResult) return { error: authResult.error };
+
+  const ticketId = (formData.get("ticketId") as string | null)?.trim();
+  const assigneeId = (formData.get("assigneeId") as string | null)?.trim();
+
+  if (!ticketId || !assigneeId) {
+    return { error: "Укажите обращение и администратора" };
+  }
+
+  const assignee = await prisma.user.findFirst({
+    where: { id: assigneeId, role: "ADMIN", adminActive: true },
+    select: { id: true },
+  });
+
+  if (!assignee) {
+    return { error: "Администратор не найден" };
+  }
+
+  await prisma.supportTicket.update({
+    where: { id: ticketId },
+    data: {
+      assignedToId: assigneeId,
+      status: "IN_PROGRESS",
+    },
+  });
+
+  await logAdminAction(authResult.admin.id, "TICKET_ASSIGN", {
+    targetType: "ticket",
+    targetId: ticketId,
+    details: { assigneeId },
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/mobile/support");
+  return { success: true };
+}
