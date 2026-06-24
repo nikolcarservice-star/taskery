@@ -617,7 +617,6 @@ export type Dictionary = {
     reviews: string;
   };
   cabinet: {
-    soon: string;
     adminCabinet: string;
     adminPanel: string;
     messages: string;

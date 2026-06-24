@@ -385,7 +385,6 @@
     }
   },
   "cabinet": {
-    "soon": "Soon",
     "adminCabinet": "Main cabinet",
     "adminPanel": "Admin panel",
     "messages": "Messages",

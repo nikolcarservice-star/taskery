@@ -12,6 +12,7 @@ import {
   type MessageDisplayBlock,
 } from "@/lib/message-display";
 import { isSafeHttpUrl } from "@/lib/safe-url";
+import type { AppLocale } from "@/lib/i18n/types";
 import type { ReactNode } from "react";
 
 type MessageContentProps = {
@@ -22,7 +23,7 @@ type MessageContentProps = {
 
 function resolveMarkdownLinkHref(
   rawHref: string,
-  locale: ReturnType<typeof useDictionaryLocale>,
+  locale: AppLocale,
   warnExternalLinks: boolean,
 ): { href: string; external: boolean } | null {
   const trimmed = rawHref.trim();
@@ -49,7 +50,7 @@ function resolveMarkdownLinkHref(
 
 function renderAutoLinkedText(
   text: string,
-  locale: ReturnType<typeof useDictionaryLocale>,
+  locale: AppLocale,
   warnExternalLinks: boolean,
   inverse: boolean,
   keyPrefix: string,
@@ -85,41 +86,48 @@ function renderAutoLinkedText(
 
 function renderInlineNodes(
   nodes: InlineMessageNode[],
-  locale: ReturnType<typeof useDictionaryLocale>,
+  locale: AppLocale,
   warnExternalLinks: boolean,
   inverse: boolean,
   keyPrefix: string,
 ): ReactNode[] {
-  return nodes.flatMap((node, index) => {
+  const result: ReactNode[] = [];
+
+  for (const [index, node] of nodes.entries()) {
     const key = `${keyPrefix}-inline-${index}`;
 
     if (node.type === "text") {
-      return renderAutoLinkedText(
-        node.value,
-        locale,
-        warnExternalLinks,
-        inverse,
-        key,
+      result.push(
+        ...renderAutoLinkedText(
+          node.value,
+          locale,
+          warnExternalLinks,
+          inverse,
+          key,
+        ),
       );
+      continue;
     }
 
     if (node.type === "bold") {
-      return [
+      result.push(
         <strong
           key={key}
           className={inverse ? "font-semibold text-white" : "font-semibold"}
         >
           {node.value}
         </strong>,
-      ];
+      );
+      continue;
     }
 
     if (node.type === "italic") {
-      return [
+      result.push(
         <em key={key} className={inverse ? "italic text-white/95" : "italic"}>
           {node.value}
         </em>,
-      ];
+      );
+      continue;
     }
 
     const resolved = resolveMarkdownLinkHref(
@@ -129,7 +137,8 @@ function renderInlineNodes(
     );
 
     if (!resolved) {
-      return [<span key={key}>{node.label}</span>];
+      result.push(<span key={key}>{node.label}</span>);
+      continue;
     }
 
     const className = inverse
@@ -138,7 +147,7 @@ function renderInlineNodes(
         ? "font-medium text-indigo-600 underline decoration-indigo-300 underline-offset-2 hover:text-indigo-800"
         : "font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-800";
 
-    return [
+    result.push(
       <a
         key={key}
         href={resolved.href}
@@ -148,13 +157,15 @@ function renderInlineNodes(
       >
         {node.label}
       </a>,
-    ];
-  });
+    );
+  }
+
+  return result;
 }
 
 function renderBlock(
   block: MessageDisplayBlock,
-  locale: ReturnType<typeof useDictionaryLocale>,
+  locale: AppLocale,
   warnExternalLinks: boolean,
   inverse: boolean,
   index: number,
