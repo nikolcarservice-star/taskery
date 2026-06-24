@@ -9,12 +9,23 @@ import {
 } from "@/lib/actions/admin";
 import { adminBlockProject } from "@/lib/actions/admin-moderation";
 import { AdminAttentionPanel } from "@/components/AdminAttentionPanel";
+import { AdminContentModerationPanel } from "@/components/AdminContentModerationPanel";
+import { AdminPendingProjectsPanel } from "@/components/AdminPendingProjectsPanel";
 import { AdminReportsPanel } from "@/components/AdminReportsPanel";
+import { AdminSupportPanel } from "@/components/AdminSupportPanel";
+import { AdminTabNav } from "@/components/admin/AdminTabNav";
 import type { ModerationAttentionItem } from "@/lib/queries/admin-attention";
 import { adminConversationReviewPath } from "@/lib/admin-review-paths";
+import {
+  MODERATION_SECTIONS,
+  type ModerationSectionKey,
+} from "@/lib/admin-tabs";
 import { formatBudget } from "@/lib/project-labels";
 import { contractStatusLabels } from "@/lib/contract-labels";
-import { useActionState, useState } from "react";
+import type { ContentModerationOverview } from "@/lib/queries/admin-content-moderation";
+import type { PendingProjectItem } from "@/lib/queries/admin-pending-projects";
+import type { AdminSupportTicketItem } from "@/lib/queries/admin-support";
+import { useActionState, useMemo, useState } from "react";
 
 type DisputeProject = {
   id: string;
@@ -41,8 +52,12 @@ type AdminModerationStackProps = {
     title: string;
     client: { name: string | null };
   }[];
+  pendingProjects?: PendingProjectItem[];
+  contentModeration?: ContentModerationOverview;
+  supportTickets?: AdminSupportTicketItem[];
   compact?: boolean;
   moderationBackHref?: string;
+  layout?: "stack" | "tabs";
 };
 
 const initialState: ActionState = {};
@@ -191,104 +206,219 @@ function CloseProjectButton({ projectId }: { projectId: string }) {
   );
 }
 
+function DisputesSection({
+  disputes,
+  moderationBackHref,
+}: {
+  disputes: DisputeProject[];
+  moderationBackHref: string;
+}) {
+  return (
+    <section className="rounded-2xl border border-red-200 bg-white p-4 shadow-sm sm:p-6">
+      <h2 className="text-base font-semibold text-red-900 sm:text-lg">
+        Споры ({disputes.length})
+      </h2>
+      {disputes.length === 0 ? (
+        <p className="mt-3 text-sm text-zinc-600">Активных споров нет</p>
+      ) : (
+        <ul className="mt-4 space-y-3">
+          {disputes.map((project) => (
+            <li
+              key={project.id}
+              className="rounded-xl border border-red-100 bg-red-50 p-4"
+            >
+              <p className="font-medium text-zinc-900">{project.title}</p>
+              {project.contract && (
+                <>
+                  <p className="mt-1 text-sm text-zinc-600">
+                    {formatBudget(project.contract.amount, project.currency)} ·{" "}
+                    {contractStatusLabels[
+                      project.contract.status as keyof typeof contractStatusLabels
+                    ]}
+                  </p>
+                  <p className="mt-1 text-xs text-zinc-500">
+                    {project.client.name ?? project.client.email} ·{" "}
+                    {project.contract.freelancer.name ??
+                      project.contract.freelancer.email}
+                  </p>
+                  {project.conversation && (
+                    <a
+                      href={adminConversationReviewPath(
+                        project.conversation.id,
+                        moderationBackHref,
+                      )}
+                      className="mt-3 inline-flex items-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-medium text-white active:bg-red-700"
+                    >
+                      Открыть чат спора
+                    </a>
+                  )}
+                  <DisputeActions projectId={project.id} />
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function OpenProjectsSection({
+  openProjects,
+}: {
+  openProjects: AdminModerationStackProps["openProjects"];
+}) {
+  return (
+    <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6">
+      <h2 className="text-base font-semibold text-zinc-900 sm:text-lg">
+        Открытые проекты ({openProjects.length})
+      </h2>
+      {openProjects.length === 0 ? (
+        <p className="mt-3 text-sm text-zinc-600">Нет открытых проектов</p>
+      ) : (
+        <ul className="mt-4 space-y-3">
+          {openProjects.map((project) => (
+            <li
+              key={project.id}
+              className="flex flex-col gap-3 rounded-xl border border-zinc-100 bg-zinc-50/60 p-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="min-w-0">
+                <a
+                  href={`/projects/${project.slug}`}
+                  className="font-medium text-zinc-900 hover:text-blue-600"
+                >
+                  {project.title}
+                </a>
+                <p className="text-xs text-zinc-500">
+                  {project.client.name ?? "Заказчик"}
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+                <CloseProjectButton projectId={project.id} />
+                <BlockProjectButton projectId={project.id} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 export function AdminModerationStack({
   attentionItems,
   reports,
   disputes,
   openProjects,
+  pendingProjects = [],
+  contentModeration,
+  supportTickets = [],
   compact = false,
   moderationBackHref = "/admin",
+  layout = "stack",
 }: AdminModerationStackProps) {
-  const gap = compact ? "space-y-4" : "space-y-10";
+  const gap = compact ? "space-y-4" : "space-y-8";
+  const contentCount = contentModeration
+    ? contentModeration.portfolio.length + contentModeration.avatars.length
+    : 0;
+  const openSupportCount = supportTickets.filter((ticket) =>
+    ["OPEN", "IN_PROGRESS"].includes(ticket.status),
+  ).length;
+
+  const sectionBadges = useMemo(
+    () => ({
+      attention: attentionItems.length,
+      disputes: disputes.length,
+      reports: reports.length,
+      projects: pendingProjects.length + contentCount + openProjects.length,
+      support: openSupportCount,
+    }),
+    [
+      attentionItems.length,
+      disputes.length,
+      reports.length,
+      pendingProjects.length,
+      contentCount,
+      openProjects.length,
+      openSupportCount,
+    ],
+  );
+
+  const [activeSection, setActiveSection] =
+    useState<ModerationSectionKey>("attention");
+
+  const firstNonEmptySection = useMemo(() => {
+    for (const section of MODERATION_SECTIONS) {
+      if (sectionBadges[section.id] > 0) return section.id;
+    }
+    return "attention" as ModerationSectionKey;
+  }, [sectionBadges]);
+
+  const currentSection =
+    layout === "tabs" && sectionBadges[activeSection] === 0
+      ? firstNonEmptySection
+      : activeSection;
+
+  const attentionBlock = (
+    <AdminAttentionPanel
+      items={attentionItems}
+      moderationBackHref={moderationBackHref}
+    />
+  );
+  const reportsBlock = <AdminReportsPanel reports={reports} />;
+  const disputesBlock = (
+    <DisputesSection
+      disputes={disputes}
+      moderationBackHref={moderationBackHref}
+    />
+  );
+  const projectsBlock = (
+    <div className={gap}>
+      {pendingProjects.length > 0 && (
+        <AdminPendingProjectsPanel projects={pendingProjects} />
+      )}
+      {contentModeration &&
+        (contentModeration.portfolio.length > 0 ||
+          contentModeration.avatars.length > 0) && (
+          <AdminContentModerationPanel queue={contentModeration} />
+        )}
+      <OpenProjectsSection openProjects={openProjects} />
+    </div>
+  );
+  const supportBlock = <AdminSupportPanel tickets={supportTickets} />;
+
+  if (layout === "tabs") {
+    return (
+      <div className="space-y-5">
+        <AdminTabNav
+          size={compact ? "sm" : "md"}
+          tabs={MODERATION_SECTIONS.map((section) => ({
+            id: section.id,
+            label: section.label,
+            badge: sectionBadges[section.id],
+          }))}
+          active={currentSection}
+          onChange={setActiveSection}
+        />
+
+        <div role="tabpanel">
+          {currentSection === "attention" && attentionBlock}
+          {currentSection === "disputes" && disputesBlock}
+          {currentSection === "reports" && reportsBlock}
+          {currentSection === "projects" && projectsBlock}
+          {currentSection === "support" && supportBlock}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={gap}>
-      <AdminAttentionPanel
-        items={attentionItems}
-        moderationBackHref={moderationBackHref}
-      />
-      <AdminReportsPanel reports={reports} />
-
-      <section className="rounded-2xl border border-red-200 bg-white p-4 shadow-sm sm:p-6">
-        <h2 className="text-base font-semibold text-red-900 sm:text-lg">
-          Споры ({disputes.length})
-        </h2>
-        {disputes.length === 0 ? (
-          <p className="mt-3 text-sm text-zinc-600">Активных споров нет</p>
-        ) : (
-          <ul className="mt-4 space-y-3">
-            {disputes.map((project) => (
-              <li
-                key={project.id}
-                className="rounded-xl border border-red-100 bg-red-50 p-4"
-              >
-                <p className="font-medium text-zinc-900">{project.title}</p>
-                {project.contract && (
-                  <>
-                    <p className="mt-1 text-sm text-zinc-600">
-                      {formatBudget(project.contract.amount, project.currency)} ·{" "}
-                      {contractStatusLabels[
-                        project.contract.status as keyof typeof contractStatusLabels
-                      ]}
-                    </p>
-                    <p className="mt-1 text-xs text-zinc-500">
-                      {project.client.name ?? project.client.email} ·{" "}
-                      {project.contract.freelancer.name ??
-                        project.contract.freelancer.email}
-                    </p>
-                    {project.conversation && (
-                      <a
-                        href={adminConversationReviewPath(
-                          project.conversation.id,
-                          moderationBackHref,
-                        )}
-                        className="mt-3 inline-flex items-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-medium text-white active:bg-red-700"
-                      >
-                        Открыть чат спора
-                      </a>
-                    )}
-                    <DisputeActions projectId={project.id} />
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6">
-        <h2 className="text-base font-semibold text-zinc-900 sm:text-lg">
-          Открытые проекты ({openProjects.length})
-        </h2>
-        {openProjects.length === 0 ? (
-          <p className="mt-3 text-sm text-zinc-600">Нет открытых проектов</p>
-        ) : (
-          <ul className="mt-4 space-y-3">
-            {openProjects.map((project) => (
-              <li
-                key={project.id}
-                className="flex flex-col gap-3 rounded-xl border border-zinc-100 bg-zinc-50/60 p-4 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="min-w-0">
-                  <a
-                    href={`/projects/${project.slug}`}
-                    className="font-medium text-zinc-900 hover:text-blue-600"
-                  >
-                    {project.title}
-                  </a>
-                  <p className="text-xs text-zinc-500">
-                    {project.client.name ?? "Заказчик"}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
-                  <CloseProjectButton projectId={project.id} />
-                  <BlockProjectButton projectId={project.id} />
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {attentionBlock}
+      {disputesBlock}
+      {reportsBlock}
+      {projectsBlock}
+      {supportTickets.length > 0 && supportBlock}
     </div>
   );
 }

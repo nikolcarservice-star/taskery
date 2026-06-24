@@ -21,6 +21,7 @@ import { getAdminSupportTickets } from "@/lib/queries/admin-support";
 import { getPendingWithdrawals } from "@/lib/queries/admin-withdrawals";
 import { getHomeRouteForRole } from "@/lib/role-redirect";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Админ — Taskery",
@@ -157,15 +158,21 @@ export default async function AdminPage({
     <div className="flex min-h-full flex-1 flex-col bg-zinc-50">
       <AdminHeader />
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
         <PageBackNav />
         <h1 className="text-3xl font-bold text-zinc-900">Админ-панель</h1>
         <p className="mt-2 text-sm text-zinc-600">
-          Модерация, пользователи, финансы и управление командой.
+          Разделы по вкладкам: модерация, пользователи, финансы и управление
+          платформой.
         </p>
 
         <div className="mt-8">
-          <AdminPanel
+          <Suspense
+            fallback={
+              <div className="h-40 animate-pulse rounded-2xl bg-zinc-200/70" />
+            }
+          >
+            <AdminPanel
             disputes={disputes}
             openProjects={openProjects}
             reports={reports}
@@ -195,6 +202,7 @@ export default async function AdminPage({
             contentModeration={contentModeration}
             cmsPages={cmsPages}
           />
+          </Suspense>
         </div>
       </main>
 
