@@ -374,7 +374,7 @@
     "sections": {
       "email": "E-mail сповіщення",
       "telegram": "Telegram сповіщення",
-      "telegramHint": "Підключення Telegram-бота незабаром буде доступне.",
+      "telegramHint": "Отримуйте сповіщення в Telegram-боті Taskery.",
       "push": "Push та звукові сповіщення",
       "localization": "Локалізація та автопереклад",
       "visual": "Візуальні налаштування"
@@ -399,6 +399,15 @@
       "soundMessages": "Нові особисті повідомлення (звук)",
       "soundHint": "Короткий сигнал при нових непрочитаних повідомленнях",
       "soundSoon": "Незабаром"
+    },
+    "telegram": {
+      "connect": "Підключити Telegram",
+      "linking": "Створюємо посилання…",
+      "openBot": "Відкрити бота",
+      "connectHint": "Натисніть кнопку та підтвердіть підключення в Telegram.",
+      "connected": "Telegram підключено",
+      "disconnect": "Відключити",
+      "notConfigured": "Telegram-бот не налаштовано на сервері"
     },
     "localization": {
       "preferredLanguage": "Бажана мова",

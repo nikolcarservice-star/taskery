@@ -368,7 +368,7 @@
     "sections": {
       "email": "Powiadomienia e-mail",
       "telegram": "Powiadomienia Telegram",
-      "telegramHint": "Połączenie z botem Telegram będzie wkrótce dostępne.",
+      "telegramHint": "Otrzymuj powiadomienia w bocie Telegram Taskery.",
       "push": "Powiadomienia push i dźwięk",
       "localization": "Lokalizacja i auto-tłumaczenie",
       "visual": "Preferencje wizualne"
@@ -393,6 +393,15 @@
       "soundMessages": "Nowe wiadomości prywatne (dźwięk)",
       "soundHint": "Krótki sygnał przy nowych nieprzeczytanych wiadomościach",
       "soundSoon": "Wkrótce"
+    },
+    "telegram": {
+      "connect": "Połącz Telegram",
+      "linking": "Tworzenie linku…",
+      "openBot": "Otwórz bota",
+      "connectHint": "Kliknij przycisk i potwierdź połączenie w Telegramie.",
+      "connected": "Telegram połączony",
+      "disconnect": "Odłącz",
+      "notConfigured": "Bot Telegram nie jest skonfigurowany na serwerze"
     },
     "localization": {
       "preferredLanguage": "Preferowany język",

@@ -18,6 +18,10 @@ function isFundEscrowPayment(payment: Payment): boolean {
   return metadata?.type === "fund_escrow" && typeof metadata?.contractId === "string";
 }
 
+function refundedAmount(metadata: Record<string, unknown> | null | undefined): number {
+  return Number(metadata?.refundedAmount ?? 0);
+}
+
 export async function findStripeEscrowFundingPayment(
   contractId: string,
   clientId: string,
@@ -39,17 +43,12 @@ export async function findStripeEscrowFundingPayment(
   });
 }
 
-export async function refundStripeEscrowFunding(
-  contractId: string,
-  clientId: string,
-): Promise<{ refunded: boolean; paymentIntentId?: string }> {
-  if (!stripeEnabled || !stripe) {
-    return { refunded: false };
-  }
-
-  const payment = await findStripeEscrowFundingPayment(contractId, clientId);
-  if (!payment?.stripePaymentIntentId) {
-    return { refunded: false };
+async function refundStripePaymentAmount(
+  payment: Payment,
+  refundAmount: number,
+): Promise<{ refunded: boolean; refundedAmount: number }> {
+  if (!stripeEnabled || !stripe || !payment.stripePaymentIntentId) {
+    return { refunded: false, refundedAmount: 0 };
   }
 
   if (payment.status === "REFUNDED") {
@@ -59,9 +58,24 @@ export async function refundStripeEscrowFunding(
     );
   }
 
+  const metadata = (payment.metadata as Record<string, unknown> | null) ?? {};
+  const paidAmount = Number(payment.amount);
+  const alreadyRefunded = refundedAmount(metadata);
+  const remaining =
+    Math.round((paidAmount - alreadyRefunded) * 100) / 100;
+  const amount = Math.min(
+    Math.round(refundAmount * 100) / 100,
+    remaining,
+  );
+
+  if (amount <= 0) {
+    return { refunded: false, refundedAmount: 0 };
+  }
+
   try {
     await stripe.refunds.create({
       payment_intent: payment.stripePaymentIntentId,
+      amount: Math.round(amount * 100),
     });
   } catch (error) {
     if (error instanceof Stripe.errors.StripeError) {
@@ -70,10 +84,52 @@ export async function refundStripeEscrowFunding(
     throw error;
   }
 
+  const totalRefunded =
+    Math.round((alreadyRefunded + amount) * 100) / 100;
+
   await prisma.payment.update({
     where: { id: payment.id },
-    data: { status: "REFUNDED" },
+    data: {
+      status: totalRefunded >= paidAmount - 0.01 ? "REFUNDED" : "COMPLETED",
+      metadata: {
+        ...metadata,
+        refundedAmount: totalRefunded,
+      },
+    },
   });
 
-  return { refunded: true, paymentIntentId: payment.stripePaymentIntentId };
+  return { refunded: true, refundedAmount: amount };
+}
+
+export async function refundStripeEscrowFunding(
+  contractId: string,
+  clientId: string,
+): Promise<{ refunded: boolean; paymentIntentId?: string }> {
+  const payment = await findStripeEscrowFundingPayment(contractId, clientId);
+  if (!payment) {
+    return { refunded: false };
+  }
+
+  const result = await refundStripePaymentAmount(
+    payment,
+    Number(payment.amount),
+  );
+
+  return {
+    refunded: result.refunded,
+    paymentIntentId: payment.stripePaymentIntentId ?? undefined,
+  };
+}
+
+export async function refundStripeEscrowFundingPartial(
+  contractId: string,
+  clientId: string,
+  refundAmount: number,
+): Promise<{ refunded: boolean; refundedAmount: number }> {
+  const payment = await findStripeEscrowFundingPayment(contractId, clientId);
+  if (!payment) {
+    return { refunded: false, refundedAmount: 0 };
+  }
+
+  return refundStripePaymentAmount(payment, refundAmount);
 }

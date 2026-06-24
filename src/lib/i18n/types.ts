@@ -646,6 +646,15 @@ export type Dictionary = {
       soundHint: string;
       soundSoon: string;
     };
+    telegram: {
+      connect: string;
+      linking: string;
+      openBot: string;
+      connectHint: string;
+      connected: string;
+      disconnect: string;
+      notConfigured: string;
+    };
     localization: {
       preferredLanguage: string;
       autoTranslate: string;

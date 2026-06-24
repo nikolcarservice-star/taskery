@@ -7,6 +7,7 @@ import { useLocalizedPath } from "@/components/LocalizedLink";
 import { TwoFactorSettings } from "@/components/TwoFactorSettings";
 import { PushBrowserSettings } from "@/components/PushBrowserSettings";
 import { SessionLogoutAllButton } from "@/components/SessionLogoutAllButton";
+import { TelegramSettings } from "@/components/TelegramSettings";
 import { useDictionary } from "@/lib/i18n/dictionary-context";
 import { stripLocalePrefix } from "@/lib/i18n/routing";
 import {
@@ -146,11 +147,7 @@ function ServiceSettingsTab({
         title={t.sections.telegram}
         description={t.sections.telegramHint}
       >
-        <CheckboxRow
-          name="telegramMessages"
-          label={t.email.telegramMessages}
-          disabled
-        />
+        <TelegramSettings />
       </SettingsSection>
 
       <SettingsSection title={t.sections.push}>

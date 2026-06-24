@@ -389,7 +389,7 @@
     "sections": {
       "email": "Email notifications",
       "telegram": "Telegram notifications",
-      "telegramHint": "Telegram bot connection will be available soon.",
+      "telegramHint": "Get notifications in the Taskery Telegram bot.",
       "push": "Push and sound notifications",
       "localization": "Localization and auto-translate",
       "visual": "Visual preferences"
@@ -414,6 +414,15 @@
       "soundMessages": "New private messages (sound)",
       "soundHint": "Short alert when unread messages arrive",
       "soundSoon": "Soon"
+    },
+    "telegram": {
+      "connect": "Connect Telegram",
+      "linking": "Creating link…",
+      "openBot": "Open bot",
+      "connectHint": "Tap the button and confirm linking in Telegram.",
+      "connected": "Telegram connected",
+      "disconnect": "Disconnect",
+      "notConfigured": "Telegram bot is not configured on the server"
     },
     "localization": {
       "preferredLanguage": "Preferred language",

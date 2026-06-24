@@ -1,5 +1,6 @@
 import type { NotificationType, Prisma } from "@/generated/prisma/client";
 import { sendPushToUser } from "@/lib/push-notifications";
+import { sendTelegramToUser } from "@/lib/telegram";
 import { prisma } from "@/lib/prisma";
 
 export async function createUserNotification({
@@ -39,4 +40,8 @@ export async function createUserNotification({
       console.error("[createUserNotification push]", userId, error);
     });
   }
+
+  await sendTelegramToUser(userId, title, body, link).catch((error) => {
+    console.error("[createUserNotification telegram]", userId, error);
+  });
 }

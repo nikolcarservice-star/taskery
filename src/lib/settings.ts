@@ -35,6 +35,8 @@ export async function getUserSettings(userId: string): Promise<UserSettingsData>
     emailBlogDigest: settings?.emailBlogDigest ?? DEFAULT_SETTINGS.emailBlogDigest,
     pushBrowser: settings?.pushBrowser ?? DEFAULT_SETTINGS.pushBrowser,
     soundNewMessages: settings?.soundNewMessages ?? DEFAULT_SETTINGS.soundNewMessages,
+    telegramLinked: Boolean(settings?.telegramChatId),
+    telegramMessages: settings?.telegramMessages ?? DEFAULT_SETTINGS.telegramMessages,
     interfaceLanguage: localePrefs.interfaceLanguage,
     autoTranslate: localePrefs.autoTranslate,
     theme: settings?.theme ?? DEFAULT_SETTINGS.theme,

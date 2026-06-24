@@ -11,6 +11,8 @@ export type UserSettingsData = {
   emailBlogDigest: boolean;
   pushBrowser: boolean;
   soundNewMessages: boolean;
+  telegramLinked: boolean;
+  telegramMessages: boolean;
   interfaceLanguage: string;
   autoTranslate: boolean;
   theme: string;
@@ -37,6 +39,8 @@ export const DEFAULT_SETTINGS: Omit<UserSettingsData, "email" | "twoFactorEnable
   emailBlogDigest: false,
   pushBrowser: false,
   soundNewMessages: false,
+  telegramLinked: false,
+  telegramMessages: false,
   interfaceLanguage: "ru",
   autoTranslate: true,
   theme: "light",

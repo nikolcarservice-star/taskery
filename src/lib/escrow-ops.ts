@@ -163,11 +163,7 @@ export async function atomicReleaseDispute(
   });
 }
 
-export async function atomicSplitDispute(
-  contractId: string,
-  projectId: string,
-  freelancerId: string,
-  clientId: string,
+export function calculateSplitDisputeAmounts(
   totalAmount: number,
   totalCommission: number,
   totalPayout: number,
@@ -191,6 +187,28 @@ export async function atomicSplitDispute(
     throw new EscrowError("Некорректное распределение суммы", "INVALID_STATUS");
   }
 
+  return { payout, commission, clientRefund };
+}
+
+export async function atomicSplitDispute(
+  contractId: string,
+  projectId: string,
+  freelancerId: string,
+  clientId: string,
+  totalAmount: number,
+  totalCommission: number,
+  totalPayout: number,
+  freelancerPercent: number,
+  options?: { clientBalanceRefund?: number },
+) {
+  const { payout, commission, clientRefund } = calculateSplitDisputeAmounts(
+    totalAmount,
+    totalCommission,
+    totalPayout,
+    freelancerPercent,
+  );
+  const clientBalanceRefund = options?.clientBalanceRefund ?? clientRefund;
+
   return prisma.$transaction(async (tx) => {
     const contractResult = await tx.contract.updateMany({
       where: { id: contractId, status: "ESCROWED" },
@@ -208,10 +226,10 @@ export async function atomicSplitDispute(
       });
     }
 
-    if (clientRefund > 0) {
+    if (clientBalanceRefund > 0) {
       await tx.user.update({
         where: { id: clientId },
-        data: { balance: { increment: clientRefund } },
+        data: { balance: { increment: clientBalanceRefund } },
       });
     }
 

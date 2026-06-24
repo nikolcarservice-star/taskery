@@ -8,9 +8,14 @@ import {
   atomicRefundContract,
   atomicReleaseDispute,
   atomicSplitDispute,
+  calculateSplitDisputeAmounts,
 } from "@/lib/escrow-ops";
 import { createUserNotification } from "@/lib/create-user-notification";
-import { refundStripeEscrowFunding, StripeRefundError } from "@/lib/stripe-refund";
+import {
+  refundStripeEscrowFunding,
+  refundStripeEscrowFundingPartial,
+  StripeRefundError,
+} from "@/lib/stripe-refund";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -97,7 +102,7 @@ export async function adminReleaseDispute(
     details: { contractId: project.contract.id, payout, commission },
   });
 
-  revalidatePath("/admin");
+  revalidatePath("/admin/moderation");
   revalidatePath("/admin/mobile/moderation");
   revalidatePath(`/projects/${projectId}`);
 
@@ -209,6 +214,31 @@ export async function adminSplitDispute(
   const commission = Number(project.contract.commission);
   const payout = Number(project.contract.freelancerPayout);
 
+  const { clientRefund } = calculateSplitDisputeAmounts(
+    amount,
+    commission,
+    payout,
+    freelancerPercent,
+  );
+
+  let stripeRefunded = false;
+  let stripeRefundedAmount = 0;
+  try {
+    const stripeResult = await refundStripeEscrowFundingPartial(
+      project.contract.id,
+      project.clientId,
+      clientRefund,
+    );
+    stripeRefunded = stripeResult.refunded;
+    stripeRefundedAmount = stripeResult.refundedAmount;
+  } catch (error) {
+    return { error: escrowErrorMessage(error) };
+  }
+
+  const balanceCredit = stripeRefunded
+    ? Math.max(0, Math.round((clientRefund - stripeRefundedAmount) * 100) / 100)
+    : clientRefund;
+
   try {
     await atomicSplitDispute(
       project.contract.id,
@@ -219,9 +249,23 @@ export async function adminSplitDispute(
       commission,
       payout,
       freelancerPercent,
+      { clientBalanceRefund: balanceCredit },
     );
   } catch (error) {
     return { error: escrowErrorMessage(error) };
+  }
+
+  if (clientRefund > 0) {
+    await createUserNotification({
+      userId: project.clientId,
+      type: "USER_WARNING",
+      title: "Спор решён частично",
+      body:
+        stripeRefundedAmount > 0
+          ? `Вам возвращено ${stripeRefundedAmount.toLocaleString("uk-UA")} через Stripe по проекту «${project.title}».`
+          : `На баланс возвращено ${clientRefund.toLocaleString("uk-UA")} по проекту «${project.title}».`,
+      link: `/client/finances`,
+    });
   }
 
   await logAdminAction(authResult.admin.id, "DISPUTE_SPLIT", {
@@ -231,10 +275,12 @@ export async function adminSplitDispute(
       contractId: project.contract.id,
       freelancerPercent,
       amount,
+      clientRefund,
+      stripeRefundedAmount,
     },
   });
 
-  revalidatePath("/admin");
+  revalidatePath("/admin/moderation");
   revalidatePath("/admin/mobile/moderation");
   revalidatePath(`/projects/${projectId}`);
 
@@ -279,7 +325,7 @@ export async function adminCloseProject(
     targetId: projectId,
   });
 
-  revalidatePath("/admin");
+  revalidatePath("/admin/moderation");
   revalidatePath("/admin/mobile/moderation");
   revalidatePath(`/projects/${projectId}`);
 

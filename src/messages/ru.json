@@ -848,7 +848,7 @@
     "sections": {
       "email": "E-mail уведомления",
       "telegram": "Telegram уведомления",
-      "telegramHint": "Подключение Telegram-бота скоро будет доступно.",
+      "telegramHint": "Получайте уведомления в Telegram-боте Taskery.",
       "push": "Push и звуковые уведомления",
       "localization": "Локализация и автоперевод",
       "visual": "Визуальные предпочтения"
@@ -873,6 +873,15 @@
       "soundMessages": "Новые личные сообщения (звук)",
       "soundHint": "Короткий сигнал при новых непрочитанных сообщениях",
       "soundSoon": "Скоро"
+    },
+    "telegram": {
+      "connect": "Подключить Telegram",
+      "linking": "Создаём ссылку…",
+      "openBot": "Открыть бота",
+      "connectHint": "Нажмите кнопку и подтвердите подключение в Telegram.",
+      "connected": "Telegram подключён",
+      "disconnect": "Отключить",
+      "notConfigured": "Telegram-бот не настроен на сервере"
     },
     "localization": {
       "preferredLanguage": "Предпочитаемый язык",
