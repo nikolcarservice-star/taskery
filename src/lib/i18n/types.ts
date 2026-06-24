@@ -38,6 +38,7 @@ export type Dictionary = {
     freelancers: MetaBlock;
     login: MetaBlock;
     register: MetaBlock;
+    pageNotFound: MetaBlock;
   };
   market: {
     regionLabel: string;
@@ -161,6 +162,8 @@ export type Dictionary = {
     supportTitle: string;
     supportEmailLabel: string;
     proSupport: string;
+    alreadyRegistered: string;
+    openSupportInCabinet: string;
   };
   support: {
     meta: {
@@ -648,7 +651,6 @@ export type Dictionary = {
       personal: string;
       settings: string;
       messages: string;
-      competitions: string;
       boost: string;
       freelancerProfile: string;
     };
@@ -801,7 +803,6 @@ export type Dictionary = {
     myTasks: string;
     myProjectsInProgress: string;
     noActiveProjectsSr: string;
-    competitions: string;
     findProject: string;
     freelancers: string;
     newProject: string;
@@ -864,8 +865,7 @@ export type Dictionary = {
       emptyTitle: string;
       emptyBodyPrefix: string;
       emptySearchWork: string;
-      emptyContests: string;
-      emptyBodyMiddle: string;
+      emptyBodySuffix: string;
     };
   };
   backNav: {
@@ -995,9 +995,6 @@ export type Dictionary = {
     emptyBody: string;
     deleteSelected: string;
     searchPlaceholder: string;
-    filterProjects: string;
-    attachments: string;
-    favorites: string;
     sender: string;
     subject: string;
     messageCount: string;
@@ -1010,7 +1007,6 @@ export type Dictionary = {
     chatWith: string;
     participantFallback: string;
     allConversations: string;
-    bookmarks: string;
     projectLink: string;
     deleteConversation: string;
     delete: string;
@@ -1026,7 +1022,6 @@ export type Dictionary = {
       participant: string;
       adminBadge: string;
       placeholder: string;
-      attachFiles: string;
       formatPlaceholder: string;
       linkLabelPlaceholder: string;
       send: string;

@@ -27,8 +27,7 @@ export function NoActiveTasksPopover() {
         >
           {p.emptySearchWork}
         </Link>
-        {p.emptyBodyMiddle}
-        <span className="font-medium text-zinc-400">{p.emptyContests}</span>
+        {p.emptyBodySuffix}
       </p>
 
       <div className="mt-4">

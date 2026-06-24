@@ -72,6 +72,10 @@
     "register": {
       "title": "Регистрация на Taskery",
       "description": "Создайте бесплатный аккаунт заказчика или фрилансера на Taskery."
+    },
+    "pageNotFound": {
+      "title": "Страница не найдена",
+      "description": "Запрошенная страница не найдена на Taskery."
     }
   },
   "market": {
@@ -262,7 +266,9 @@
     "intro": "Напишите нам — ответим в течение 1–2 рабочих дней.",
     "supportTitle": "Поддержка",
     "supportEmailLabel": "Email",
-    "proSupport": "PRO-пользователи получают приоритетную поддержку."
+    "proSupport": "PRO-пользователи получают приоритетную поддержку.",
+    "alreadyRegistered": "Уже зарегистрированы?",
+    "openSupportInCabinet": "Открыть обращение в личном кабинете"
   },
   "support": {
     "meta": {
@@ -876,7 +882,6 @@
       "personal": "Личные данные",
       "settings": "Настройки",
       "messages": "Переписки",
-      "competitions": "Мои конкурсы",
       "boost": "TaskBoost",
       "freelancerProfile": "Профиль фрилансера"
     }
@@ -1022,7 +1027,6 @@
     "myTasks": "Мои задачи",
     "myProjectsInProgress": "В работе",
     "noActiveProjectsSr": "активных проектов нет",
-    "competitions": "Конкурсы",
     "findProject": "Найти проект",
     "freelancers": "Исполнители",
     "newProject": "+ Новый проект",
@@ -1085,8 +1089,7 @@
       "emptyTitle": "У вас нет активных задач в работе",
       "emptyBodyPrefix": "Перейдите в ",
       "emptySearchWork": "поиск работы",
-      "emptyContests": "конкурсах",
-      "emptyBodyMiddle": " в своей категории или проявите свои таланты в "
+      "emptyBodySuffix": " в своей категории и откликайтесь на проекты."
     }
   },
   "backNav": {
@@ -1284,9 +1287,6 @@
     "emptyBody": "Чат откроется, когда заказчик выберет вас исполнителем по проекту.",
     "deleteSelected": "Удалить ({count})",
     "searchPlaceholder": "Поиск по сообщениям",
-    "filterProjects": "Фильтр по проектам",
-    "attachments": "Вложения",
-    "favorites": "Избранное",
     "sender": "Отправитель",
     "subject": "Тема",
     "messageCount": "Сообщений",
@@ -1299,7 +1299,6 @@
     "chatWith": "Общение с",
     "participantFallback": "участником",
     "allConversations": "Все переписки",
-    "bookmarks": "Закладки",
     "projectLink": "Проект",
     "deleteConversation": "Удалить переписку",
     "delete": "Удалить",
@@ -1315,7 +1314,6 @@
       "participant": "Участник",
       "adminBadge": "Администратор",
       "placeholder": "Начните набирать сообщение…",
-      "attachFiles": "Приложить файлы",
       "formatPlaceholder": "текст",
       "linkLabelPlaceholder": "текст",
       "send": "Отправить",
@@ -1374,7 +1372,7 @@
       "Сверьте домен: мошенники часто подменяют одну-две буквы в адресе.",
       "Никогда не вводите пароль Taskery на сторонних сайтах.",
       "Не скачивайте файлы и архивы с паролем от незнакомых людей.",
-      "Важные договорённости и файлы — в чате Taskery под защитой эскроу."
+      "Важные договорённости фиксируйте в переписке Taskery — история сохраняется в аккаунте."
     ]
   },
   "tables": {

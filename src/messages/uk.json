@@ -57,6 +57,10 @@
     "register": {
       "title": "Реєстрація на Taskery",
       "description": "Створіть безкоштовний акаунт на Taskery."
+    },
+    "pageNotFound": {
+      "title": "Сторінку не знайдено",
+      "description": "Запитувану сторінку не знайдено на Taskery."
     }
   },
   "market": {
@@ -247,7 +251,9 @@
     "intro": "Напишіть нам — відповімо протягом 1–2 робочих днів.",
     "supportTitle": "Підтримка",
     "supportEmailLabel": "Email",
-    "proSupport": "PRO-користувачі отримують пріоритетну підтримку."
+    "proSupport": "PRO-користувачі отримують пріоритетну підтримку.",
+    "alreadyRegistered": "Уже зареєстровані?",
+    "openSupportInCabinet": "Відкрити звернення в особистому кабінеті"
   },
   "support": {
     "meta": {
@@ -401,7 +407,6 @@
       "personal": "Особисті дані",
       "settings": "Налаштування",
       "messages": "Переписки",
-      "competitions": "Мої конкурси",
       "boost": "TaskBoost",
       "freelancerProfile": "Профіль фрілансера"
     }
@@ -547,7 +552,6 @@
     "myTasks": "Мої завдання",
     "myProjectsInProgress": "В роботі",
     "noActiveProjectsSr": "активних проєктів немає",
-    "competitions": "Конкурси",
     "findProject": "Знайти проєкт",
     "freelancers": "Виконавці",
     "newProject": "+ Новий проєкт",
@@ -640,8 +644,7 @@
       "emptyTitle": "У вас немає активних завдань",
       "emptyBodyPrefix": "Перейдіть до ",
       "emptySearchWork": "пошуку роботи",
-      "emptyBodyMiddle": " у вашій категорії або покажіть навички в ",
-      "emptyContests": "конкурсах"
+      "emptyBodySuffix": " у вашій категорії та відгукуйтесь на проєкти."
     }
   },
   "backNav": {
@@ -839,9 +842,6 @@
     "emptyBody": "Чат відкриється, коли замовник обере вас виконавцем проєкту.",
     "deleteSelected": "Видалити ({count})",
     "searchPlaceholder": "Пошук по повідомленнях",
-    "filterProjects": "Фільтр по проєктах",
-    "attachments": "Вкладення",
-    "favorites": "Обране",
     "sender": "Відправник",
     "subject": "Тема",
     "messageCount": "Повідомлень",
@@ -854,7 +854,6 @@
     "chatWith": "Спілкування з",
     "participantFallback": "учасником",
     "allConversations": "Усі переписки",
-    "bookmarks": "Закладки",
     "projectLink": "Проєкт",
     "deleteConversation": "Видалити переписку",
     "delete": "Видалити",
@@ -870,7 +869,6 @@
       "participant": "Учасник",
       "adminBadge": "Адміністратор",
       "placeholder": "Почніть набирати повідомлення…",
-      "attachFiles": "Додати файли",
       "formatPlaceholder": "текст",
       "linkLabelPlaceholder": "текст",
       "send": "Надіслати",
@@ -929,7 +927,7 @@
       "Перевірте домен: шахраї часто підміняють одну-дві літери в адресі.",
       "Ніколи не вводьте пароль Taskery на сторонніх сайтах.",
       "Не завантажуйте файли та архіви з паролем від незнайомих людей.",
-      "Важливі домовленості та файли — у чаті Taskery під захистом ескроу."
+      "Важливі домовленості фіксуйте в переписці Taskery — історія зберігається в акаунті."
     ]
   },
   "notificationsPage": {

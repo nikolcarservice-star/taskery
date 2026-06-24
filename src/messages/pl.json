@@ -51,6 +51,10 @@
     "register": {
       "title": "Rejestracja w Taskery",
       "description": "Utwórz darmowe konto w Taskery."
+    },
+    "pageNotFound": {
+      "title": "Nie znaleziono strony",
+      "description": "Nie znaleziono żądanej strony w Taskery."
     }
   },
   "market": {
@@ -241,7 +245,9 @@
     "intro": "Napisz do nas — odpowiemy w ciągu 1–2 dni roboczych.",
     "supportTitle": "Wsparcie",
     "supportEmailLabel": "Email",
-    "proSupport": "Użytkownicy PRO otrzymują priorytetowe wsparcie."
+    "proSupport": "Użytkownicy PRO otrzymują priorytetowe wsparcie.",
+    "alreadyRegistered": "Masz już konto?",
+    "openSupportInCabinet": "Otwórz zgłoszenie w panelu konta"
   },
   "support": {
     "meta": {
@@ -395,7 +401,6 @@
       "personal": "Dane osobowe",
       "settings": "Ustawienia",
       "messages": "Wiadomości",
-      "competitions": "Moje konkursy",
       "boost": "TaskBoost",
       "freelancerProfile": "Profil freelancera"
     }
@@ -541,7 +546,6 @@
     "myTasks": "Moje zadania",
     "myProjectsInProgress": "W trakcie",
     "noActiveProjectsSr": "brak aktywnych projektów",
-    "competitions": "Konkursy",
     "findProject": "Znajdź projekt",
     "freelancers": "Wykonawcy",
     "newProject": "+ Nowy projekt",
@@ -634,8 +638,7 @@
       "emptyTitle": "Nie masz aktywnych zadań",
       "emptyBodyPrefix": "Przejdź do ",
       "emptySearchWork": "wyszukiwania pracy",
-      "emptyBodyMiddle": " w swojej kategorii lub pokaż umiejętności w ",
-      "emptyContests": "konkursach"
+      "emptyBodySuffix": " w swojej kategorii i składaj oferty na projekty."
     }
   },
   "backNav": {
@@ -833,9 +836,6 @@
     "emptyBody": "Czat otworzy się, gdy klient wybierze Cię do projektu.",
     "deleteSelected": "Usuń ({count})",
     "searchPlaceholder": "Szukaj wiadomości",
-    "filterProjects": "Filtruj według projektu",
-    "attachments": "Załączniki",
-    "favorites": "Ulubione",
     "sender": "Nadawca",
     "subject": "Temat",
     "messageCount": "Wiadomości",
@@ -848,7 +848,6 @@
     "chatWith": "Rozmowa z",
     "participantFallback": "uczestnikiem",
     "allConversations": "Wszystkie rozmowy",
-    "bookmarks": "Zakładki",
     "projectLink": "Projekt",
     "deleteConversation": "Usuń rozmowę",
     "delete": "Usuń",
@@ -864,7 +863,6 @@
       "participant": "Uczestnik",
       "adminBadge": "Administrator",
       "placeholder": "Wpisz wiadomość…",
-      "attachFiles": "Dołącz pliki",
       "formatPlaceholder": "tekst",
       "linkLabelPlaceholder": "tekst",
       "send": "Wyślij",
@@ -923,7 +921,7 @@
       "Sprawdź domenę — oszuści często zmieniają jedną lub dwie litery.",
       "Nigdy nie wpisuj hasła Taskery na zewnętrznych stronach.",
       "Nie pobieraj plików i archiwów z hasłem od nieznajomych.",
-      "Ważne ustalenia i pliki trzymaj na czacie Taskery pod ochroną escrow."
+      "Ważne ustalenia zapisuj w wiadomościach Taskery — historia jest w Twoim koncie."
     ]
   },
   "notificationsPage": {

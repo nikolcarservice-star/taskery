@@ -1,3 +1,4 @@
+import { getDictionary } from "@/lib/i18n/dictionary";
 import { requireAppLocale } from "@/lib/i18n/locale-page";
 import { createMetadata } from "@/lib/metadata";
 import { getCmsPageBySlug } from "@/lib/queries/admin-cms";
@@ -9,15 +10,17 @@ type CmsPageProps = {
 
 export async function generateMetadata({ params }: CmsPageProps) {
   const locale = await requireAppLocale(params);
+  const dict = await getDictionary(locale);
   const { slug } = await params;
   const page = await getCmsPageBySlug(slug, locale);
 
   if (!page) {
     return createMetadata({
-      title: "Страница не найдена",
-      description: "Страница не найдена",
+      title: dict.meta.pageNotFound.title,
+      description: dict.meta.pageNotFound.description,
       path: `/pages/${slug}`,
       locale,
+      noIndex: true,
     });
   }
 

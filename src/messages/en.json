@@ -72,6 +72,10 @@
     "register": {
       "title": "Register on Taskery",
       "description": "Create a free client or freelancer account on Taskery."
+    },
+    "pageNotFound": {
+      "title": "Page not found",
+      "description": "The requested page was not found on Taskery."
     }
   },
   "market": {
@@ -262,7 +266,9 @@
     "intro": "Write to us — we reply within 1–2 business days.",
     "supportTitle": "Support",
     "supportEmailLabel": "Email",
-    "proSupport": "PRO users receive priority support."
+    "proSupport": "PRO users receive priority support.",
+    "alreadyRegistered": "Already registered?",
+    "openSupportInCabinet": "Open a support request in your account"
   },
   "support": {
     "meta": {
@@ -416,7 +422,6 @@
       "personal": "Personal info",
       "settings": "Settings",
       "messages": "Messages",
-      "competitions": "My contests",
       "boost": "TaskBoost",
       "freelancerProfile": "Freelancer profile"
     }
@@ -562,7 +567,6 @@
     "myTasks": "My tasks",
     "myProjectsInProgress": "In progress",
     "noActiveProjectsSr": "no active projects",
-    "competitions": "Contests",
     "findProject": "Find a project",
     "freelancers": "Freelancers",
     "newProject": "+ New project",
@@ -655,8 +659,7 @@
       "emptyTitle": "You have no active tasks in progress",
       "emptyBodyPrefix": "Go to ",
       "emptySearchWork": "job search",
-      "emptyBodyMiddle": " in your category or showcase your skills in ",
-      "emptyContests": "contests"
+      "emptyBodySuffix": " in your category and apply to projects."
     }
   },
   "backNav": {
@@ -854,9 +857,6 @@
     "emptyBody": "Chat opens when a client selects you for a project.",
     "deleteSelected": "Delete ({count})",
     "searchPlaceholder": "Search messages",
-    "filterProjects": "Filter by project",
-    "attachments": "Attachments",
-    "favorites": "Favorites",
     "sender": "Sender",
     "subject": "Subject",
     "messageCount": "Messages",
@@ -869,7 +869,6 @@
     "chatWith": "Chat with",
     "participantFallback": "participant",
     "allConversations": "All conversations",
-    "bookmarks": "Bookmarks",
     "projectLink": "Project",
     "deleteConversation": "Delete conversation",
     "delete": "Delete",
@@ -885,7 +884,6 @@
       "participant": "Participant",
       "adminBadge": "Administrator",
       "placeholder": "Type your message…",
-      "attachFiles": "Attach files",
       "formatPlaceholder": "text",
       "linkLabelPlaceholder": "text",
       "send": "Send",
@@ -944,7 +942,7 @@
       "Check the domain carefully — scammers often change one or two letters.",
       "Never enter your Taskery password on external websites.",
       "Do not download password-protected files from strangers.",
-      "Keep agreements and deliverables in Taskery chat under escrow protection."
+      "Record important agreements in Taskery messages — history is saved in your account."
     ]
   },
   "notificationsPage": {

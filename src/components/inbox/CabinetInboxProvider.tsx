@@ -5,6 +5,7 @@ import { playMessageNotificationSound } from "@/lib/message-sound";
 import type { MessagePreviewItem } from "@/lib/messages-shared";
 import type { NotificationItem } from "@/lib/notifications-shared";
 import { useSession } from "next-auth/react";
+import { INBOX_POLL_MS } from "@/lib/inbox-poll";
 import {
   createContext,
   useCallback,
@@ -34,8 +35,6 @@ const emptyState: InboxChromeState = {
   user: { name: null, avatar: null },
   ready: false,
 };
-
-const POLL_MS = 45_000;
 
 const CabinetInboxContext = createContext<InboxChromeState>(emptyState);
 
@@ -120,7 +119,7 @@ export function CabinetInboxProvider({ children }: { children: ReactNode }) {
       if (document.visibilityState === "visible") {
         void refresh();
       }
-    }, POLL_MS);
+    }, INBOX_POLL_MS);
 
     const onRefresh = () => {
       void refresh();
