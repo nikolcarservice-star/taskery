@@ -22,8 +22,10 @@ const recommended = [
   ["STRIPE_WEBHOOK_SECRET", "Stripe webhooks"],
   ["VAPID_PUBLIC_KEY", "Browser push notifications"],
   ["VAPID_PRIVATE_KEY", "Browser push notifications"],
-  ["TELEGRAM_BOT_TOKEN", "Telegram bot"],
-  ["TELEGRAM_BOT_USERNAME", "Telegram bot username"],
+  ["TELEGRAM_BOT_TOKEN", "User Telegram bot"],
+  ["TELEGRAM_BOT_USERNAME", "User Telegram bot username"],
+  ["TELEGRAM_ADMIN_BOT_TOKEN", "Admin Telegram bot"],
+  ["TELEGRAM_ADMIN_BOT_USERNAME", "Admin Telegram bot username"],
 ];
 
 function isSet(name) {

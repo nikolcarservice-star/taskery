@@ -1,6 +1,7 @@
 "use client";
 
 import { AdminAnalyticsPanel } from "@/components/AdminAnalyticsPanel";
+import { AdminTelegramSettings } from "@/components/admin/AdminTelegramSettings";
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
 import {
   getAdminTabHrefForPlatform,
@@ -120,6 +121,13 @@ export function AdminOverviewSection({
           </div>
         </section>
       )}
+
+      <section className="rounded-xl border border-zinc-200 bg-white p-5">
+        <h2 className="text-sm font-semibold text-zinc-900">{copy.telegram.title}</h2>
+        <div className="mt-3">
+          <AdminTelegramSettings locale={locale} />
+        </div>
+      </section>
 
       {canViewFinance && analytics && (
         <AdminAnalyticsPanel analytics={analytics} locale={locale} />

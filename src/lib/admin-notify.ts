@@ -8,6 +8,10 @@ import {
   type NotificationTemplateKey,
 } from "@/lib/notification-i18n";
 import { prisma } from "@/lib/prisma";
+import {
+  adminPermissionForNotificationType,
+  sendAdminTelegramToUser,
+} from "@/lib/telegram/admin-bot";
 
 type AdminNotifyPayload = {
   type: NotificationType;
@@ -16,6 +20,19 @@ type AdminNotifyPayload = {
   link: string;
   metadata?: Prisma.InputJsonValue;
 };
+
+function metadataAsStrings(
+  metadata?: Prisma.InputJsonValue,
+): Record<string, string> | undefined {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
+    return undefined;
+  }
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(metadata)) {
+    if (typeof value === "string") result[key] = value;
+  }
+  return Object.keys(result).length > 0 ? result : undefined;
+}
 
 export async function notifyAdminsWithPermission(
   permission: AdminPermission,
@@ -46,6 +63,9 @@ export async function notifyAdminsWithPermission(
     { push: false, telegram: false },
   );
 
+  const metaStrings = metadataAsStrings(payload.metadata);
+  const requiredPermission = adminPermissionForNotificationType(payload.type);
+
   await Promise.all(
     recipients.map(async (admin) => {
       const locale = await getEmailLocaleForUser(admin.id);
@@ -62,6 +82,14 @@ export async function notifyAdminsWithPermission(
         link: payload.link,
       }).catch((error) => {
         console.error("[admin-email]", admin.email, error);
+      });
+
+      await sendAdminTelegramToUser(admin.id, admin.adminPermissions, {
+        template: payload.template,
+        variables: payload.variables,
+        link: payload.link,
+        metadata: metaStrings,
+        requiredPermission,
       });
     }),
   );

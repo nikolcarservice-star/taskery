@@ -1,74 +1,13 @@
-import type { NotificationType } from "@/generated/prisma/client";
-import { shouldSendTelegramForType } from "@/lib/notification-channels";
-import { siteConfig } from "@/lib/seo";
-import { prisma } from "@/lib/prisma";
+export {
+  getUserTelegramBotUsername as getTelegramBotUsername,
+  sendUserTelegramMessage as sendTelegramMessage,
+  sendUserTelegramToUser as sendTelegramToUser,
+  userTelegramConfigured as telegramConfigured,
+} from "@/lib/telegram/user-bot";
 
-export function telegramConfigured(): boolean {
-  return Boolean(process.env.TELEGRAM_BOT_TOKEN?.trim());
-}
-
-export function getTelegramBotUsername(): string | null {
-  const username = process.env.TELEGRAM_BOT_USERNAME?.trim();
-  return username || null;
-}
-
-export async function sendTelegramMessage(chatId: string, text: string) {
-  const token = process.env.TELEGRAM_BOT_TOKEN?.trim();
-  if (!token) return false;
-
-  const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text,
-      disable_web_page_preview: true,
-    }),
-  });
-
-  return response.ok;
-}
-
-export async function sendTelegramToUser(
-  userId: string,
-  title: string,
-  body: string,
-  link?: string,
-  type: NotificationType = "USER_WARNING",
-) {
-  if (!telegramConfigured()) return;
-
-  const settings = await prisma.userSettings.findUnique({
-    where: { userId },
-    select: {
-      telegramChatId: true,
-      telegramMessages: true,
-      telegramNotifications: true,
-    },
-  });
-
-  if (!settings?.telegramChatId) return;
-
-  if (
-    !shouldSendTelegramForType(type, {
-      telegramMessages: settings.telegramMessages,
-      telegramNotifications: settings.telegramNotifications,
-    })
-  ) {
-    return;
-  }
-
-  const url = link
-    ? link.startsWith("http")
-      ? link
-      : `${siteConfig.url}${link}`
-    : `${siteConfig.url}/notifications`;
-
-  const text = `${title}\n${body}\n\n${url}`;
-
-  try {
-    await sendTelegramMessage(settings.telegramChatId, text);
-  } catch (error) {
-    console.error("[telegram]", userId, error);
-  }
-}
+export {
+  adminTelegramConfigured,
+  getAdminTelegramBotUsername,
+  sendAdminTelegramMessage,
+  sendAdminTelegramToUser,
+} from "@/lib/telegram/admin-bot";

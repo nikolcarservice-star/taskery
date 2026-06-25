@@ -79,6 +79,18 @@ type AdminCopy = {
     dismiss: string;
     dismissTitle: string;
   };
+  telegram: {
+    title: string;
+    hint: string;
+    connect: string;
+    linking: string;
+    openBot: string;
+    connectHint: string;
+    connected: string;
+    disconnect: string;
+    alertsToggle: string;
+    notConfigured: string;
+  };
   panels: AdminPanelsCopy;
 };
 
@@ -188,6 +200,18 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
       dismiss: "Скрыть",
       dismissTitle: "Скрыть уведомление только у вас",
     },
+    telegram: {
+      title: "Telegram для админов",
+      hint: "Закрытый бот: уведомления модерации и финансов, управление кнопками.",
+      connect: "Подключить админ-бот",
+      linking: "Создание ссылки…",
+      openBot: "Открыть админ-бот",
+      connectHint: "Ссылка действует 15 минут. Не передавайте её посторонним.",
+      connected: "Админ-бот подключён",
+      disconnect: "Отключить",
+      alertsToggle: "Уведомления модерации и финансов в Telegram",
+      notConfigured: "Админ-бот не настроен на сервере (TELEGRAM_ADMIN_BOT_TOKEN)",
+    },
     panels: ADMIN_PANELS_COPY.ru,
   },
   uk: {
@@ -295,6 +319,18 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     attention: {
       dismiss: "Приховати",
       dismissTitle: "Приховати сповіщення лише у вас",
+    },
+    telegram: {
+      title: "Telegram для адмінів",
+      hint: "Закритий бот: сповіщення модерації та фінансів, керування кнопками.",
+      connect: "Підключити адмін-бот",
+      linking: "Створення посилання…",
+      openBot: "Відкрити адмін-бот",
+      connectHint: "Посилання діє 15 хвилин. Не передавайте його стороннім.",
+      connected: "Адмін-бот підключено",
+      disconnect: "Відключити",
+      alertsToggle: "Сповіщення модерації та фінансів у Telegram",
+      notConfigured: "Адмін-бот не налаштовано на сервері (TELEGRAM_ADMIN_BOT_TOKEN)",
     },
     panels: ADMIN_PANELS_COPY.uk,
   },
@@ -404,6 +440,18 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
       dismiss: "Ukryj",
       dismissTitle: "Ukryj powiadomienie tylko u siebie",
     },
+    telegram: {
+      title: "Telegram dla adminów",
+      hint: "Zamknięty bot: powiadomienia moderacji i finansów, sterowanie przyciskami.",
+      connect: "Połącz bota admina",
+      linking: "Tworzenie linku…",
+      openBot: "Otwórz bota admina",
+      connectHint: "Link ważny 15 minut. Nie udostępniaj go osobom trzecim.",
+      connected: "Bot admina połączony",
+      disconnect: "Odłącz",
+      alertsToggle: "Powiadomienia moderacji i finansów w Telegramie",
+      notConfigured: "Bot admina nie jest skonfigurowany na serwerze (TELEGRAM_ADMIN_BOT_TOKEN)",
+    },
     panels: ADMIN_PANELS_COPY.pl,
   },
   en: {
@@ -510,6 +558,18 @@ const ADMIN_COPY: Record<AppLocale, AdminCopy> = {
     attention: {
       dismiss: "Dismiss",
       dismissTitle: "Dismiss this alert for you only",
+    },
+    telegram: {
+      title: "Admin Telegram",
+      hint: "Private bot: moderation and finance alerts, actions via inline buttons.",
+      connect: "Connect admin bot",
+      linking: "Creating link…",
+      openBot: "Open admin bot",
+      connectHint: "Link expires in 15 minutes. Do not share it with others.",
+      connected: "Admin bot connected",
+      disconnect: "Disconnect",
+      alertsToggle: "Moderation and finance alerts in Telegram",
+      notConfigured: "Admin bot is not configured on the server (TELEGRAM_ADMIN_BOT_TOKEN)",
     },
     panels: ADMIN_PANELS_COPY.en,
   },

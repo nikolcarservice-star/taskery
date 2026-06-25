@@ -1,22 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
-import { sendTelegramMessage } from "@/lib/telegram";
-
-type TelegramUpdate = {
-  message?: {
-    chat: { id: number };
-    text?: string;
-  };
-};
+import { sendUserTelegramMessage } from "@/lib/telegram/user-bot";
+import type { TelegramUpdate } from "@/lib/telegram/types";
+import { verifyTelegramWebhookSecret } from "@/lib/telegram/webhook-utils";
 
 export async function POST(request: NextRequest) {
-  const secret = process.env.TELEGRAM_WEBHOOK_SECRET?.trim();
-  if (secret) {
-    const header = request.headers.get("x-telegram-bot-api-secret-token");
-    if (header !== secret) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+  if (!verifyTelegramWebhookSecret(request, "TELEGRAM_WEBHOOK_SECRET")) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const update = (await request.json()) as TelegramUpdate;
@@ -32,7 +23,7 @@ export async function POST(request: NextRequest) {
     const token = text.slice("/start".length).trim();
 
     if (!token) {
-      await sendTelegramMessage(
+      await sendUserTelegramMessage(
         String(chatId),
         "Откройте ссылку подключения в настройках Taskery.",
       );
@@ -48,7 +39,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!settings) {
-      await sendTelegramMessage(
+      await sendUserTelegramMessage(
         String(chatId),
         "Ссылка устарела или недействительна. Создайте новую в настройках Taskery.",
       );
@@ -66,7 +57,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await sendTelegramMessage(
+    await sendUserTelegramMessage(
       String(chatId),
       "Telegram подключён к Taskery. Вы будете получать уведомления о сообщениях и сделках.",
     );
