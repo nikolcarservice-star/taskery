@@ -47,6 +47,7 @@ import { markBidMessageNotificationsReadForProject } from "@/lib/notifications";
 
 import { prisma } from "@/lib/prisma";
 import { getProjectDetailById } from "@/lib/queries/project-detail";
+import { canModerationAdminViewPendingProject } from "@/lib/project-access";
 import { filterMessagesForViewer } from "@/lib/messages-visibility";
 import { resolveProjectSlug } from "@/lib/queries/project-lookup";
 import { shouldWarnExternalLinks } from "@/lib/moderation/message-guard";
@@ -80,7 +81,7 @@ export async function generateMetadata({ params }: ProjectPageProps) {
 
     where: { OR: [{ slug }, { id: slug }] },
 
-    select: { title: true, description: true, slug: true },
+    select: { title: true, description: true, slug: true, status: true },
 
   });
 
@@ -114,6 +115,8 @@ export async function generateMetadata({ params }: ProjectPageProps) {
     locale,
 
     keywords: [dict.meta.projects.keywords?.[0] ?? "project", project.title],
+
+    noIndex: project.status !== "OPEN",
 
   });
 
@@ -167,11 +170,15 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
     session?.user?.role === "FREELANCER" || adminInFreelancerMode;
 
-
+  const isModerationReviewer = await canModerationAdminViewPendingProject(
+    session?.user?.id,
+    project.status,
+  );
 
   const canViewProject =
     canManage ||
     isAssignedFreelancer ||
+    isModerationReviewer ||
     (project.status === "OPEN" && !project.blockedAt);
 
 
