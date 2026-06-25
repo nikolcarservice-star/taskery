@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
-import { handleAdminTelegramUpdate } from "@/lib/telegram/admin-handlers";
+import { handleAdminTelegramUpdate, sendAdminWelcomeMenu } from "@/lib/telegram/admin-handlers";
 import {
   isTelegramUserAllowedForAdminBot,
   sendAdminTelegramMessage,
@@ -67,10 +67,7 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      await sendAdminTelegramMessage(
-        String(chatId),
-        "Админ-бот подключён. Вы будете получать уведомления модерации и финансов.\n\n/help — список команд",
-      );
+      await sendAdminWelcomeMenu(chatId, settings.userId);
       return NextResponse.json({ ok: true });
     }
   }

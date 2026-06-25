@@ -4,8 +4,10 @@ import { publishProjectAfterApproval } from "@/lib/actions/admin-project-moderat
 import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { formatMoney } from "@/lib/i18n/currencies";
 import { prisma } from "@/lib/prisma";
+import { absoluteUrl } from "@/lib/seo";
 import { transferWithdrawalToConnect } from "@/lib/stripe-connect";
 import type { ResolvedAdmin } from "@/lib/telegram/resolve";
+import { clearAdminTelegramAlerts } from "@/lib/telegram/admin-alerts";
 import {
   atomicApproveWithdrawal,
   atomicRejectWithdrawal,
@@ -88,6 +90,8 @@ export async function telegramRejectProject(
     details: { reason, source: "telegram" },
   });
 
+  await clearAdminTelegramAlerts("project_moderation", projectId);
+
   revalidatePath("/admin/moderation");
   revalidatePath("/client/projects");
   return { ok: true };
@@ -152,6 +156,8 @@ export async function telegramApproveWithdrawal(
       targetId: paymentId,
       details: { userId: payment.userId, amount: Number(payment.amount), source: "telegram" },
     });
+
+    await clearAdminTelegramAlerts("withdrawal", paymentId);
   } catch (error) {
     if (error instanceof WithdrawalError) {
       return { ok: false, error: error.message };
@@ -193,6 +199,8 @@ export async function telegramRejectWithdrawal(
         source: "telegram",
       },
     });
+
+    await clearAdminTelegramAlerts("withdrawal", paymentId);
   } catch (error) {
     if (error instanceof WithdrawalError) {
       return { ok: false, error: error.message };
@@ -213,7 +221,7 @@ export async function telegramListPendingProjects(
 
   const projects = await prisma.project.findMany({
     where: { status: "PENDING_MODERATION" },
-    select: { id: true, title: true, createdAt: true },
+    select: { id: true, slug: true, title: true, createdAt: true },
     orderBy: { createdAt: "asc" },
     take: 10,
   });
@@ -222,9 +230,10 @@ export async function telegramListPendingProjects(
     return { ok: true, text: "Нет проектов на модерации." };
   }
 
-  const lines = projects.map(
-    (p, i) => `${i + 1}. ${p.title}`,
-  );
+  const lines = projects.map((p, i) => {
+    const url = absoluteUrl(`/projects/${p.slug}`);
+    return `${i + 1}. ${p.title}\n${url}`;
+  });
   return {
     ok: true,
     text: `Проекты на модерации (${projects.length}):\n\n${lines.join("\n")}`,
@@ -278,7 +287,15 @@ export async function telegramListPendingReports(
 }
 
 export function telegramHelpText(admin: ResolvedAdmin) {
-  const lines = ["Команды Taskery Admin Bot:", "/help — эта справка"];
+  const lines = [
+    "<b>Taskery Admin Bot</b>",
+    "",
+    "Используйте /menu для главного меню с кнопками.",
+    "",
+    "<b>Команды:</b>",
+    "/menu — главное меню",
+    "/help — эта справка",
+  ];
 
   if (hasAdminPermission(admin.adminPermissions, "MODERATION")) {
     lines.push("/pending — проекты на модерации");
@@ -288,6 +305,29 @@ export function telegramHelpText(admin: ResolvedAdmin) {
     lines.push("/withdrawals — заявки на вывод");
   }
 
-  lines.push("\nДействия также доступны через кнопки в уведомлениях.");
+  lines.push("");
+  lines.push("Действия также доступны через кнопки в уведомлениях.");
   return lines.join("\n");
+}
+
+export async function telegramToggleAdminAlerts(
+  adminId: string,
+): Promise<{ ok: true; enabled: boolean } | { ok: false; error: string }> {
+  const settings = await prisma.userSettings.findUnique({
+    where: { userId: adminId },
+    select: { adminTelegramChatId: true, adminTelegramAlerts: true },
+  });
+
+  if (!settings?.adminTelegramChatId) {
+    return { ok: false, error: "Бот не подключён" };
+  }
+
+  const enabled = !settings.adminTelegramAlerts;
+
+  await prisma.userSettings.update({
+    where: { userId: adminId },
+    data: { adminTelegramAlerts: enabled },
+  });
+
+  return { ok: true, enabled };
 }

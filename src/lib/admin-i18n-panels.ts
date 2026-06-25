@@ -49,6 +49,7 @@ export type AdminPanelsCopy = {
   pendingProjects: {
     title: string;
     empty: string;
+    viewProject: string;
   };
   contentModeration: {
     title: string;
@@ -538,6 +539,7 @@ export const ADMIN_PANELS_COPY: Record<AppLocale, AdminPanelsCopy> = {
     pendingProjects: {
       title: "Премодерация проектов",
       empty: "Нет проектов в очереди",
+      viewProject: "Открыть проект",
     },
     contentModeration: {
       title: "Модерация контента",
@@ -932,6 +934,7 @@ export const ADMIN_PANELS_COPY: Record<AppLocale, AdminPanelsCopy> = {
     pendingProjects: {
       title: "Премодерація проєктів",
       empty: "Немає проєктів у черзі",
+      viewProject: "Відкрити проєкт",
     },
     contentModeration: {
       title: "Модерація контенту",
@@ -1423,6 +1426,7 @@ export const ADMIN_PANELS_COPY: Record<AppLocale, AdminPanelsCopy> = {
     pendingProjects: {
       title: "Premoderacja projektów",
       empty: "Brak projektów w kolejce",
+      viewProject: "Otwórz projekt",
     },
     contentModeration: {
       title: "Moderacja treści",
@@ -1914,6 +1918,7 @@ export const ADMIN_PANELS_COPY: Record<AppLocale, AdminPanelsCopy> = {
     pendingProjects: {
       title: "Project pre-moderation",
       empty: "No projects in queue",
+      viewProject: "Open project",
     },
     contentModeration: {
       title: "Content moderation",

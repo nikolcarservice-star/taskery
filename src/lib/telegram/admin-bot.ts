@@ -8,6 +8,10 @@ import {
 import { prisma } from "@/lib/prisma";
 import { siteConfig } from "@/lib/seo";
 import type { TelegramInlineButton, TelegramSendOptions } from "@/lib/telegram/types";
+import {
+  adminTelegramAlertScopeForTemplate,
+  recordAdminTelegramAlert,
+} from "@/lib/telegram/admin-alerts";
 
 export function adminTelegramConfigured(): boolean {
   return Boolean(process.env.TELEGRAM_ADMIN_BOT_TOKEN?.trim());
@@ -39,9 +43,9 @@ export async function sendAdminTelegramMessage(
   chatId: string,
   text: string,
   options?: TelegramSendOptions,
-) {
+): Promise<number | null> {
   const token = process.env.TELEGRAM_ADMIN_BOT_TOKEN?.trim();
-  if (!token) return false;
+  if (!token) return null;
 
   const response = await fetch(
     `https://api.telegram.org/bot${token}/sendMessage`,
@@ -58,7 +62,17 @@ export async function sendAdminTelegramMessage(
     },
   );
 
-  return response.ok;
+  if (!response.ok) return null;
+
+  try {
+    const data = (await response.json()) as {
+      ok?: boolean;
+      result?: { message_id?: number };
+    };
+    return data.ok ? (data.result?.message_id ?? null) : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function answerAdminTelegramCallback(
@@ -84,10 +98,33 @@ export async function answerAdminTelegramCallback(
   return response.ok;
 }
 
+export async function deleteAdminTelegramMessage(
+  chatId: string | number,
+  messageId: number,
+) {
+  const token = process.env.TELEGRAM_ADMIN_BOT_TOKEN?.trim();
+  if (!token) return false;
+
+  const response = await fetch(
+    `https://api.telegram.org/bot${token}/deleteMessage`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        message_id: messageId,
+      }),
+    },
+  );
+
+  return response.ok;
+}
+
 export async function editAdminTelegramMessage(
   chatId: string | number,
   messageId: number,
   text: string,
+  options?: TelegramSendOptions,
 ) {
   const token = process.env.TELEGRAM_ADMIN_BOT_TOKEN?.trim();
   if (!token) return false;
@@ -102,6 +139,8 @@ export async function editAdminTelegramMessage(
         message_id: messageId,
         text,
         disable_web_page_preview: true,
+        parse_mode: options?.parseMode,
+        reply_markup: options?.replyMarkup,
       }),
     },
   );
@@ -134,6 +173,15 @@ export function buildAdminTelegramKeyboard(
     ]);
   }
 
+  if (template === "ADMIN_PROJECT_PENDING" && metadata?.projectSlug) {
+    rows.push([
+      {
+        text: "📋 Открыть проект",
+        url: absoluteAdminLink(`/projects/${metadata.projectSlug}`),
+      },
+    ]);
+  }
+
   if (template === "ADMIN_WITHDRAWAL_REQUEST" && metadata?.paymentId) {
     rows.push([
       {
@@ -147,7 +195,15 @@ export function buildAdminTelegramKeyboard(
     ]);
   }
 
-  rows.push([{ text: "🌐 Открыть в админке", url: openUrl }]);
+  rows.push([
+    {
+      text:
+        template === "ADMIN_PROJECT_PENDING"
+          ? "🌐 Модерация"
+          : "🌐 Открыть в админке",
+      url: openUrl,
+    },
+  ]);
 
   return rows;
 }
@@ -185,16 +241,38 @@ export async function sendAdminTelegramToUser(
 
   const keyboard = buildAdminTelegramKeyboard(
     payload.template,
-    payload.link,
+    payload.template === "ADMIN_PROJECT_PENDING"
+      ? "/admin/moderation"
+      : payload.link,
     payload.metadata,
   );
 
-  const text = `🔔 ${title}\n${body}`;
+  let text = `🔔 ${title}\n${body}`;
+  if (payload.metadata?.projectSlug) {
+    text += `\n\n${absoluteAdminLink(`/projects/${payload.metadata.projectSlug}`)}`;
+  }
 
   try {
-    await sendAdminTelegramMessage(settings.adminTelegramChatId, text, {
-      replyMarkup: { inline_keyboard: keyboard },
-    });
+    const messageId = await sendAdminTelegramMessage(
+      settings.adminTelegramChatId,
+      text,
+      {
+        replyMarkup: { inline_keyboard: keyboard },
+      },
+    );
+
+    const alertTarget = adminTelegramAlertScopeForTemplate(
+      payload.template,
+      payload.metadata,
+    );
+    if (messageId != null && alertTarget) {
+      await recordAdminTelegramAlert(
+        alertTarget.scope,
+        alertTarget.targetId,
+        settings.adminTelegramChatId,
+        messageId,
+      );
+    }
   } catch (error) {
     console.error("[telegram:admin]", userId, error);
   }

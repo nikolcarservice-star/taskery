@@ -7,6 +7,7 @@ import { requireModerationAdmin } from "@/lib/actions/admin-moderation";
 import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { prisma } from "@/lib/prisma";
 import { notifyFreelancersAboutNewProject } from "@/lib/notifications";
+import { clearAdminTelegramAlerts } from "@/lib/telegram/admin-alerts";
 import { revalidatePath } from "next/cache";
 
 export type ProjectModerationState = { error?: string; success?: boolean };
@@ -46,6 +47,8 @@ export async function publishProjectAfterApproval(
       targetId: project.id,
     });
   }
+
+  await clearAdminTelegramAlerts("project_moderation", project.id);
 
   revalidatePath("/admin/moderation");
   revalidatePath("/admin/mobile/moderation");
@@ -123,6 +126,8 @@ export async function adminRejectProject(
     details: { reason },
   });
 
+  await clearAdminTelegramAlerts("project_moderation", projectId);
+
   revalidatePath("/admin/moderation");
   revalidatePath("/admin/mobile/moderation");
   revalidatePath("/client/projects");
@@ -131,13 +136,14 @@ export async function adminRejectProject(
 
 export async function notifyAdminsNewProjectPending(
   projectId: string,
+  slug: string,
   title: string,
 ) {
   await notifyAdminsWithPermission("MODERATION", {
     type: "ADMIN_PROJECT_PENDING",
     template: "ADMIN_PROJECT_PENDING",
     variables: { projectTitle: title },
-    link: "/admin/moderation",
-    metadata: { projectId },
+    link: `/projects/${slug}`,
+    metadata: { projectId, projectSlug: slug },
   });
 }

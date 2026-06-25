@@ -87,6 +87,7 @@ ok =
   )) !== false && ok;
 
 await setCommands("Admin bot", process.env.TELEGRAM_ADMIN_BOT_TOKEN, [
+  { command: "menu", description: "Главное меню" },
   { command: "help", description: "Справка по командам" },
   { command: "pending", description: "Проекты на модерации" },
   { command: "reports", description: "Открытые жалобы" },

@@ -136,7 +136,7 @@ export async function createProject(
   });
 
   if (projectPreModerationEnabled) {
-    await notifyAdminsNewProjectPending(project.id, project.title);
+    await notifyAdminsNewProjectPending(project.id, project.slug, project.title);
 
     await createLocalizedUserNotification({
       userId: session.user.id,

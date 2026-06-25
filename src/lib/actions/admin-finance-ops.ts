@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { createLocalizedUserNotification } from "@/lib/create-user-notification";
 import { formatMoney } from "@/lib/i18n/currencies";
 import { prisma } from "@/lib/prisma";
+import { clearAdminTelegramAlerts } from "@/lib/telegram/admin-alerts";
 import { transferWithdrawalToConnect } from "@/lib/stripe-connect";
 import {
   atomicApproveWithdrawal,
@@ -180,6 +181,8 @@ export async function adminApproveWithdrawal(
       targetId: paymentId,
       details: { userId: payment.userId, amount: Number(payment.amount) },
     });
+
+    await clearAdminTelegramAlerts("withdrawal", paymentId);
   } catch (error) {
     if (error instanceof WithdrawalError) {
       return { error: error.message };
@@ -231,6 +234,8 @@ export async function adminRejectWithdrawal(
         reason,
       },
     });
+
+    await clearAdminTelegramAlerts("withdrawal", paymentId);
   } catch (error) {
     if (error instanceof WithdrawalError) {
       return { error: error.message };

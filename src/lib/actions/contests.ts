@@ -107,7 +107,7 @@ export async function createContest(
   });
 
   if (pending) {
-    await notifyAdminsNewProjectPending(project.id, project.title);
+    await notifyAdminsNewProjectPending(project.id, project.slug, project.title);
     await createLocalizedUserNotification({
       userId: session.user.id,
       type: "PROJECT_MATCH",

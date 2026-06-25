@@ -9,6 +9,7 @@ import {
 import { getAdminCopy } from "@/lib/admin-i18n";
 import type { PendingProjectItem } from "@/lib/queries/admin-pending-projects";
 import type { AppLocale } from "@/lib/i18n/types";
+import Link from "next/link";
 import { useActionState } from "react";
 
 const initialState: ProjectModerationState = {};
@@ -21,6 +22,7 @@ function PendingProjectRow({
   locale: AppLocale;
 }) {
   const c = getAdminCopy(locale).panels.common;
+  const p = getAdminCopy(locale).panels.pendingProjects;
   const [approveState, approveAction, approvePending] = useActionState(
     adminApproveProject,
     initialState,
@@ -33,8 +35,25 @@ function PendingProjectRow({
   return (
     <li className="rounded-xl border border-amber-200 bg-amber-50/50 p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="font-medium text-zinc-900">{project.title}</p>
+        <div className="min-w-0">
+          <Link
+            href={`/projects/${project.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-zinc-900 hover:text-blue-600 hover:underline"
+          >
+            {project.title}
+          </Link>
+          <p className="mt-1">
+            <Link
+              href={`/projects/${project.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              {p.viewProject}
+            </Link>
+          </p>
           <p className="mt-1 text-sm text-zinc-600">
             {project.client.name ?? project.client.email}
             {project.category ? ` · ${project.category.name}` : ""}
